@@ -1,0 +1,22 @@
+TRUFFLE INSTALLATION 
+nodeJS needs to be installed first
+
+$ npm  install -g truffle
+
+CREATING A PROJECT
+$ mkdir myproject
+$ cd myproject
+$ truffle init
+
+folder is now initialized with project structure
+Contents include:
+conracts/
+migrations/
+test/
+truffle.js
+
+DOWNLOADING GANACHE
+download link: http://truffleframework.com/ganache/
+
+More: http://truffleframework.com/docs/getting_started/installation
+http://truffleframework.com/docs/getting_started/project
