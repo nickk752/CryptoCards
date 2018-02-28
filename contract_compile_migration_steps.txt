@@ -18,4 +18,11 @@ This will run all migrations in migrations/ directory.
 For local testing, make sure ganache is installed and 
 running before executing migrate.
 
-More: http://truffleframework.com/docs/getting_started/migrations
+You have to have at least two migration files.
+The first is an initial migration that that deploys the Migrations.sol
+(1_initial_migration.js)
+Then you can create migration files to deploy your other contracts.
+(2_deploy_some_contract.js)
+
+Read more at: http://truffleframework.com/docs/getting_started/compile
+http://truffleframework.com/docs/getting_started/migrations
