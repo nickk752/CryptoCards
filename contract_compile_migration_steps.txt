@@ -24,5 +24,14 @@ The first is an initial migration that that deploys the Migrations.sol
 Then you can create migration files to deploy your other contracts.
 (2_deploy_some_contract.js)
 
+Basic migration.js structure:
+
+var MyContract = artifacts.require("MyContract");
+
+module.exports = function(deployer) {
+  // deployment steps
+  deployer.deploy(MyContract);
+};
+
 Read more at: http://truffleframework.com/docs/getting_started/compile
 http://truffleframework.com/docs/getting_started/migrations
