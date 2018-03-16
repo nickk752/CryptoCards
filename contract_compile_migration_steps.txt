@@ -1,0 +1,37 @@
+TRUFFLE COMPILE
+All contracts are located in project's conracts/ directory.
+Change to root directory where the project is located.
+
+$ truffle compile
+
+Compiles all contracts if upon first run. Upon subsequent runs,
+only contracts that have changed will be compiled.
+
+TRUFFLE MIGRATIONS
+Migration scripts help deploy contracts to the Ethereum network.
+
+To run migrations:
+
+$ truffle migrate
+
+This will run all migrations in migrations/ directory.
+For local testing, make sure ganache is installed and 
+running before executing migrate.
+
+You have to have at least two migration files.
+The first is an initial migration that that deploys the Migrations.sol
+(1_initial_migration.js)
+Then you can create migration files to deploy your other contracts.
+(2_deploy_some_contract.js)
+
+Basic migration.js structure:
+
+var MyContract = artifacts.require("MyContract");
+
+module.exports = function(deployer) {
+  // deployment steps
+  deployer.deploy(MyContract);
+};
+
+Read more at: http://truffleframework.com/docs/getting_started/compile
+http://truffleframework.com/docs/getting_started/migrations
