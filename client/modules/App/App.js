@@ -29,12 +29,13 @@ export class App extends Component {
   };
 
   render() {
+    //const { isAuthenticated, errorMessage } = this.props;
     return (
       <div>
         {this.state.isMounted && !window.devToolsExtension && process.env.NODE_ENV === 'development' && <DevTools />}
         <div>
           <Helmet
-            title="MERN Starter - Blog App"
+            title="CryptoCards "
             titleTemplate="%s - Blog App"
             meta={[
               { charset: 'utf-8' },
@@ -67,12 +68,17 @@ App.propTypes = {
   children: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
+  //isAuthenticated: PropTypes.bool.isRequired,
+  //errorMessage: PropTypes.string,
 };
 
 // Retrieve data from store as props
 function mapStateToProps(store) {
+  //const { isAuthenticated, errorMessage } = auth;
   return {
     intl: store.intl,
+    //isAuthenticated,
+    //errorMessage,
   };
 }
 

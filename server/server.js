@@ -37,6 +37,7 @@ import Helmet from 'react-helmet';
 import routes from '../client/routes';
 import { fetchComponentData } from './util/fetchData';
 import posts from './routes/post.routes';
+import auctions from './routes/auction.routes';
 import dummyData from './dummyData';
 import serverConfig from './config';
 
@@ -60,6 +61,7 @@ app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
 app.use(Express.static(path.resolve(__dirname, '../dist/client')));
 app.use('/api', posts);
+app.use('/api', auctions);
 
 // Render Initial HTML
 const renderFullPage = (html, initialState) => {
@@ -146,7 +148,7 @@ app.use((req, res, next) => {
 // start app
 app.listen(serverConfig.port, (error) => {
   if (!error) {
-    console.log(`MERN is running on port: ${serverConfig.port}! Build something amazing!`); // eslint-disable-line
+    console.log(`CryptoCards is running on port: ${serverConfig.port}! Build a feature!`); // eslint-disable-line
   }
 });
 
