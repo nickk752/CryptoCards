@@ -47,6 +47,14 @@ export default (
         });
       }}
     />
+    <Route //testing why page is blank
+      path="/test"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/TestPage/TestPage').default);
+        });
+      }}
+    />
     <Route //route for all cards belonging to logged in user
       path="/inventory/testing" //need to make it so path goes to userId
       getComponent={(nextState, cb) => {

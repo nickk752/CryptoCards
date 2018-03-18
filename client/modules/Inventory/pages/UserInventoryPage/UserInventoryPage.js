@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
 import ReactDOM from 'react-dom';
 
 // Import Components
@@ -12,7 +11,7 @@ import { addCardRequest, fetchCards, deleteCardRequest } from '../../InventoryAc
 //Import Selectors
 import { getCards } from '../../InventoryReducer';
 
-class UserInventoryPage extends React.Component {
+class UserInventoryPage extends Component {
     componentDidMount() {
         //ReactDOM.hydrate(<UserInventoryPage/>, document.getElementById('root'));
         this.props.dispatch(fetchCards());
@@ -25,7 +24,7 @@ class UserInventoryPage extends React.Component {
     }
 
     handleAddCard = (name, owner) => {
-        this.props.dispatch(addCardRequest({ name, owner}));
+        this.props.dispatch(addCardRequest({ name, owner }));
     };
 
     render(){
@@ -40,7 +39,7 @@ class UserInventoryPage extends React.Component {
 }
 
 // Actions required to provide data for this component to render in sever side.
-UserInventoryPage.need = [() => {return fetchCards(); }];
+UserInventoryPage.need = [() => { return fetchCards(); }];
 
 // Retrieve data from store as props
 const mapStateToProps = (state) => {
@@ -51,12 +50,17 @@ const mapStateToProps = (state) => {
 
 //
 UserInventoryPage.propTypes = {
-    card: PropTypes.shape({
+    cards: PropTypes.shape({
         name: PropTypes.string.isRequired,
         owner: PropTypes.string.isRequired,
         slug: PropTypes.string.isRequired,
         cuid: PropTypes.string.isRequired,
     }).isRequired,
+    dispatch: PropTypes.func.isRequired,
+};
+
+UserInventoryPage.contextTypes = {
+    router: React.PropTypes.object,
 };
 
 export default connect(mapStateToProps)(UserInventoryPage);

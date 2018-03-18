@@ -5,17 +5,14 @@ import ReactDOM from 'react-dom';
 // This causes crashes and I don't know why
 // import styles from './InventoryPage.css';
 
-class InventoryPage extends Component {
-    componentDidMount() {
-        ReactDOM.hydrate(<InventoryPage/>, document.getElementById('root'));
-     }
+class TestPage extends Component {
     render() {
         return (
             <div>
-                <h3> zzz Please log in to view Inventory zzzzz </h3>
+                <h3> Testing </h3>
             </div>
         );
     }
 }
 
-export default InventoryPage;
+export default TestPage;

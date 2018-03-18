@@ -3,7 +3,7 @@ import { TOGGLE_ADD_POST } from './AppActions';
 
 // Initial State
 const initialState = {
-  showAddPost: true,
+  showAddPost: false,
 };
 
 const AppReducer = (state = initialState, action) => {

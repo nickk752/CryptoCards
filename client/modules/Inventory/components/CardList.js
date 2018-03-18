@@ -7,7 +7,7 @@ function CardList(props){
     return(
         <div>
             {
-                props.card.map(card => (
+                props.cards.map(card => (
                     <CardListItem
                         card = {card}
                         key = {card.cuid}

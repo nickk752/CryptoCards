@@ -32,6 +32,7 @@ const InventoryReducer = (state = initialState, action) => {
 export const getCards = state => state.cards.data;
 
 // get card by cuid
+//changed cards to inventory here idk if thats right
 export const getCard = (state, cuid) => state.cards.data.filter(card => card.cuid === cuid)[0];
 
 //Export Reducer
