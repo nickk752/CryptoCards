@@ -1,5 +1,5 @@
 // Import Actions
-import { ADD_CARD, ADD_CARDS, DELETE_CARD  } from './InventoryActions';
+import { ADD_CARD, ADD_CARDS, DELETE_CARD } from './InventoryActions';
 
 // Initial State
 const initialState = { data: [] };
@@ -7,7 +7,7 @@ const initialState = { data: [] };
 const InventoryReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_CARD:
-        return{
+        return {
             data: [action.card, ...state.data],
         };
 
@@ -15,7 +15,7 @@ const InventoryReducer = (state = initialState, action) => {
         return {
             data: action.cards,
         };
-        
+
     case DELETE_CARD:
         return {
             data: state.data.filter(card => card.cuid !== action.cuid),
@@ -32,7 +32,6 @@ const InventoryReducer = (state = initialState, action) => {
 export const getCards = state => state.cards.data;
 
 // get card by cuid
-//changed cards to inventory here idk if thats right
 export const getCard = (state, cuid) => state.cards.data.filter(card => card.cuid === cuid)[0];
 
 //Export Reducer

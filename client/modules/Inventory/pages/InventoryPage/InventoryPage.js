@@ -7,8 +7,8 @@ import ReactDOM from 'react-dom';
 
 class InventoryPage extends Component {
     componentDidMount() {
-        ReactDOM.hydrate(<InventoryPage/>, document.getElementById('root'));
-     }
+        ReactDOM.hydrate(<InventoryPage/>, document.getElementById('root')); 
+    }
     render() {
         return (
             <div>

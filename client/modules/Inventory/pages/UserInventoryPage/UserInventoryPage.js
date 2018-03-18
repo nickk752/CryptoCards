@@ -33,8 +33,8 @@ class UserInventoryPage extends Component {
             <div>
                 <h3> Inventory </h3>
                 <CardList handleDeleteCard={this.handleDeleteCard} cards={this.props.cards} />
-            </div>    
-        );    
+            </div>
+        );
     }
 }
 
@@ -53,8 +53,6 @@ UserInventoryPage.propTypes = {
     cards: PropTypes.shape({
         name: PropTypes.string.isRequired,
         owner: PropTypes.string.isRequired,
-        slug: PropTypes.string.isRequired,
-        cuid: PropTypes.string.isRequired,
     }).isRequired,
     dispatch: PropTypes.func.isRequired,
 };
