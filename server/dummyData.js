@@ -1,6 +1,8 @@
 import Post from './models/post';
+import Card from './models/card';
 
 export default function () {
+
   Post.count().exec((err, count) => {
     if (count > 0) {
       return;

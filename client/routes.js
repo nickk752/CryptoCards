@@ -39,5 +39,29 @@ export default (
         });
       }}
     />
+    <Route //route for when user is not logged in
+      path="/inventory"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/InventoryPage/InventoryPage').default);
+        });
+      }}
+    />
+    <Route //route for all cards belonging to logged in user
+      path="/inventory/testing" //need to make it so path goes to userId
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/UserInventoryPage/UserInventoryPage').default);
+        });
+      }}
+    />
+    <Route //route for specific card
+      path="/inventory/:cuid"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/CardPage/CardPage').default);
+        });
+      }}
+    />
   </Route>
 );
