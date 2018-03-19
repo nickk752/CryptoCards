@@ -10,7 +10,7 @@ class InventoryPage extends React.Component {
     render() {
         return (
             <div>
-                <h3> zzz Please log in to view Inventory zzzzz </h3>
+                <h3> Please log in to view Inventory </h3>
             </div>
         );
     }

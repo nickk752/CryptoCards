@@ -13,7 +13,6 @@ import { getCards } from '../../InventoryReducer';
 
 class UserInventoryPage extends Component {
     componentDidMount() {
-        //ReactDOM.hydrate(<UserInventoryPage/>, document.getElementById('root'));
         this.props.dispatch(fetchCards());
     }
 
