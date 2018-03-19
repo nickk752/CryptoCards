@@ -8,11 +8,11 @@ function CardListItem(props){
     return(
         <div>
             <h3>
-                <Link to={`/inventory/${props.card.slug}-${props.card.cuid}`}>
+                <Link to={`/inventory/${props.card.cuid}`}>
                     {props.card.name}
                 </Link>
             </h3>
-            <p><FormarttedMessage id = "owner"/> {props.owner} </p>    
+            <p><FormattedMessage id = "owner:"/> {props.card.owner} </p>    
         </div>
     );
 }

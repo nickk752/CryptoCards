@@ -11,6 +11,7 @@ import sanitizeHtml from 'sanitize-html';
  */
 
 export function getCards(req, res) {
+    console.log(res);
     Card.find().exec((err, cards) => {
         if(err) {
             res.status(500).send(err);

@@ -16,7 +16,7 @@ export function CardPage(props) {
             <Helmet title = {props.card.name} />
                 <div>
                     <h3> {props.card.name} </h3>
-                    <p> {props.card.owner} </p>
+                    <p> Owner: {props.card.owner} </p>
                 </div>    
         </div>    
     );

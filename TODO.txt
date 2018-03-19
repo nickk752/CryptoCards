@@ -1,2 +1,2 @@
-UserInventoryPage:
-    figure out wtf data error is
+-Get cards for specific user
+-redirect user if not logged in

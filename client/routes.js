@@ -2,6 +2,9 @@
 import React from 'react';
 import { Route, IndexRoute } from 'react-router';
 import App from './modules/App/App';
+import Inventory from './modules/Inventory/pages/InventoryPage/InventoryPage';
+import UserInventoryPage from './modules/Inventory/pages/UserInventoryPage/UserInventoryPage';
+import CardPage from './modules/Inventory/pages/CardPage/CardPage';
 
 // require.ensure polyfill for node
 if (typeof require.ensure !== 'function') {
@@ -47,14 +50,6 @@ export default (
         });
       }}
     />
-    <Route //testing why page is blank
-      path="/test"
-      getComponent={(nextState, cb) => {
-        require.ensure([], require => {
-          cb(null, require('./modules/Inventory/pages/TestPage/TestPage').default);
-        });
-      }}
-    />
     <Route //route for all cards belonging to logged in user
       path="/inventory/testing" //need to make it so path goes to userId
       getComponent={(nextState, cb) => {
@@ -62,6 +57,7 @@ export default (
           cb(null, require('./modules/Inventory/pages/UserInventoryPage/UserInventoryPage').default);
         });
       }}
+      
     />
     <Route //route for specific card
       path="/inventory/:cuid"
