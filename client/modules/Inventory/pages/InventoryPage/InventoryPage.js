@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom';
 
 // styles
 // This causes crashes and I don't know why
-// import styles from './InventoryPage.css';
+import styles from './InventoryPage.css';
 
 class InventoryPage extends Component {
     componentDidMount() {
