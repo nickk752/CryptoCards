@@ -2,6 +2,8 @@ import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 
+// import { Login } from '../../../Login/components/Login/Login';
+
 // Import Style
 import styles from './Header.css';
 
@@ -17,6 +19,12 @@ export function Header(props, context) {
           <li><FormattedMessage id="switchLanguage" /></li>
           {languageNodes}
         </ul>
+      </div>
+      <div className={styles['language-switcher']}>
+        {/* <Login
+          handleLogin={props.handleLogin}
+          isLoggedIn={props.isLoggedIn}
+        /> */}
       </div>
       <div className={styles.content}>
         <h1 className={styles['site-title']}>
@@ -40,6 +48,8 @@ Header.propTypes = {
   toggleAddPost: PropTypes.func.isRequired,
   switchLanguage: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
+  // handleLogin: PropTypes.func.isRequired,
+  // isLoggedIn: PropTypes.bool.isRequired,
 };
 
 export default Header;

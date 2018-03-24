@@ -1,15 +1,15 @@
 import React, {
+  Component,
   PropTypes
 } from 'react';
 
-class Game extends React.Component {
+export class Game extends Component {
+
+
   render() {
     return (
       <div className="" >
         hello
-        {
-          props.game
-        }
       </div>
     );
   }

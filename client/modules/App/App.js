@@ -13,6 +13,7 @@ import Footer from './components/Footer/Footer';
 // Import Actions
 import { toggleAddPost } from './AppActions';
 import { switchLanguage } from '../../modules/Intl/IntlActions';
+import { loginRequest } from '../../modules/Login/LoginActions';
 
 export class App extends Component {
   constructor(props) {
@@ -28,8 +29,16 @@ export class App extends Component {
     this.props.dispatch(toggleAddPost());
   };
 
+  // handleLogin = (event) => {
+  //   this.props.dispatch(loginRequest({ username, password }));
+  // };
+
+  // hadleChange = (event) => {
+  //   this.setState({})
+  // }
+
   render() {
-    //const { isAuthenticated, errorMessage } = this.props;
+    // const { isAuthenticated, errorMessage } = this.props;
     return (
       <div>
         {this.state.isMounted && !window.devToolsExtension && process.env.NODE_ENV === 'development' && <DevTools />}
@@ -53,6 +62,8 @@ export class App extends Component {
             switchLanguage={lang => this.props.dispatch(switchLanguage(lang))}
             intl={this.props.intl}
             toggleAddPost={this.toggleAddPostSection}
+            handleLogin={this.handleLogin}
+            isLoggedIn={this.props.isLoggedIn}
           />
           <div className={styles.container}>
             {this.props.children}
@@ -68,17 +79,19 @@ App.propTypes = {
   children: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
+  isLoggedIn: PropTypes.bool.isRequired,
   //isAuthenticated: PropTypes.bool.isRequired,
   //errorMessage: PropTypes.string,
 };
 
 // Retrieve data from store as props
 function mapStateToProps(store) {
-  //const { isAuthenticated, errorMessage } = auth;
+  // const { isAuthenticated, errorMessage } = auth;
   return {
     intl: store.intl,
-    //isAuthenticated,
-    //errorMessage,
+    isLoggedIn: true,
+    // isAuthenticated,
+    // errorMessage,
   };
 }
 
