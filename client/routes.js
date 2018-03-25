@@ -48,13 +48,13 @@ export default (
         });
       }}
     />
-    <Route
+    {/* <Route
       path="/game"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
           cb(null, require('./modules/Game/pages/GamePage/GamePage').default);
         });
       }}
-    />
+    /> */}
   </Route>
 );

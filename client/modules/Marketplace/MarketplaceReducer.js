@@ -18,7 +18,7 @@ const MarketplaceReducer = (state = initialState, action) => {
 
     case ADD_AUCTIONS :
       return {
-        data: action.auction,
+        data: action.auctions,
       };
     case DELETE_AUCTION :
       return {

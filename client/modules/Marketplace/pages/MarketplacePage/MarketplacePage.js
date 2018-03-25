@@ -9,6 +9,7 @@ import { fetchAuctions, deleteAuctionRequest, addAuctionRequest } from '../../Ma
 // Import Selectors
 import { getAuctions } from '../../MarketplaceReducer';
 
+
 class MarketplacePage extends Component {
   componentDidMount() {
     this.props.dispatch(fetchAuctions());
@@ -28,7 +29,6 @@ class MarketplacePage extends Component {
     return (
       <div>
         <AuctionList auctions={this.props.auctions} />
-        hello
       </div>
     );
   }
