@@ -7,8 +7,8 @@ import { combineReducers } from 'redux';
 import app from './modules/App/AppReducer';
 import posts from './modules/Post/PostReducer';
 import intl from './modules/Intl/IntlReducer';
-//added inventory import
-import cards from './modules/Inventory/InventoryReducer';
+import cards from './modules/Inventory/CardReducer';
+import decks from './modules/Inventory/DeckReducer';
 
 // Combine all reducers into one root reducer
 export default combineReducers({
@@ -17,4 +17,5 @@ export default combineReducers({
   intl,
   //add cards reducer here
   cards,
+  decks,
 });

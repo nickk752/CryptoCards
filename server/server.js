@@ -38,6 +38,7 @@ import routes from '../client/routes';
 import { fetchComponentData } from './util/fetchData';
 import posts from './routes/post.routes';
 import cards from './routes/card.routes';
+import decks from './routes/deck.routes';
 import dummyData from './dummyData';
 import serverConfig from './config';
 
@@ -62,6 +63,7 @@ app.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
 app.use(Express.static(path.resolve(__dirname, '../dist/client')));
 app.use('/api', posts);
 app.use('/api', cards);
+app.use('/api', decks);
 
 // Render Initial HTML
 const renderFullPage = (html, initialState) => {

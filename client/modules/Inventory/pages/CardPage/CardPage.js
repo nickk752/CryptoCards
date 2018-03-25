@@ -8,7 +8,7 @@ import Helmet from 'react-helmet';
 import{ fetchCard } from '../../InventoryActions';
 
 // Import Selectoes
-import{ getCard } from '../../InventoryReducer';
+import{ getCard } from '../../CardReducer';
 
 export function CardPage(props) {
     return(
@@ -17,6 +17,9 @@ export function CardPage(props) {
                 <div>
                     <h3> {props.card.name} </h3>
                     <p> Owner: {props.card.owner} </p>
+                    <p> Type: {props.card.type} </p>
+                    <p> Attack: {props.card.attack} </p>
+                    <p> Defense: {props.card.defense} </p>
                 </div>    
         </div>    
     );
@@ -38,6 +41,9 @@ CardPage.propTypes = {
     card: PropTypes.shape({
         name: PropTypes.string.isRequired,
         owner: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        attack: PropTypes.string.isRequired,
+        defense: PropTypes.string.isRequired,
         slug: PropTypes.string.isRequired,
         cuid: PropTypes.string.isRequired,
     }).isRequired,

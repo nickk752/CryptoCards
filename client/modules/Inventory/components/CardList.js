@@ -11,7 +11,6 @@ function CardList(props){
                     <CardListItem
                         card = {card}
                         key = {card.cuid}
-                        onDelete = {() => props.handleDeleteCard(card.cuid)}
                     />
                 ))
             }
@@ -23,10 +22,12 @@ CardList.propTypes = {
     cards: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
         owner: PropTypes.string.isRequired,
+        type: PropTypes.string.isRequired,
+        attack: PropTypes.string.isRequired,
+        defense: PropTypes.string.isRequired,
         slug: PropTypes.string.isRequired,
         cuid: PropTypes.string.isRequired,
     })).isRequired,
-    handleDeleteCard: PropTypes.func.isRequired,
 };
 
 export default CardList;

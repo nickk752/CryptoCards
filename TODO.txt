@@ -1,2 +1,3 @@
--Get cards for specific user
--redirect user if not logged in
+-fix deckpage so it gets cards everytime its loaded
+-allow cards to update it's decks
+-do UI stuff

@@ -1,7 +1,22 @@
 import Post from './models/post';
 import Card from './models/card';
+import Deck from './models/deck';
 
 export default function () {
+  Deck.count().exec((err, count) => {
+    if (count > 0) {
+      return;
+    }
+
+    const deck1 = new Deck({ number: 1, name: 'deck1', owner: 'bob', cards: ['why', 'cikqgkv4q01ck7453ualdnaaa'],  slug: 'deck1', cuid: 'ppp' });
+    const deck2 = new Deck({ number: 2, name: 'second deck', owner: 'ok', cards: ['why', 'idkwhyweneedthis'],  slug: 'second deck', cuid: 'ddd' });
+
+    Deck.create([deck1, deck2], (error) => {
+      if (!error) {
+         console.log('Added decks for first go');
+      }
+    });
+  });
 
   Post.count().exec((err, count) => {
     if (count > 0) {

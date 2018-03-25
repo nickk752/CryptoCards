@@ -5,16 +5,14 @@ const router = new Router();
 // get all Cards. This should not be used for production
 router.route('/cards').get(CardController.getCards);
 
-// TODO: get all Cards for specific user
-
+// get all Cards for specific user
+router.route('/cards/users/:cuid').get(CardController.getUserCards);
 
 // get one card by cuid
 router.route('/cards/:cuid').get(CardController.getCard);
 
-// add a new card. Dont use for production
+// add a new card. 
 router.route('/cards').post(CardController.addCard);//TODO: change to userid
-
-// TODO: add a card for user
 
 // delete a card by cuid
 router.route('/cards/:cuid').delete(CardController.deleteCard);

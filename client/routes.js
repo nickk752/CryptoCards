@@ -20,6 +20,8 @@ if (process.env.NODE_ENV !== 'production') {
   require('./modules/Post/pages/PostDetailPage/PostDetailPage');
   require('./modules/Inventory/pages/InventoryPage/InventoryPage');// InventoryPage
   require('./modules/Inventory/pages/CardPage/CardPage');// Card page
+  require('./modules/Inventory/pages/DeckPage/DeckPage');// Deck page
+  require('./modules/Inventory/pages/TestInventoryPage/TestInventoryPage');// TestInventoryPage
   require('./modules/Inventory/pages/UserInventoryPage/UserInventoryPage');// UserInventoryPage
 }
 
@@ -50,20 +52,35 @@ export default (
         });
       }}
     />
+    <Route //route for viewing all cards and decks. Only for development
+      path="/inventory/testing"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/TestInventoryPage/TestInventoryPage').default);
+        });
+      }}
+    />
     <Route //route for all cards belonging to logged in user
-      path="/inventory/testing" //need to make it so path goes to userId
+      path="/inventory/:cuid" 
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
           cb(null, require('./modules/Inventory/pages/UserInventoryPage/UserInventoryPage').default);
         });
       }}
-      
     />
     <Route //route for specific card
-      path="/inventory/:cuid"
+      path="/inventory/card/:cuid"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
           cb(null, require('./modules/Inventory/pages/CardPage/CardPage').default);
+        });
+      }}
+    />
+    <Route //route for specific deck
+      path="/inventory/deck/:cuid"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/DeckPage/DeckPage').default);
         });
       }}
     />

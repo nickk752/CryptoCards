@@ -44,6 +44,7 @@
     "npm": "^5.7.1",
     "prop-types": "^15.6.1",
     "react": "^15.1.0",
+    "react-columns": "^1.2.0",
     "react-dom": "^15.1.0",
     "react-helmet": "^3.1.0",
     "react-intl": "^2.1.2",

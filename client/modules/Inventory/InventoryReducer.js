@@ -1,5 +1,11 @@
 // Import Actions
-import { ADD_CARD, ADD_CARDS, DELETE_CARD } from './InventoryActions';
+import { 
+    ADD_CARD, 
+    ADD_CARDS, 
+    DELETE_CARD, 
+    ADD_DECK, 
+    ADD_DECKS, 
+    DELETE_DECK } from './InventoryActions';
 
 // Initial State
 const initialState = { data: [] };
@@ -21,18 +27,39 @@ const InventoryReducer = (state = initialState, action) => {
             data: state.data.filter(card => card.cuid !== action.cuid),
         };
 
+    case ADD_DECK:
+        return {
+            data: [action.deck, ...state.data],
+        };    
+    
+    case ADD_DECKS:
+        return {
+            data: action.decks,
+        };
+        
+    case DELETE_DECK:
+        return {
+            data: state.data.filter(deck => deck.cuid !== action.cuid),
+        };    
+
     default:
-      return state;
+        return state;
   }
 };
 
 /* Selectors */
 
-//get all cards that belong to user
+// get all cards TODO: for user
 export const getCards = state => state.cards.data;
 
 // get card by cuid
 export const getCard = (state, cuid) => state.cards.data.filter(card => card.cuid === cuid)[0];
+
+// get all decks TODO: for user
+export const getDecks = state => state.decks.data;
+
+// get deck by cuid
+export const getDeck = (state, cuid) => state.decks.data.filter(deck => deck.cuid === cuid)[0];
 
 //Export Reducer
 export default InventoryReducer;

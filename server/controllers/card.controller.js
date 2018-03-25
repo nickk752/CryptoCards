@@ -11,7 +11,6 @@ import sanitizeHtml from 'sanitize-html';
  */
 
 export function getCards(req, res) {
-    console.log(res);
     Card.find().exec((err, cards) => {
         if(err) {
             res.status(500).send(err);
@@ -20,6 +19,15 @@ export function getCards(req, res) {
     });
 }
 
+export function getUserCards(req, res) {
+    var query = { owner: req.params.cuid };
+    Card.find(query).exec((err, cards) => {
+        if(err) {
+            res.status(500).send(err);
+        }
+        res.json({ cards });
+    });
+}
 
 /**
  * Save a card
@@ -38,6 +46,9 @@ const newCard = new Card(req.body.card);
 // sanitize input and ur mum
 newCard.name = sanitizeHtml(newCard.name);
 newCard.owner = sanitizeHtml(newCard.owner);
+newCard.type = sanitizeHtml(newCard.type);
+newCard.attack = sanitizeHtml(newCard.attack);
+newCard.defense = sanitizeHtml(newCard.defense);
 newCard.slug = slug(newCard.name.toLowerCase(), { lowercase: true });
 newCard.cuid = cuid();
 newCard.save((err, saved) => {
@@ -49,7 +60,7 @@ newCard.save((err, saved) => {
 }
 
  /**
- * Get a single post
+ * Get a single card
  * @param req
  * @param res
  * @returns void
@@ -64,7 +75,7 @@ export function getCard(req, res) {
 }
 
 /**
- * Delete a post
+ * Delete a card
  * @param req
  * @param res
  * @returns void
