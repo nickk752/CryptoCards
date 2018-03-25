@@ -15,7 +15,7 @@ function AuctionListItem(props) {
       key={props.auction.slug}
       title={props.auction.card}
       subtitle={<span>by <b>{props.auction.seller}</b></span>}
-      actionIcon={<IconButton><FontIcon className='gavel' /></IconButton>}
+      actionIcon={<IconButton><FontIcon className="gavel" /></IconButton>}
     >
       <img src={img} />
     </GridTile>

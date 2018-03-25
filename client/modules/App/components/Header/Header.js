@@ -51,7 +51,7 @@ export function Header(props, context) {
             <NavItem eventKey={1} href="#inventory">
               Inventory
             </NavItem>
-            <NavItem eventKey={1} href="#marketplace">
+            <NavItem eventKey={1} href="marketplace">
               Marketplace
             </NavItem>
             <NavItem eventKey={1} href="#newgame">
