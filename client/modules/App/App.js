@@ -10,7 +10,6 @@ import Helmet from 'react-helmet';
 import DevTools from './components/DevTools';
 import Header from './components/Header/Header';
 import Footer from './components/Footer/Footer';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 // Import Actions
 import { toggleAddPost } from './AppActions';

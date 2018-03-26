@@ -10,7 +10,7 @@ import intl from './modules/Intl/IntlReducer';
 import auctions from './modules/Marketplace/MarketplaceReducer';
 //import login from './modules/Login/LoginReducer';
 // import game from './modules/Game/GameReducer';
-import { reducer as form } from 'redux-form';
+// import { reducer as form } from 'redux-form';
 import cards from './modules/Inventory/CardReducer';
 import decks from './modules/Inventory/DeckReducer';
 
