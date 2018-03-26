@@ -1,0 +1,1 @@
+- Fix card model(setting deck arrays)

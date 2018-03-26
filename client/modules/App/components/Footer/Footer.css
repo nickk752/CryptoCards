@@ -7,11 +7,11 @@
 .footer p{
   margin: 0 0 8px 0;
   font-size: 14px;
-  color: #FFF;
+  color: black;
 }
 
 .footer a{
-  color: #FFF;
+  color: black;
   text-decoration: none;
   font-weight: 700;
 }

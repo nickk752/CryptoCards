@@ -20,19 +20,18 @@ const styles = {
 function AuctionList(props) {
   return (
     <div style={styles.root}>
-
       <GridList
         cellHeight={200}
         style={styles.gridList}
       >
-        {
-          props.auctions.map(auction => (
-            <AuctionListItem
-              auction={auction}
-              key={auction.cuid}
-            />
-          ))
-        }
+      {
+        props.auctions.map(auction => (
+          <AuctionListItem
+            auction={auction}
+            key={auction.cuid}
+          />
+        ))
+      }
       </GridList>
     </div>
   );

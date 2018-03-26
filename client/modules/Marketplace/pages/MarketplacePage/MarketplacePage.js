@@ -16,7 +16,7 @@ class MarketplacePage extends Component {
   }
 
   handleDeleteAuction = auction => {
-    if (confirm('Do you want to delete this auction?')) {
+    if (confirm('Do you want to delete this auction?')) { // eslint-disable-line
       this.props.dispatch(deleteAuctionRequest(auction));
     }
   };

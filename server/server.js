@@ -38,6 +38,8 @@ import routes from '../client/routes';
 import { fetchComponentData } from './util/fetchData';
 import posts from './routes/post.routes';
 import auctions from './routes/auction.routes';
+import cards from './routes/card.routes';
+import decks from './routes/deck.routes';
 import dummyData from './dummyData';
 import serverConfig from './config';
 
@@ -62,6 +64,8 @@ app.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
 app.use(Express.static(path.resolve(__dirname, '../dist/client')));
 app.use('/api', posts);
 app.use('/api', auctions);
+app.use('/api', cards);
+app.use('/api', decks);
 
 // Render Initial HTML
 const renderFullPage = (html, initialState) => {
@@ -83,10 +87,14 @@ const renderFullPage = (html, initialState) => {
 
         ${isProdMode ? `<link rel='stylesheet' href='${assetsManifest['/app.css']}' />` : ''}
         <link href='https://fonts.googleapis.com/css?family=Lato:400,300,700' rel='stylesheet' type='text/css'/>
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous" rel='stylesheet' type='text/css' />
         <link rel="shortcut icon" href="http://res.cloudinary.com/hashnode/image/upload/v1455629445/static_imgs/mern/mern-favicon-circle-fill.png" type="image/png" />
       </head>
       <body>
-        <div id="root">${html}</div>
+        <div id="root">${html}
+          <div id="stuff"></div>
+        </div>
+        
         <script>
           window.__INITIAL_STATE__ = ${JSON.stringify(initialState)};
           ${isProdMode ?
