@@ -23,7 +23,7 @@ module.exports = {
   output: {
     path: __dirname,
     filename: 'app.js',
-    publicPath: 'http://0.0.0.0:8000/',
+    publicPath: 'http://localhost:8000/',
   },
 
   resolve: {
@@ -59,6 +59,10 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.DefinePlugin({
+      'CANVAS_RENDERER': JSON.stringify(true),
+      'WEBGL_RENDERER': JSON.stringify(true)
+    }),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'vendor',
