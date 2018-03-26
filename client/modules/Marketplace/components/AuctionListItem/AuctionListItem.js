@@ -1,11 +1,13 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { FormattedMessage } from 'react-intl';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import FontIcon from 'material-ui/FontIcon';
+// import Image from 'react-bootstrap/lib';
+
+
 // Import Style
-import styles from './AuctionListItem.css';
+// import styles from './AuctionListItem.css';
 
 import img from '../../exodia.jpg';
 
@@ -13,13 +15,12 @@ function AuctionListItem(props) {
   return (
     <GridTile
       key={props.auction.slug}
-      title={props.auction.card}
+      title={<Link to={`/marketplace/${props.auction.cuid}`} >{props.auction.card}</Link>}
       subtitle={<span>by <b>{props.auction.seller}</b></span>}
       actionIcon={<IconButton><FontIcon className="gavel" /></IconButton>}
     >
-      <img src={img} />
+      <img src={img} role="presentation" />;
     </GridTile>
-
 
   //   <div className={styles['single-auction']}>
   //     <h3 className={styles['auction-title']}>

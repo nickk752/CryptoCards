@@ -19,6 +19,7 @@ if (process.env.NODE_ENV !== 'production') {
   require('./modules/Post/pages/PostListPage/PostListPage');
   require('./modules/Post/pages/PostDetailPage/PostDetailPage');
   require('./modules/Marketplace/pages/MarketplacePage/MarketplacePage');
+  require('./modules/Marketplace/pages/AuctionDetailPage/AuctionDetailPage');
 }
 
 // react-router setup with code-splitting
@@ -45,6 +46,14 @@ export default (
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
           cb(null, require('./modules/Marketplace/pages/MarketplacePage/MarketplacePage').default);
+        });
+      }}
+    />
+    <Route
+      path="/marketplace/:cuid"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Marketplace/pages/AuctionDetailPage/AuctionDetailPage').default);
         });
       }}
     />
