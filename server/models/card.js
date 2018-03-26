@@ -5,8 +5,12 @@ const cardSchema = new Schema({
     name: { type: 'String', required: true },
     owner: { type: 'String', required: true },
     type: { type: 'String', required: true},
-    attack: { type: 'String', required: true},
-    defense: { type: 'String', required: true},
+    attack: { type: 'Number', required: true},
+    defense: { type: 'Number', required: true},
+    nCost: { type: 'Number', required: true},
+    lCost: { type: 'Number', required: true},
+    rCost: { type: 'Number', required: true},
+    effect: { type: 'String', required: true},
     // still very uncertain if we should store deck reference in card documents or the other way around
     //decks: { type: 'Array', required: true}, this makes a 2d array idk why
     slug: { type: 'String', required: true },

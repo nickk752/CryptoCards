@@ -2,10 +2,16 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 import Columns from 'react-columns';
+//import { Tabs, Tab } from 'react-bootstrap';
+import { Tabs, Tab } from 'material-ui/Tabs';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 
 // Import Components
 import CardList from '../../components/CardList';
 import DeckList from '../../components/DeckList';
+import DeckListItem from '../../components/DeckListItem/DeckListItem';
 
 //Import Actions
 import { addCardRequest, fetchCards, deleteCardRequest, fetchDecks, addDeckRequest, deleteDeckRequest } from '../../InventoryActions';
@@ -15,6 +21,17 @@ import { getCards } from '../../CardReducer';
 import { getDecks } from '../../DeckReducer';
 
 class TestInventoryPage extends Component {
+
+    constructor(props){
+        super(props);
+        this.state = { value: 0 };   
+    }
+
+    handleChange = (value) => {
+        this.setState({
+          value: value,
+        });
+      };
     
     componentDidMount() {
         this.props.dispatch(fetchCards());
@@ -32,17 +49,37 @@ class TestInventoryPage extends Component {
     render(){
         return (
             <h1> Inventory
-                <Columns columns='2'>
-                    <h3> Cards </h3>
-                    <h3> Decks </h3>
-                </Columns>
-                <Columns columns='2'>
-                    {/* Card List */}
-                    <CardList cards={this.props.cards} />
-                
-                    {/* Deck List */}
-                    <DeckList cards={this.props.cards} decks={this.props.decks} />
-                </Columns>    
+                <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+                    <Tabs
+                        value={this.state.value}
+                        onChange={this.handleChange}
+                    >
+                        <Tab label="All Cards" value={0}>    
+                            {/* Card List */} 
+                            <CardList cards={this.props.cards} /> 
+                        </Tab>
+                        <Tab label="Deck 1" value={1}> 
+                            {/* Deck List */}
+                            <DeckListItem cards={this.props.cards} deck={this.props.decks[0]} /> 
+                        </Tab> 
+                        <Tab label="Deck 2" value={2}>
+                            {/* Deck List */}
+                            <DeckListItem cards={this.props.cards} deck={this.props.decks[0]} /> 
+                        </Tab> 
+                        <Tab label="Deck 3" value={3}>      
+                            {/* Deck List */}
+                            <DeckListItem cards={this.props.cards} deck={this.props.decks[0]} /> 
+                        </Tab> 
+                        <Tab label="Deck 4" value={4}>      
+                            {/* Deck List */}
+                            <DeckListItem cards={this.props.cards} deck={this.props.decks[1]} /> 
+                        </Tab>
+                        <Tab label="Deck 5" value={5}>      
+                            {/* Deck List */}
+                            <DeckListItem cards={this.props.cards} deck={this.props.decks[1]} /> 
+                        </Tab>     
+                    </Tabs>
+                </MuiThemeProvider>         
             </h1>    
         );
     }

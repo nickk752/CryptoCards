@@ -1,6 +1,7 @@
 import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
+import { GridTile } from 'material-ui/GridList';
 
 // Import Styles
 
@@ -10,11 +11,15 @@ import{ fetchCard } from '../../InventoryActions';
 // Import Selectoes
 import{ getCard } from '../../CardReducer';
 
+// Import Wang
+import wang from '../../../../components/wang.jpg';
+
 export function CardPage(props) {
     return(
         <div>
             <Helmet title = {props.card.name} />
                 <div>
+                    <img src={wang}/>
                     <h3> {props.card.name} </h3>
                     <p> Owner: {props.card.owner} </p>
                     <p> Type: {props.card.type} </p>

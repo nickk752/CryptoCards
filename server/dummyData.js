@@ -8,12 +8,43 @@ export default function () {
       return;
     }
 
-    const deck1 = new Deck({ number: 1, name: 'deck1', owner: 'bob', cards: ['why', 'cikqgkv4q01ck7453ualdnaaa'],  slug: 'deck1', cuid: 'ppp' });
-    const deck2 = new Deck({ number: 2, name: 'second deck', owner: 'ok', cards: ['why', 'idkwhyweneedthis'],  slug: 'second deck', cuid: 'ddd' });
+    //bob decks
+    const deck1 = new Deck({ number: 1, name: 'This Deck', owner: 'bob',  slug: 'This Deck', cuid: 'aaa' });
+    const deck2 = new Deck({ number: 2, name: 'That Deck', owner: 'bob', slug: 'That Deck', cuid: 'bbb' });
+    const deck3 = new Deck({ number: 3, name: 'Best Deck', owner: 'bob', slug: 'Best Deck', cuid: 'ccc' });
+    const deck4 = new Deck({ number: 4, name: 'Worst Deck', owner: 'bob', slug: 'Worst Deck', cuid: 'ddd' });
+    const deck5 = new Deck({ number: 5, name: 'The Deck', owner: 'bob', slug: 'The Deck', cuid: 'eee' });
 
-    Deck.create([deck1, deck2], (error) => {
+    // charles decks
+    const deck6 = new Deck({ number: 1, name: 'ayy', owner: 'charles',  slug: 'ayy', cuid: 'fff' });
+    const deck7 = new Deck({ number: 2, name: 'byy', owner: 'charles', slug: 'byy', cuid: 'ggg' });
+    const deck8 = new Deck({ number: 3, name: 'cyy', owner: 'charles', slug: 'cyy', cuid: 'hhh' });
+    const deck9 = new Deck({ number: 4, name: 'dyy', owner: 'charles', slug: 'dyy', cuid: 'iii' });
+    const deck10 = new Deck({ number: 5, name: 'eyy', owner: 'charles', slug: 'eyy', cuid: 'jjj' });
+
+    Deck.create([deck1, deck2, deck3, deck4, deck5, deck6, deck7, deck8, deck9, deck10], (error) => {
       if (!error) {
          console.log('Added decks for first go');
+      }
+    });
+  });
+
+  Card.count().exec((err, count) => {
+    if (count > 0) {
+      return;
+    }
+
+    // bob cards
+    const card1 = new Card({ name: 'lil Punchy', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: '', decks: ['aaa', 'bbb'],  slug: 'lil Punchy', cuid: 'aaaa' });
+    const card2 = new Card({ name: 'lil blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 0, defense: 2, effect: '', decks: ['aaa', 'ccc', 'ddd', 'eee'],  slug: 'lil blocky', cuid: 'bbbb' });
+
+    // charles cards
+    const card3 = new Card({ name: 'Mid Blocky', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: '', decks: ['fff', 'hhh', 'jjj'],  slug: 'Mid Blocky', cuid: 'cccc' });
+    const card4 = new Card({ name: 'Mid Punchy', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: '', decks: ['ggg', 'fff', 'hhh', 'iii'],  slug: 'Mid Punchy', cuid: 'dddd' });
+
+    Card.create([card1, card2], (error) => {
+      if (!error) {
+         console.log('Added cards for first go');
       }
     });
   });

@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 
 // Import Actions
-import{ fetchDeck, fetchCards } from '../../InventoryActions';
+import{ fetchDeck, fetchCards, fetchUserCards } from '../../InventoryActions';
 
 // Import Selectoes
 import{ getDeck } from '../../DeckReducer';
@@ -39,13 +39,14 @@ export function DeckPage(props) {
 
 // Actions required to provide data for this component to render in server side.
 DeckPage.need = [params => {
-    return fetchDeck(params.cuid);
+    return fetchDeck(params.cuid), fetchUserCards(params.cuid);
 }];
 
 // Retrieve data from store as props
 function mapStateToProps(state, props) {
     return {
       deck: getDeck(state, props.params.cuid),
+      cards: getUserCards(state. props.params.cuid),
     };
 }
 

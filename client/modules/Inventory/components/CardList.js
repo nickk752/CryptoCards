@@ -1,4 +1,6 @@
 import React, { PropTypes } from 'react';
+import { GridList } from 'material-ui/GridList';
+import MultiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 // Import Components
 import CardListItem from './CardListItem/CardListItem';
@@ -6,14 +8,22 @@ import CardListItem from './CardListItem/CardListItem';
 function CardList(props){
     return(
         <div>
-            {
-                props.cards.map(card => (
-                    <CardListItem
-                        card = {card}
-                        key = {card.cuid}
-                    />
-                ))
-            }
+            <MultiThemeProvider>
+                <GridList
+                    cellHeight={300}
+                    cellWidth={200}
+                    cols={4}
+                >
+                    {
+                        props.cards.map(card => (
+                            <CardListItem
+                                card = {card}
+                                key = {card.cuid}
+                            />
+                        ))
+                    }
+                </GridList>
+            </MultiThemeProvider>
         </div>
     );
 }
