@@ -1,6 +1,6 @@
 import React, { PropTypes } from 'react';
 import { GridList } from 'material-ui/GridList';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+
 // Import Components
 import AuctionListItem from './AuctionListItem/AuctionListItem';
 
@@ -20,11 +20,11 @@ const styles = {
 function AuctionList(props) {
   return (
     <div style={styles.root}>
-      <MuiThemeProvider>
-        <GridList
-          cellHeight={200}
-          style={styles.gridList}
-        >
+
+      <GridList
+        cellHeight={200}
+        style={styles.gridList}
+      >
         {
           props.auctions.map(auction => (
             <AuctionListItem
@@ -33,8 +33,7 @@ function AuctionList(props) {
             />
           ))
         }
-        </GridList>
-      </MuiThemeProvider>
+      </GridList>
     </div>
   );
 }

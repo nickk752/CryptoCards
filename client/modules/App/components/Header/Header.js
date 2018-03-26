@@ -45,7 +45,7 @@ export function Header(props, context) {
             </Navbar.Brand>
           </Navbar.Header>
           <Nav>
-            <NavItem eventKey={1} href="#home">
+            <NavItem eventKey={1} href="/">
               Home
             </NavItem>
             <NavItem eventKey={1} href="#inventory">

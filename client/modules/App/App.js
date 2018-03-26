@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 // Import Style
 import styles from './App.css';
@@ -22,7 +23,7 @@ export class App extends Component {
   }
 
   componentDidMount() {
-    this.setState({isMounted: true}); // eslint-disable-line
+    this.setState({ isMounted: true }); // eslint-disable-line
   }
 
   toggleAddPostSection = () => {
@@ -66,7 +67,9 @@ export class App extends Component {
             isLoggedIn={this.props.isLoggedIn}
           />
           <div className={styles.container}>
-            {this.props.children}
+            <MuiThemeProvider>
+              {this.props.children}
+            </MuiThemeProvider>
           </div>
           <Footer />
         </div>
