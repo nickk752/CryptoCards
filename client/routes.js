@@ -20,6 +20,11 @@ if (process.env.NODE_ENV !== 'production') {
   require('./modules/Post/pages/PostDetailPage/PostDetailPage');
   require('./modules/Marketplace/pages/MarketplacePage/MarketplacePage');
   require('./modules/Marketplace/pages/AuctionDetailPage/AuctionDetailPage');
+  require('./modules/Inventory/pages/InventoryPage/InventoryPage');// InventoryPage
+  require('./modules/Inventory/pages/CardPage/CardPage');// Card page
+  require('./modules/Inventory/pages/DeckPage/DeckPage');// Deck page
+  require('./modules/Inventory/pages/TestInventoryPage/TestInventoryPage');// TestInventoryPage
+  require('./modules/Inventory/pages/UserInventoryPage/UserInventoryPage');// UserInventoryPage
 }
 
 // react-router setup with code-splitting
@@ -65,5 +70,45 @@ export default (
         });
       }}
     /> */}
+    <Route //route for when user is not logged in
+      path="/inventory"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/InventoryPage/InventoryPage').default);
+        });
+      }}
+    />
+    <Route //route for viewing all cards and decks. Only for development
+      path="/inventory/testing"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/TestInventoryPage/TestInventoryPage').default);
+        });
+      }}
+    />
+    <Route //route for all cards belonging to logged in user
+      path="/inventory/:cuid" 
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/UserInventoryPage/UserInventoryPage').default);
+        });
+      }}
+    />
+    <Route //route for specific card
+      path="/inventory/card/:cuid"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/CardPage/CardPage').default);
+        });
+      }}
+    />
+    <Route //route for specific deck
+      path="/inventory/deck/:cuid"
+      getComponent={(nextState, cb) => {
+        require.ensure([], require => {
+          cb(null, require('./modules/Inventory/pages/DeckPage/DeckPage').default);
+        });
+      }}
+    />
   </Route>
 );

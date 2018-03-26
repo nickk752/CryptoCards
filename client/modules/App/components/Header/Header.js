@@ -35,6 +35,14 @@ export function Header(props, context) {
         <h1 className={styles['site-title']}>
           <Link to="/" ><FormattedMessage id="siteTitle" /></Link>
         </h1>
+
+        {/* Need to make it so link goes to inventory/userid or /inventory if user not logged in.
+            Also JSX comments suck.
+         */}
+        <h1>
+          <Link to="/inventory/bob" > Inventory </Link>
+        </h1>  
+
         {
           context.router.isActive('/', true)
             ? <a className={styles['add-post-button']} href="#" onClick={props.toggleAddPost}><FormattedMessage id="addPost" /></a>
