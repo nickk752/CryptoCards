@@ -70,7 +70,7 @@ export default (
         });
       }}
     /> */}
-    <Route //route for when user is not logged in
+    <Route // route for when user is not logged in
       path="/inventory"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
@@ -78,7 +78,7 @@ export default (
         });
       }}
     />
-    <Route //route for viewing all cards and decks. Only for development
+    <Route // route for viewing all cards and decks. Only for development
       path="/inventory/testing"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
@@ -86,15 +86,15 @@ export default (
         });
       }}
     />
-    <Route //route for all cards belonging to logged in user
-      path="/inventory/:cuid" 
+    <Route // route for all cards belonging to logged in user
+      path="/inventory/:cuid"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
           cb(null, require('./modules/Inventory/pages/UserInventoryPage/UserInventoryPage').default);
         });
       }}
     />
-    <Route //route for specific card
+    <Route // route for specific card
       path="/inventory/card/:cuid"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
@@ -102,7 +102,7 @@ export default (
         });
       }}
     />
-    <Route //route for specific deck
+    <Route // route for specific deck
       path="/inventory/deck/:cuid"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {

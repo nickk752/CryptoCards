@@ -23,8 +23,8 @@ function mapStateToProps(store) {
 }
 
 HomePage.propTypes = {
-  children: PropTypes.object.isRequired,
-  dispatch: PropTypes.func.isRequired,
+  // children: PropTypes.object.isRequired,
+  // dispatch: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
 };
 
