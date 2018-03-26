@@ -38,6 +38,10 @@ io.on('connection',function(socket){
             socket.player.x = data.x;
             socket.player.y = data.y;
             io.emit('move',socket.player);
+
+						//check to see if they've clicked a card in their hand "select it"
+						
+						//check to see if they've clicked a card on their side of the field " select it"
         });
 
         socket.on('disconnect',function(){

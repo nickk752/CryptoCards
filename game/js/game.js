@@ -18,6 +18,7 @@ Game.preload = function() {
 		game.load.image('blank_card_sprite','assets/sprites/blank_card_sprite.png');
 		game.load.image('creaturezone_sprite','assets/sprites/test_creaturezone_sprite.png');
 		game.load.image('buildingzone_sprite','assets/sprites/test_buildingzone_sprite.png');
+
 };
 
 Game.create = function(){
@@ -33,7 +34,6 @@ Game.create = function(){
     for(var i = 0; i < map.layers.length; i++) {
         layer = map.createLayer(i);
     }
-
     layer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
     layer.events.onInputUp.add(Game.getCoordinates, this);
 		createZoneSprites();
@@ -49,8 +49,8 @@ Game.addNewPlayer = function(id,x,y,player){
     Game.playerMap[id] = game.add.sprite(x,y,'sprite');
 
 		if (id == 2){
-			setUpDeck();
-			drawCards(8);
+			var starter = Math.floor(Math.random() * 2) + 1;
+			Game.setupGame();
 		}
 };
 
@@ -67,6 +67,17 @@ Game.removePlayer = function(id){
     Game.playerMap[id].destroy();
     delete Game.playerMap[id];
 };
+
+Game.setupGame = function(){
+		setUpDeck();
+		drawCards(8);
+}
+
+Game.useCard = function(card, start, dest){
+	//here would go internal logic checking and such
+
+}
+
 
 //creates invisible sprites that represent any zones we might have to check
 //collision with.
@@ -136,15 +147,45 @@ drawCards = function(numCards){
 
 		Game.deck[deckIndex].sprite.inputEnabled = true;
 		Game.deck[deckIndex].sprite.input.enableDrag();
+		Game.deck[deckIndex].sprite.events.onDragStop.add(onDragStop, this);
 		Game.deck[deckIndex].sprite.alignIn(Game.zoneSprites.deck, Phaser.CENTER, 0, 0);
+		Game.deck[deckIndex].sprite.dindex = deckIndex;
 
-		var handBounds = Game.zoneSprites.hand[Game.hand.count+i].getBounds();
-		var cardBounds = Game.deck[deckIndex].sprite.getBounds();
+		//var handBounds = Game.zoneSprites.hand[Game.hand.count+i].getBounds();
+		//var cardBounds = Game.deck[deckIndex].sprite.getBounds();
 
-    var distance = Phaser.Math.distance(handBounds.x,handBounds.y,cardBounds.x,cardBounds.y);
-    var tween = game.add.tween(Game.deck[deckIndex].sprite);
-    var duration = distance*5;
-    tween.to({x:handBounds.x,y:handBounds.y}, duration);
-    tween.start();
+		Game.deck[deckIndex].sprite.moveTo = function(zone, deckIndex){
+			var cardBounds = Game.deck[deckIndex].sprite.getBounds();
+			var zoneBounds = zone.getBounds();
+			var distance = Phaser.Math.distance(zoneBounds.x,zoneBounds.y,cardBounds.x,cardBounds.y);
+	    var tween = game.add.tween(Game.deck[deckIndex].sprite);
+	    var duration = distance*2;
+	    tween.to({x:zoneBounds.x,y:zoneBounds.y}, duration);
+	    tween.start();
+		}
+		Game.deck[deckIndex].sprite.home = Game.zoneSprites.hand[Game.hand.count+i];
+		Game.deck[deckIndex].sprite.moveTo(Game.zoneSprites.hand[Game.hand.count+i], deckIndex);
+    //var distance = Phaser.Math.distance(handBounds.x,handBounds.y,cardBounds.x,cardBounds.y);
+    //var tween = game.add.tween(Game.deck[deckIndex].sprite);
+    //var duration = distance*5;
+    //tween.to({x:handBounds.x,y:handBounds.y}, duration);
+    //tween.start();
+	}
+	Game.deck.curr += numCards;
+	Game.hand.count += numCards;
+}
+
+function onDragStop(sprite, pointer) {
+	for (var i = 0; i < 4; i++){
+		var zone = Game.zoneSprites.crt.p1.lane1[i];
+		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+				sprite.home = zone;
+		} else {
+			zone = Game.zoneSprites.crt.p1.lane2[i];
+			if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+					sprite.home = zone;
+			}
+			sprite.moveTo(sprite.home, sprite.dindex);
+		}
 	}
 }
