@@ -35,16 +35,25 @@ export default function () {
     }
 
     // bob cards
-    const card1 = new Card({ name: 'lil Punchy', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: '', decks: ['aaa', 'bbb'],  slug: 'lil Punchy', cuid: 'aaaa' });
-    const card2 = new Card({ name: 'lil blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 0, defense: 2, effect: '', decks: ['aaa', 'ccc', 'ddd', 'eee'],  slug: 'lil blocky', cuid: 'bbbb' });
-
+    const card1 = new Card({ name: 'lil Punchy', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: ' ', decks: ['aaa', 'bbb', 'eee'],  slug: 'lil Punchy', cuid: 'aaaa' });
+    const card2 = new Card({ name: 'lil blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 0, defense: 2, effect: ' ', decks: ['bbb', 'ccc', 'ddd', 'eee'],  slug: 'lil blocky', cuid: 'bbbb' });
+    const card3 = new Card({ name: 'ayy blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 2, effect: ' ', decks: ['bbb', 'ccc',  'eee'],  slug: 'ayy blocky', cuid: 'cccc' });
+    const card4 = new Card({ name: 'wut blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 3, defense: 5, effect: ' ', decks: [ 'ccc', 'ddd', 'eee'],  slug: 'wut blocky', cuid: 'dddd' });
+    const card5 = new Card({ name: 'how blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 5, defense: 2, effect: ' ', decks: ['bbb', 'eee'],  slug: 'how blocky', cuid: 'eeee' });
+    
     // charles cards
-    const card3 = new Card({ name: 'Mid Blocky', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: '', decks: ['fff', 'hhh', 'jjj'],  slug: 'Mid Blocky', cuid: 'cccc' });
-    const card4 = new Card({ name: 'Mid Punchy', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: '', decks: ['ggg', 'fff', 'hhh', 'iii'],  slug: 'Mid Punchy', cuid: 'dddd' });
+    const card6 = new Card({ name: 'Mid Blocky', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: ' ', decks: ['fff', 'hhh', 'jjj'],  slug: 'Mid Blocky', cuid: 'ffff' });
+    const card7 = new Card({ name: 'Mid Punchy', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 7, effect: ' ', decks: ['ggg', 'fff', 'hhh', 'iii'],  slug: 'Mid Punchy', cuid: 'gggg' });
+    const card8 = new Card({ name: 'Mid Bonchon', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 3, attack: 4, defense: 1, effect: ' ', decks: [ 'fff', 'hhh', 'iii'],  slug: 'Mid Bonchon', cuid: 'hhhh' });
+    const card9 = new Card({ name: 'Mid Wonchon', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 2, defense: 1, effect: ' ', decks: ['ggg', 'fff', 'iii'],  slug: 'Mid Wonchon', cuid: 'iiii' });
+    const card10 = new Card({ name: 'Mid Lanchon', owner: 'charles', type: 'Creature', nCost: 1, lCost: 2, rCost: 0, attack: 1, defense: 4, effect: ' ', decks: ['hhh', 'iii'],  slug: 'Mid Lanchon', cuid: 'jjjj' });
 
-    Card.create([card1, card2], (error) => {
+    Card.create([card1, card2, card3, card4, card5, card6, card7, card8, card9, card10], (error) => {
       if (!error) {
          console.log('Added cards for first go');
+      }
+      else {
+        console.log(error);
       }
     });
   });

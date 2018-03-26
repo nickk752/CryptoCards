@@ -1,3 +1,1 @@
--fix deckpage so it gets cards everytime its loaded
--allow cards to update it's decks
--do UI stuff
+- Fix card model(setting deck arrays)

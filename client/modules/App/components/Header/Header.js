@@ -27,7 +27,7 @@ export function Header(props, context) {
             Also JSX comments suck.
          */}
         <h1>
-          <Link to="/inventory/testing" > Inventory </Link>
+          <Link to="/inventory/bob" > Inventory </Link>
         </h1>  
 
         {
