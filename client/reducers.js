@@ -11,6 +11,8 @@ import auctions from './modules/Marketplace/MarketplaceReducer';
 import login from './modules/Login/LoginReducer';
 // import game from './modules/Game/GameReducer';
 import { reducer as form } from 'redux-form';
+import cards from './modules/Inventory/CardReducer';
+import decks from './modules/Inventory/DeckReducer';
 
 // Combine all reducers into one root reducer
 export default combineReducers({
@@ -21,4 +23,6 @@ export default combineReducers({
   login,
   form,
   // game,
+  cards,
+  decks,
 });
