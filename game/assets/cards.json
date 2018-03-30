@@ -1,0 +1,254 @@
+{
+  "cards": [
+    {
+      "name": "Lil Punchy",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 1,
+      "rcost": 0,
+      "att": 1,
+      "def": 1,
+      "traits": ""
+    },
+    {
+      "name": "Lil Punchy",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 1,
+      "rcost": 0,
+      "att": 1,
+      "def": 1,
+      "traits": ""
+    },
+    {
+      "name": "Lil Punchy",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 1,
+      "rcost": 0,
+      "att": 1,
+      "def": "",
+      "traits": ""
+    },
+    {
+      "name": "Lil Blocky",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 1,
+      "rcost": 0,
+      "att": 0,
+      "def": 2,
+      "traits": ""
+    },
+    {
+      "name": "Lil Blocky",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 1,
+      "rcost": 0,
+      "att": 0,
+      "def": 2,
+      "traits": ""
+    },
+    {
+      "name": "Lil Blocky",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 1,
+      "rcost": 0,
+      "att": 0,
+      "def": 2,
+      "traits": ""
+    },
+    {
+      "name": "Mid Blocky",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 1,
+      "def": 2,
+      "traits": ""
+    },
+    {
+      "name": "Mid Blocky",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 1,
+      "def": 2,
+      "traits": ""
+    },
+    {
+      "name": "Mid Punchy",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 2,
+      "def": 1,
+      "traits": ""
+    },
+    {
+      "name": "Mid Punchy",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 2,
+      "def": 1,
+      "traits": ""
+    },
+    {
+      "name": "Lil Vamp",
+      "type": "Creature",
+      "lcost": 1,
+      "mcost": 1,
+      "rcost": 0,
+      "att": 2,
+      "def": 1,
+      "traits": "Lifesteal"
+    },
+    {
+      "name": "Lil Vamp",
+      "type": "Creature",
+      "lcost": 1,
+      "mcost": 1,
+      "rcost": 0,
+      "att": 2,
+      "def": 1,
+      "traits": "Lifesteal"
+    },
+    {
+      "name": "Lil Troll",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 1,
+      "rcost": 1,
+      "att": 1,
+      "def": 2,
+      "traits": "Taunt"
+    },
+    {
+      "name": "Lil Troll",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 1,
+      "rcost": 1,
+      "att": 1,
+      "def": 2,
+      "traits": "Taunt"
+    },
+    {
+      "name": "Big Vamp",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 1,
+      "att": 3,
+      "def": 2,
+      "traits": "Lifesteal"
+    },
+    {
+      "name": "Big Troll",
+      "type": "Creature",
+      "lcost": 1,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 2,
+      "def": 3,
+      "traits": "Taunt"
+    },
+    {
+      "name": "Big Punchy",
+      "type": "Creature",
+      "lcost": 1,
+      "mcost": 3,
+      "rcost": 0,
+      "att": 4,
+      "def": 2,
+      "traits": ""
+    },
+    {
+      "name": "Big Blocky",
+      "type": "Creature",
+      "lcost": 0,
+      "mcost": 3,
+      "rcost": 1,
+      "att": 2,
+      "def": 4,
+      "traits": "Taunt"
+    },
+    {
+      "name": "Hospital",
+      "type": "Building",
+      "lcost": 1,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 0,
+      "def": 8,
+      "traits": "1 Def / turn"
+    },
+    {
+      "name": "Barrack",
+      "type": "Building",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 1,
+      "att": 0,
+      "def": 8,
+      "traits": "1 Att / turn"
+    },
+    {
+      "name": "Biggs' Lamb",
+      "type": "Augment",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 0,
+      "def": 0,
+      "traits": "Destroy creature"
+    },
+    {
+      "name": "Biggs' Lamb",
+      "type": "Augment",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 0,
+      "def": 0,
+      "traits": "Destroy creature"
+    },
+    {
+      "name": "DU Lift",
+      "type": "Augment",
+      "lcost": 0,
+      "mcost": 3,
+      "rcost": 0,
+      "att": 0,
+      "def": 0,
+      "traits": "Give +1/+1 Creature"
+    },
+    {
+      "name": "Thicc Walls",
+      "type": "Augment",
+      "lcost": 0,
+      "mcost": 2,
+      "rcost": 0,
+      "att": 0,
+      "def": 0,
+      "traits": "Building 0/+2"
+    },
+    {
+      "name": "Art Hillary",
+      "type": "Augment",
+      "lcost": 0,
+      "mcost": 3,
+      "rcost": 0,
+      "att": 0,
+      "def": 0,
+      "traits": "Deal 2 damage"
+    }
+  ]
+}

@@ -7,6 +7,10 @@ import { combineReducers } from 'redux';
 import app from './modules/App/AppReducer';
 import posts from './modules/Post/PostReducer';
 import intl from './modules/Intl/IntlReducer';
+import auctions from './modules/Marketplace/MarketplaceReducer';
+//import login from './modules/Login/LoginReducer';
+// import game from './modules/Game/GameReducer';
+// import { reducer as form } from 'redux-form';
 import cards from './modules/Inventory/CardReducer';
 import decks from './modules/Inventory/DeckReducer';
 
@@ -14,8 +18,11 @@ import decks from './modules/Inventory/DeckReducer';
 export default combineReducers({
   app,
   posts,
+  auctions,
   intl,
-  //add cards reducer here
+  //login,
+  //form,
+  // game,
   cards,
   decks,
 });

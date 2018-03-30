@@ -1,0 +1,41 @@
+{
+  "test_cards": {
+    "card1": {
+      "name": "lil' puncher",
+      "type": "creature",
+      "lcost": "0",
+      "mcost": "2",
+      "rcost": "1",
+      "atk": "1",
+      "def": "3",
+      "traits": {
+        "lifelink": {}
+      }
+    },
+    "card2": {
+      "name": "big' puncher",
+      "type": "creature",
+      "lcost": "0",
+      "mcost": "4",
+      "rcost": "2",
+      "atk": "3",
+      "def": "5",
+      "traits": {
+        "lifelink": {}
+      }
+    },
+    "": {},
+    "card3": {
+      "name": "plain jane",
+      "type": "creature",
+      "lcost": "0",
+      "mcost": "1",
+      "rcost": "0",
+      "atk": "1",
+      "def": "1",
+      "traits": {
+        "none": {}
+      }
+    }
+  }
+}
