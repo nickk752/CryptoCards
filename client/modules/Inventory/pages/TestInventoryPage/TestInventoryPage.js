@@ -1,7 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
-import Columns from 'react-columns';
 //import { Tabs, Tab } from 'react-bootstrap';
 import { Tabs, Tab } from 'material-ui/Tabs';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
