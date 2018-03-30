@@ -41,7 +41,7 @@ export function Header(props, context) {
          */}
         <h1>
           <Link to="/inventory/bob" > Inventory </Link>
-        </h1>  
+        </h1>
 
         {
           context.router.isActive('/', true)
@@ -51,26 +51,26 @@ export function Header(props, context) {
         <Navbar fixedTop={fixedTop}>
           <Navbar.Header>
             <Navbar.Brand>
-              <a href="#brand">CryptoCards</a>
+              <a href="/">CryptoCards</a>
             </Navbar.Brand>
           </Navbar.Header>
           <Nav>
             <NavItem eventKey={1} href="/">
               Home
             </NavItem>
-            <NavItem eventKey={1} href="inventory">
+            <NavItem eventKey={1} href="/inventory">
               Inventory
             </NavItem>
-            <NavItem eventKey={1} href="marketplace">
+            <NavItem eventKey={1} href="/marketplace">
               Marketplace
             </NavItem>
-            <NavItem eventKey={1} href="game">
+            <NavItem eventKey={1} href="#game">
               Play!
             </NavItem>
           </Nav>
           <Nav pullRight>
             <Navbar.Text>
-              Signed in as: <Navbar.Link href="#">Charles Wang</Navbar.Link>
+              Signed in as: <Navbar.Link href="#">Nick Kelly</Navbar.Link>
             </Navbar.Text>
           </Nav>
         </Navbar>
