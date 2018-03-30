@@ -17,8 +17,6 @@ export function Header(props, context) {
 
   return (
     <div className={styles.header}>
-      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossOrigin="anonymous">
-      </link>
       <div className={styles['language-switcher']}>
         <ul>
           <li><FormattedMessage id="switchLanguage" /></li>
@@ -39,9 +37,9 @@ export function Header(props, context) {
         {/* Need to make it so link goes to inventory/userid or /inventory if user not logged in.
             Also JSX comments suck.
          */}
-        <h1>
+        {/* <h1>
           <Link to="/inventory/bob" > Inventory </Link>
-        </h1>
+        </h1> */}
 
         {
           context.router.isActive('/', true)
@@ -58,13 +56,13 @@ export function Header(props, context) {
             <NavItem eventKey={1} href="/">
               Home
             </NavItem>
-            <NavItem eventKey={1} href="/inventory">
+            <NavItem eventKey={1} href="/inventory/bob">
               Inventory
             </NavItem>
             <NavItem eventKey={1} href="/marketplace">
               Marketplace
             </NavItem>
-            <NavItem eventKey={1} href="#game">
+            <NavItem eventKey={1} href="http://ec2-18-219-186-28.us-east-2.compute.amazonaws.com:8081/">
               Play!
             </NavItem>
           </Nav>
