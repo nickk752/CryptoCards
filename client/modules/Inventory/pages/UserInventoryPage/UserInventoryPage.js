@@ -111,8 +111,8 @@ class UserInventoryPage extends Component {
 }
 
 // Actions required to provide data for this component to render in sever side.
-UserInventoryPage.need = [() => { 
-    return fetchUserCards(), fetchUserDecks();
+UserInventoryPage.need = [(params) => { 
+    return fetchUserCards(params.cuid), fetchUserDecks(params.cuid);
 }];
 
 // Retrieve data from store as props
