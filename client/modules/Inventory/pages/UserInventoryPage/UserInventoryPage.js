@@ -10,13 +10,14 @@ import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 import CardList from '../../components/CardList';
 import DeckList from '../../components/DeckList';
 import DeckListItem from '../../components/DeckListItem/DeckListItem';
+import AddCardDeckWidget from '../../components/AddCardDeckWidget/AddCardDeckWidget';
 
 //Import Actions
-import { addCardRequest, fetchCards, fetchUserCards, fetchUserDecks, deleteCardRequest, fetchDecks, addDeckRequest, deleteDeckRequest } from '../../InventoryActions';
+import { addCardRequest, fetchCards, fetchUserCards, fetchUserDecks, deleteCardRequest, fetchDecks, addDeckRequest, deleteDeckRequest, toggleAddCardDeck, addDeckToCardRequest } from '../../InventoryActions';
 
 //Import Selectors
 import { getCards } from '../../CardReducer';
-import { getDecks } from '../../DeckReducer';
+import { getDecks, getShowAddCardDeck } from '../../DeckReducer';
 
 class UserInventoryPage extends Component {
 
@@ -36,6 +37,30 @@ class UserInventoryPage extends Component {
         });
     };
 
+    handleToggleAddCardDeck = () => {
+        this.props.dispatch(toggleAddCardDeck());
+    }    
+
+    getDeckCards = (cards, deckCuid) => {
+        return cards.filter(card => card.decks.filter(cuid => cuid === deckCuid)[0] === deckCuid);
+    }
+
+    getAddDeckCards = (cards, deckCuid) => {
+        return cards.filter(card => card.decks.filter(cuid => cuid === deckCuid).length === 0)
+    }
+
+    handleAddDeckToCard = (cardCuid, deckCuid) => {
+        this.props.dispatch(addDeckToCardRequest( cardCuid, deckCuid ));
+    }
+
+    handleFetchCards = () => {
+        this.props.dispatch(fetchUserCards(this.props.params.cuid));
+    }
+
+    handleToggleAddCardDeck = () => {
+        this.props.dispatch(toggleAddCardDeck());
+    } 
+
     render(){
         return (
             <h1> Inventory
@@ -51,12 +76,21 @@ class UserInventoryPage extends Component {
                         <Tab label="Deck 1" value={1}> 
                                 
                             {this.props.decks[0] != null ? //check if deck exists
-                                /* Very ugly logic */
-                                <DeckListItem 
-                                    //filter for all users cards that belong to deck                                                    
-                                    cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[0].cuid)[0] === this.props.decks[0].cuid)} 
-                                    deck={this.props.decks[0]} 
-                                />  
+                                <div>
+                                    <button onClick={this.handleToggleAddCardDeck}> add cards </button>
+                                    <AddCardDeckWidget 
+                                        cards={this.getAddDeckCards(this.props.cards, this.props.decks[0].cuid)} 
+                                        deck={this.props.decks[0]} 
+                                        showAddCardDeck={this.props.showAddCardDeck} 
+                                        addDeckToCard={this.handleAddDeckToCard} 
+                                        fetchCards={this.handleFetchCards}/>
+                                    <DeckListItem 
+                                        //filter for all users cards that belong to deck                                                    
+                                        //cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[0].cuid)[0] === this.props.decks[0].cuid)} 
+                                        cards={this.getDeckCards(this.props.cards, this.props.decks[0].cuid)}
+                                        deck={this.props.decks[0]} 
+                                    /> 
+                                </div>    
                                 : 
                                 <p> Deck Does Not Exist </p>
                             }
@@ -64,10 +98,19 @@ class UserInventoryPage extends Component {
                         
                         <Tab label="Deck 2" value={2}>
                             {this.props.decks[1] != null ? 
-                                <DeckListItem 
-                                    cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[1].cuid)[0] === this.props.decks[1].cuid)} 
-                                    deck={this.props.decks[1]} 
-                                />  
+                                <div>
+                                    <button onClick={this.handleToggleAddCardDeck}> add cards </button>
+                                    <AddCardDeckWidget 
+                                        cards={this.getAddDeckCards(this.props.cards, this.props.decks[1].cuid)} 
+                                        deck={this.props.decks[1]} 
+                                        showAddCardDeck={this.props.showAddCardDeck} 
+                                        addDeckToCard={this.handleAddDeckToCard} 
+                                        fetchCards={this.handleFetchCards}/>
+                                    <DeckListItem 
+                                        cards={this.getDeckCards(this.props.cards, this.props.decks[1].cuid)}
+                                        deck={this.props.decks[1]} 
+                                    />  
+                                </div>
                                 : 
                                 <p> Deck Does Not Exist </p>
                             }
@@ -75,30 +118,57 @@ class UserInventoryPage extends Component {
                         
                         <Tab label="Deck 3" value={3}>  
                         {this.props.decks[2] != null ? 
+                                <div>
+                                <button onClick={this.handleToggleAddCardDeck}> add cards </button>
+                                <AddCardDeckWidget 
+                                    cards={this.getAddDeckCards(this.props.cards, this.props.decks[2].cuid)} 
+                                    deck={this.props.decks[2]} 
+                                    showAddCardDeck={this.props.showAddCardDeck} 
+                                    addDeckToCard={this.handleAddDeckToCard} 
+                                    fetchCards={this.handleFetchCards}/>
                                 <DeckListItem 
-                                    cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[2].cuid)[0] === this.props.decks[2].cuid)} 
+                                    cards={this.getDeckCards(this.props.cards, this.props.decks[2].cuid)}
                                     deck={this.props.decks[2]} 
                                 />  
+                            </div>
                                 : 
                                 <p> Deck Does Not Exist </p>
                             }                        
                         </Tab> 
                         <Tab label="Deck 4" value={4}>   
                         {this.props.decks[3] != null ? 
+                                <div>
+                                <button onClick={this.handleToggleAddCardDeck}> add cards </button>
+                                <AddCardDeckWidget 
+                                    cards={this.getAddDeckCards(this.props.cards, this.props.decks[3].cuid)} 
+                                    deck={this.props.decks[3]} 
+                                    showAddCardDeck={this.props.showAddCardDeck} 
+                                    addDeckToCard={this.handleAddDeckToCard} 
+                                    fetchCards={this.handleFetchCards}/>
                                 <DeckListItem 
-                                    cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[3].cuid)[0] === this.props.decks[3].cuid)} 
+                                    cards={this.getDeckCards(this.props.cards, this.props.decks[3].cuid)}
                                     deck={this.props.decks[3]} 
                                 />  
+                            </div>
                                 : 
                                 <p> Deck Does Not Exist </p>
                             }
                         </Tab>
                         <Tab label="Deck 5" value={5}>    
                         {this.props.decks[4] != null ? 
+                                <div>
+                                <button onClick={this.handleToggleAddCardDeck}> add cards </button>
+                                <AddCardDeckWidget 
+                                    cards={this.getAddDeckCards(this.props.cards, this.props.decks[4].cuid)} 
+                                    deck={this.props.decks[4]} 
+                                    showAddCardDeck={this.props.showAddCardDeck} 
+                                    addDeckToCard={this.handleAddDeckToCard} 
+                                    fetchCards={this.handleFetchCards}/>
                                 <DeckListItem 
-                                    cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[4].cuid)[0] === this.props.decks[4].cuid)} 
+                                    cards={this.getDeckCards(this.props.cards, this.props.decks[4].cuid)}
                                     deck={this.props.decks[4]} 
                                 />  
+                            </div>
                                 : 
                                 <p> Deck Does Not Exist </p>
                             }
@@ -118,6 +188,7 @@ UserInventoryPage.need = [(params) => {
 // Retrieve data from store as props
 const mapStateToProps = (state) => {
     return {
+        showAddCardDeck: getShowAddCardDeck(state), 
         cards: getCards(state),
         decks: getDecks(state),
     };

@@ -46,6 +46,10 @@ class TestInventoryPage extends Component {
         this.props.dispatch(fetchCards());
     }
 
+    handleToggleAddCardDeck = () => {
+        this.props.dispatch(toggleAddCardDeck());
+    } 
+
     render(){
         return (
             <h1> Inventory
@@ -60,7 +64,7 @@ class TestInventoryPage extends Component {
                         </Tab>
                         <Tab label="Deck 1" value={1}> 
                             {/* Deck List */}
-                            <button onClick={() => this.props.dispatch(toggleAddCardDeck())}> add cards </button> 
+                            <button onClick={this.handleToggleAddCardDeck}> add cards </button> 
                             <AddCardDeckWidget cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[0].cuid).length === 0)} deck={this.props.decks[0]} showAddCardDeck={this.props.showAddCardDeck} addDeckToCard={this.handleAddDeckToCard} fetchCards={this.handleFetchCards}/>
                             <DeckListItem cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[0].cuid)[0] === this.props.decks[0].cuid)} deck={this.props.decks[0]} /> 
                         </Tab> 
