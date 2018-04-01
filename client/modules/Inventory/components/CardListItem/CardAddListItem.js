@@ -1,6 +1,5 @@
 import React, { PropTypes } from 'react';
 import { Link } from 'react-router';
-import { FormattedMessage } from 'react-intl';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
 import FontIcon from 'material-ui/FontIcon';
@@ -10,24 +9,28 @@ import FontIcon from 'material-ui/FontIcon';
 // Import Wang
 import wang from '../../../../components/wang.jpg';
 
-function CardListItem(props){
+function CardAddListItem(props){
+    
+    
     return(
-        
-        <Link to={`/inventory/card/${props.card.cuid}`}>
-            <GridTile
-                key={props.card.slug}
-                title={props.card.name}
-                subtitle={props.card.type}
-                //find way to display attack and 
-            >
-                <img src={wang}/>
-            </GridTile>
-        </Link>
-        
+        <GridTile
+            key={props.card.slug}
+            title={props.card.name}
+            subtitle={props.card.type}
+            onClick={() => {
+                alert(props.card.cuid + ' added to ' + props.deck.cuid);
+                props.addDeckToCard(props.card.cuid, props.deck.cuid);
+                props.fetchCards();
+                }
+            }
+            //find way to display attack and 
+        >
+            <img src={wang}/>
+        </GridTile>
     );
 }
 
-CardListItem.propTypes = {
+CardAddListItem.propTypes = {
     card: PropTypes.shape({
         name: PropTypes.string.isRequired,
         owner: PropTypes.string.isRequired,
@@ -39,4 +42,4 @@ CardListItem.propTypes = {
     }).isRequired,
 };
 
-export default CardListItem;
+export default CardAddListItem;

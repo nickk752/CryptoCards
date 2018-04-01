@@ -7,17 +7,18 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 
-// Import Components
+// Import Componentsls
 import CardList from '../../components/CardList';
 import DeckList from '../../components/DeckList';
 import DeckListItem from '../../components/DeckListItem/DeckListItem';
+import AddCardDeckWidget from '../../components/AddCardDeckWidget/AddCardDeckWidget';
 
 //Import Actions
-import { addCardRequest, fetchCards, deleteCardRequest, fetchDecks, addDeckRequest, deleteDeckRequest } from '../../InventoryActions';
+import { addCardRequest, fetchCards, deleteCardRequest, fetchDecks, addDeckRequest, deleteDeckRequest, toggleAddCardDeck, addDeckToCardRequest } from '../../InventoryActions';
 
 //Import Selectors
 import { getCards } from '../../CardReducer';
-import { getDecks } from '../../DeckReducer';
+import { getDecks, getShowAddCardDeck } from '../../DeckReducer';
 
 class TestInventoryPage extends Component {
 
@@ -37,13 +38,13 @@ class TestInventoryPage extends Component {
         this.props.dispatch(fetchDecks());
     }
 
-    handleAddCard = (name, owner) => {
-        this.props.dispatch(addCardRequest({ name, owner }));
-    };
+    handleAddDeckToCard = (cardCuid, deckCuid) => {
+        this.props.dispatch(addDeckToCardRequest( cardCuid, deckCuid ));
+    }
 
-    handleAddDeck = (number, name) => {
-        this.props.dispatch(addDeckRequest({ number, name }));
-    };
+    handleFetchCards = () => {
+        this.props.dispatch(fetchCards());
+    }
 
     render(){
         return (
@@ -55,11 +56,13 @@ class TestInventoryPage extends Component {
                     >
                         <Tab label="All Cards" value={0}>    
                             {/* Card List */} 
-                            <CardList cards={this.props.cards} /> 
+                            <CardList cards={this.props.cards} height={300} cols={4}/> 
                         </Tab>
                         <Tab label="Deck 1" value={1}> 
                             {/* Deck List */}
-                            <DeckListItem cards={this.props.cards} deck={this.props.decks[0]} /> 
+                            <button onClick={() => this.props.dispatch(toggleAddCardDeck())}> add cards </button> 
+                            <AddCardDeckWidget cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[0].cuid).length === 0)} deck={this.props.decks[0]} showAddCardDeck={this.props.showAddCardDeck} addDeckToCard={this.handleAddDeckToCard} fetchCards={this.handleFetchCards}/>
+                            <DeckListItem cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[0].cuid)[0] === this.props.decks[0].cuid)} deck={this.props.decks[0]} /> 
                         </Tab> 
                         <Tab label="Deck 2" value={2}>
                             {/* Deck List */}
@@ -92,6 +95,7 @@ TestInventoryPage.need = [() => {
 // Retrieve data from store as props
 const mapStateToProps = (state) => {
     return {
+        showAddCardDeck: getShowAddCardDeck(state), 
         cards: getCards(state),
         decks: getDecks(state),
     };
@@ -111,7 +115,6 @@ TestInventoryPage.propTypes = {
         number: PropTypes.number.isRequired,
         name: PropTypes.string.isRequired,
         owner: PropTypes.string.isRequired,
-        cards: PropTypes.array.isRequired,
     })).isRequired,
     dispatch: PropTypes.func.isRequired,
 };

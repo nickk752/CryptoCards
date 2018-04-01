@@ -12,9 +12,12 @@ router.route('/cards/users/:cuid').get(CardController.getUserCards);
 router.route('/cards/:cuid').get(CardController.getCard);
 
 // add a new card. 
-router.route('/cards').post(CardController.addCard);//TODO: change to userid
+router.route('/cards').post(CardController.addCard);
 
 // delete a card by cuid
 router.route('/cards/:cuid').delete(CardController.deleteCard);
+
+// add a deck to card
+router.route('/cards/:cardCuid-:deckCuid').post(CardController.addDeckToCard);
 
 export default router;

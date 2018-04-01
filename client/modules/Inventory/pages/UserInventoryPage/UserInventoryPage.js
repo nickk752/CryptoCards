@@ -46,7 +46,7 @@ class UserInventoryPage extends Component {
                     >
                         <Tab label="All Cards" value={0}>    
                             {/* Card List */} 
-                            <CardList cards={this.props.cards} /> 
+                            <CardList cards={this.props.cards} height={300} cols={4}/> 
                         </Tab>
                         <Tab label="Deck 1" value={1}> 
                                 

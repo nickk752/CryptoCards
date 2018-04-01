@@ -4,17 +4,28 @@ import MultiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 // Import Components
 import CardListItem from './CardListItem/CardListItem';
+import CardAddListItem from './CardListItem/CardAddListItem';
 
 function CardList(props){
     return(
         <div>
             <MultiThemeProvider>
                 <GridList
-                    cellHeight={300}
-                    cellWidth={200}
-                    cols={4}
-                >
-                    {
+                    cellHeight={props.height}
+                    cols={props.cols}
+                > 
+                 
+                    { props.type == 'addDeck' ?
+                        props.cards.map(card => (
+                            <CardAddListItem
+                                card = {card}
+                                deck = {props.deck}
+                                key = {card.cuid}
+                                addDeckToCard = {props.addDeckToCard}
+                                fetchCards = {props.fetchCards}
+                            />
+                        ))
+                        :
                         props.cards.map(card => (
                             <CardListItem
                                 card = {card}

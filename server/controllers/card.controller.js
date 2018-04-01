@@ -92,3 +92,12 @@ export function deleteCard(req, res) {
     });
 }
 
+export function addDeckToCard(req, res) {
+    console.log('card and deck: ' + req.params.cardCuid + ', ' + req.params.deckCuid);
+    Card.findOneAndUpdate({ cuid: req.params.cardCuid }, { $push: { decks: req.params.deckCuid } }).exec((err, card) => {
+        if(err){
+            res.status(500).send(err);
+        }
+        res.json( {card} )
+    });
+}

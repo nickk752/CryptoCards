@@ -1,1 +1,2 @@
-- Fix card model(setting deck arrays)
+- test card contoller and actions for deck2card
+- figure out mongoose update

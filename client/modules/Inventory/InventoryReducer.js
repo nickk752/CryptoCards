@@ -5,10 +5,11 @@ import {
     DELETE_CARD, 
     ADD_DECK, 
     ADD_DECKS, 
-    DELETE_DECK } from './InventoryActions';
+    DELETE_DECK,
+    TOGGLE_ADD_CARD_DECK } from './InventoryActions';
 
 // Initial State
-const initialState = { data: [] };
+const initialState = { showAddCardDeck: false, data: [] };
 
 const InventoryReducer = (state = initialState, action) => {
   switch (action.type) {
@@ -40,8 +41,13 @@ const InventoryReducer = (state = initialState, action) => {
     case DELETE_DECK:
         return {
             data: state.data.filter(deck => deck.cuid !== action.cuid),
+        };
+    
+    case TOGGLE_ADD_CARD_DECK:
+        return {
+            showAddCardDeck: !state.showAddCardDeck,
         };    
-
+        
     default:
         return state;
   }
@@ -60,6 +66,9 @@ export const getDecks = state => state.decks.data;
 
 // get deck by cuid
 export const getDeck = (state, cuid) => state.decks.data.filter(deck => deck.cuid === cuid)[0];
+
+// Get showAddCardDeck
+export const getShowAddCardDeck = state => state.decks.showAddCardDeck;
 
 //Export Reducer
 export default InventoryReducer;

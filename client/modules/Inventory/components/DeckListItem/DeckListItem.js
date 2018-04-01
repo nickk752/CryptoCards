@@ -37,7 +37,6 @@ DeckListItem.propTypes = {
         owner: PropTypes.string.isRequired,
         name: PropTypes.string.isRequired,
         cuid: PropTypes.string.isRequired,
-        cards: PropTypes.array.isRequired,
     }).isRequired,
     cards: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,

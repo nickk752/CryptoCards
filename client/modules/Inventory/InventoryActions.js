@@ -5,10 +5,12 @@ import callApi from '../../util/apiCaller';
 export const ADD_CARD = 'ADD_CARD';
 export const ADD_CARDS = 'ADD_CARDS';
 export const DELETE_CARD = 'DELETE_CARD';
+export const ADD_DECK_TO_CARD = 'ADD_DECK_TO_CARD';
 // Decks
 export const ADD_DECK = 'ADD_DECK';
 export const ADD_DECKS = 'ADD_DECKS';
 export const DELETE_DECK = 'DELETE_DECK';
+export const TOGGLE_ADD_CARD_DECK = 'TOGGLE_ADD_CARD_DECK';
 
 /* Export Actions */
 // Cards
@@ -21,7 +23,7 @@ export function addCard(card){
 
 export function addCardRequest(card){
     return(dispatch) => {
-        return callApi('cards', 'card', {
+        return callApi('cards', 'post', {
             card: {
               name: card.name,
               owner: card.owner,
@@ -86,7 +88,7 @@ export function addDeck(deck){
 
 export function addDeckRequest(deck){
     return(dispatch) => {
-        return callApi('decks', 'deck', {
+        return callApi('decks', 'post', {
             deck: {
                 number: deck.number,
                 name: deck.name,
@@ -136,5 +138,25 @@ export function deleteDeck(cuid){
 export function deleteDeckRequest(cuid) {
     return (dispatch) => {
         return callApi(`decks/${cuid}`, 'delete').then(() => dispatch(deleteDeck(cuid)));
+    }
+}
+
+export function toggleAddCardDeck() {
+    return {
+        type: TOGGLE_ADD_CARD_DECK,
+    };
+}
+
+//TODO: figure this out
+export function addDeckToCardRequest(cardCuid, deckCuid){
+    return (dispatch) => {
+        return callApi(`cards/${cardCuid}-${deckCuid}`, 'post',).then(res => dispatch(addDeckToCard(res.card)));
+    };
+}
+
+export function addDeckToCard(card){
+    return{
+        type: ADD_DECK_TO_CARD,
+        card,
     }
 }
