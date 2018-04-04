@@ -1,6 +1,7 @@
 pragma solidity ^0.4.18;
 
 import "./AccessControl.sol";
+import "./SaleClockAuction.sol";
 
 contract CryptoCardsBase is AccessControl {
 

@@ -11,12 +11,6 @@ contract AccessControl {
     /// @dev Keeps track whether the contract is paused. When that is true, most actions are blocked
     bool public paused = false;
 
-    /// @dev The AccessControl constructor sets the original C roles of the contract to the sender account
-    function AccessControl() public {
-        ceoAddress = msg.sender;
-        cooAddress = msg.sender;
-    }
-
     /// @dev Access modifier for CEO-only functionality
     modifier onlyCEO() {
         require(msg.sender == ceoAddress);
