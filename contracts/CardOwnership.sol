@@ -3,7 +3,7 @@ pragma solidity ^0.4.18;
 import "./CryptoCardsBase.sol";
 import "./ERC721.sol";
 
-contract CardOwnerhip is CryptoCardsBase, ERC721 {
+contract CardOwnership is CryptoCardsBase, ERC721 {
 
     // @notice Name and symbol of the non fungible token, as defined in ERC721
     string public constant name = "CryptoCards";
@@ -50,8 +50,8 @@ contract CardOwnerhip is CryptoCardsBase, ERC721 {
     // @dev Checks if a given address currently has transferApproval for a pareticular Card.
     // @param _claimant the address we are confirming the kitten is approved for.
     // @param _tokenId Card ID, only valid when > 0
-    function _owns(address _claimant, uint256 _tokenId) internal view returns (bool) {
-        return kittyIndexToOwner[_tokenId] == _claimant;
+    function _approvedFor(address _claimant, uint256 _tokenId) internal view returns (bool) {
+        return cardIndexToApproved[_tokenId] == _claimant;
     }
 
     // @dev Marks an address as being approved for transferFrom(), overwriting any previous
@@ -143,7 +143,7 @@ contract CardOwnerhip is CryptoCardsBase, ERC721 {
     // @notice Returns the address currently assigned ownership of a given Card.
     // @dev Required for ERC721 compliance.
     function ownerOf(uint256 _tokenId) external view returns (address owner) {
-        owner = kittyIndexToOwner[_tokenId];
+        owner = cardIndexToOwner[_tokenId];
 
         require(owner != address(0));
     }
@@ -193,7 +193,7 @@ contract CardOwnerhip is CryptoCardsBase, ERC721 {
         }
 
         // Copy remaining bytes
-        uint256 mask = 256 ** (32 - _len) -1
+        uint256 mask = 256 ** (32 - _len) - 1;
         assembly {
             let srcpart := and(mload(_src), not(mask))
             let destpart := and(mload(_dest), mask)

@@ -1,8 +1,8 @@
 pragma solidity ^0.4.18;
 
-import "./CardAuction.sol";
+import "./ClockAuction.sol";
 
-contract SaleClockAuction is CardAuction {
+contract SaleClockAuction is ClockAuction {
 
     // @dev Sanity check that allows us to ensure that we are pointing to the
     //  right auction in our setSaleAuctionAddress() call.
@@ -24,10 +24,10 @@ contract SaleClockAuction is CardAuction {
     // @param _seller - Seller, if not the message sender
     function createAuction(
         uint256 _tokenId,
-        uint256 _startingPRice,
+        uint256 _startingPrice,
         uint256 _endingPrice,
         uint256 _duration,
-        uint256 _seller
+        address _seller
     )
         external
     {
@@ -57,11 +57,11 @@ contract SaleClockAuction is CardAuction {
     {
         // _bid verifies token ID size
         address seller = tokenIdToAuction[_tokenId].seller;
-        uint256 price = _bid(tokenId, msg.value);
+        uint256 price = _bid(_tokenId, msg.value);
         _transfer(msg.sender, _tokenId);
 
         // If not a gen0 auction, exit
-        if (seller == address(nunFungibleContract)) {
+        if (seller == address(nonFungibleContract)) {
             // Track gen0 sale prices
             lastGen0SalePrices[gen0SaleCount % 5] = price;
             gen0SaleCount++;

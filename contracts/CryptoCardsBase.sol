@@ -12,7 +12,7 @@ contract CryptoCardsBase is AccessControl {
 
     // @dev Transfer event as defined in current draft of ERC721. Emitted evry time a 
     //  card ownership is assigned, including minting
-    event Tranfer(address from, address to, uint256 tokenId);
+    event Transfer(address from, address to, uint256 tokenId);
 
     /*** DATA TYPES ***/
 
@@ -51,11 +51,11 @@ contract CryptoCardsBase is AccessControl {
     SaleClockAuction public saleAuction;
 
     // @dev Assigns ownership of a specific Card to an address
-    function _tranfer(address _from, address _to, uint256 _tokenId) internal {
+    function _transfer(address _from, address _to, uint256 _tokenId) internal {
         // Increase ownershipTokenCount of address receiving card
-        ownershpTokenCount[_to]++;
+        ownershipTokenCount[_to]++;
         // Transfer ownership.
-        kittyIndexToOwner[_tokenId] = _to;
+        cardIndexToOwner[_tokenId] = _to;
         // Additional accounting. Newly minted cards 'from' address would be zero
         // so check for that first
         if (_from != address(0)) {
