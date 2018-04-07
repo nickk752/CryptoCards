@@ -21,7 +21,6 @@ export function addCard(card) {
   };
 }
 
-<<<<<<< HEAD
 export function addCardRequest(card){
     return(dispatch) => {
         return callApi('cards', 'post', {
@@ -35,21 +34,6 @@ export function addCardRequest(card){
             },
         }).then(res => dispatch(addCard(res.card)));
     };
-=======
-export function addCardRequest(card) {
-  return (dispatch) => {
-    return callApi('cards', 'card', {
-      card: {
-        name: card.name,
-        owner: card.owner,
-        type: card.type,
-        attack: card.attack,
-        defense: card.defense,
-        decks: card.decks,
-      },
-    }).then(res => dispatch(addCard(res.card)));
-  };
->>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
 }
 
 export function addCards(cards) {
@@ -102,7 +86,6 @@ export function addDeck(deck) {
   };
 }
 
-<<<<<<< HEAD
 export function addDeckRequest(deck){
     return(dispatch) => {
         return callApi('decks', 'post', {
@@ -114,19 +97,6 @@ export function addDeckRequest(deck){
             },
         }).then(res => dispatch(addDeck(res.deck)));
     };
-=======
-export function addDeckRequest(deck) {
-  return (dispatch) => {
-    return callApi('decks', 'deck', {
-      deck: {
-        number: deck.number,
-        name: deck.name,
-        owner: deck.owner,
-        cards: deck.cards,
-      },
-    }).then(res => dispatch(addDeck(res.deck)));
-  };
->>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
 }
 
 export function addDecks(decks) {
@@ -166,7 +136,6 @@ export function deleteDeck(cuid) {
 }
 
 export function deleteDeckRequest(cuid) {
-<<<<<<< HEAD
     return (dispatch) => {
         return callApi(`decks/${cuid}`, 'delete').then(() => dispatch(deleteDeck(cuid)));
     }
@@ -190,9 +159,4 @@ export function addDeckToCard(card){
         type: ADD_DECK_TO_CARD,
         card,
     }
-=======
-  return (dispatch) => {
-    return callApi(`decks/${cuid}`, 'delete').then(() => dispatch(deleteDeck(cuid)));
-  };
->>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
 }

@@ -61,19 +61,11 @@
     "react-phaser": "^0.1.6",
     "react-redux": "^4.4.5",
     "react-router": "^2.4.1",
-<<<<<<< HEAD
-    "react-scroll": "^1.7.7",
-    "redux": "^3.5.2",
-    "redux-form": "^7.3.0",
-    "redux-thunk": "^2.1.0",
-    "sanitize-html": "^1.11.4"
-=======
     "redux": "^3.5.2",
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.1.0",
     "sanitize-html": "^1.11.4",
     "truffle-hdwallet-provider": "0.0.3"
->>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
   },
   "devDependencies": {
     "ava": "^0.15.2",
