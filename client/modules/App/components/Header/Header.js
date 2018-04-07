@@ -1,9 +1,10 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import { PropTypes } from 'prop-types';
 import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 import { Navbar, Nav, NavItem } from 'react-bootstrap/lib';
 // import { Nav } from 'react-bootstrap/lib/Nav';
-// import { Login } from '../../../Login/components/Login/Login';
+import { LoginSmall } from '../../../Login/components/Login/LoginSmall';
 
 // Import Style
 import styles from './Header.css';
@@ -22,12 +23,6 @@ export function Header(props, context) {
           <li><FormattedMessage id="switchLanguage" /></li>
           {languageNodes}
         </ul>
-      </div>
-      <div className={styles['language-switcher']}>
-        {/* <Login
-          handleLogin={props.handleLogin}
-          isLoggedIn={props.isLoggedIn}
-        /> */}
       </div>
       <div className={styles.content}>
         <h1 className={styles['site-title']}>
@@ -67,9 +62,11 @@ export function Header(props, context) {
             </NavItem>
           </Nav>
           <Nav pullRight>
-            <Navbar.Text>
-              Signed in as: <Navbar.Link href="#">Nick Kelly</Navbar.Link>
-            </Navbar.Text>
+            {<LoginSmall
+              handleSubmit={props.handleLoginSubmit}
+              handleChange={props.handleLoginChange}
+              user={props.user}
+            />}
           </Nav>
         </Navbar>
       </div>
@@ -78,13 +75,16 @@ export function Header(props, context) {
 }
 
 Header.contextTypes = {
-  router: React.PropTypes.object,
+  router: PropTypes.object,
 };
 
 Header.propTypes = {
   toggleAddPost: PropTypes.func.isRequired,
   switchLanguage: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
+  handleLoginSubmit: PropTypes.func.isRequired,
+  handleLoginChange: PropTypes.func.isRequired,
+  user: PropTypes.object.isRequired,
   // handleLogin: PropTypes.func.isRequired,
   // isLoggedIn: PropTypes.bool.isRequired,
 };

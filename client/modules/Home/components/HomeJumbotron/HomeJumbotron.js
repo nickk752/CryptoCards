@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
@@ -24,7 +25,10 @@ function HomeJumbotron(props) {
               width: '50%',
               height: 600,
             }}
-            src={'http://940ee6dce6677fa01d25-0f55c9129972ac85d6b1f4e703468e6b.r99.cf2.rackcdn.com/products/pictures/1104180.jpg'} alt='exodia' />Collect and Play with your tradable cards
+            src={'http://940ee6dce6677fa01d25-0f55c9129972ac85d6b1f4e703468e6b.r99.cf2.rackcdn.com/products/pictures/1104180.jpg'}
+            alt="exodia"
+          />
+          Collect and Play with your tradable cards
         </p>
         <p>
           <RaisedButton label="Get Started Now" primary={true} />

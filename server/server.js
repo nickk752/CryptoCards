@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
 import path from 'path';
 import IntlWrapper from '../client/modules/Intl/IntlWrapper';
+import session from 'express-session';
 
 // Webpack Requirements
 import webpack from 'webpack';
@@ -40,6 +41,7 @@ import posts from './routes/post.routes';
 import auctions from './routes/auction.routes';
 import cards from './routes/card.routes';
 import decks from './routes/deck.routes';
+import users from './routes/user.routes';
 import dummyData from './dummyData';
 import serverConfig from './config';
 
@@ -62,10 +64,16 @@ app.use(compression());
 app.use(bodyParser.json({ limit: '20mb' }));
 app.use(bodyParser.urlencoded({ limit: '20mb', extended: false }));
 app.use(Express.static(path.resolve(__dirname, '../dist/client')));
+app.use(session({
+  secret: 'hello session',
+  resave: true,
+  saveUninitialized: false,
+}));
 app.use('/api', posts);
 app.use('/api', auctions);
 app.use('/api', cards);
 app.use('/api', decks);
+app.use('/api', users);
 
 // Render Initial HTML
 const renderFullPage = (html, initialState) => {
