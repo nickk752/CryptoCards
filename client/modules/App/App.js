@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
@@ -14,7 +15,9 @@ import Footer from './components/Footer/Footer';
 // Import Actions
 import { toggleAddPost } from './AppActions';
 import { switchLanguage } from '../../modules/Intl/IntlActions';
+import { loginRequest } from '../../modules/Login/LoginActions';
 // import { loginRequest } from '../../modules/Login/LoginActions';
+import { getUser } from '../../modules/Login/UserReducer';
 
 export class App extends Component {
   constructor(props) {
@@ -30,13 +33,26 @@ export class App extends Component {
     this.props.dispatch(toggleAddPost());
   };
 
-  // handleLogin = (event) => {
-  //   this.props.dispatch(loginRequest({ username, password }));
-  // };
+  handleLoginSubmit = (event) => {
+    event.preventDefault();
+    this.setState({ loginSubmitted: true });
+    const { user } = this.state;
+    const { dispatch } = this.props;
+    if (user.username && user.password) {
+      dispatch(loginRequest(user));
+    }
+  }
 
-  // hadleChange = (event) => {
-  //   this.setState({})
-  // }
+  handleLoginChange = (event) => {
+    const { name, value } = event.target;
+    const { user } = this.state;
+    this.setState({
+      user: {
+        ...user,
+        [name]: value,
+      },
+    });
+  }
 
   render() {
     // const { isAuthenticated, errorMessage } = this.props;
@@ -46,7 +62,7 @@ export class App extends Component {
         <div>
           <Helmet
             title="CryptoCards "
-            titleTemplate="%s - Blog App"
+            titleTemplate="%s - CryptoCards App"
             meta={[
               { charset: 'utf-8' },
               {
@@ -63,8 +79,11 @@ export class App extends Component {
             switchLanguage={lang => this.props.dispatch(switchLanguage(lang))}
             intl={this.props.intl}
             toggleAddPost={this.toggleAddPostSection}
-            handleLogin={this.handleLogin}
-            isLoggedIn={this.props.isLoggedIn}
+            // handleLogin={this.handleLogin}
+            user={this.props.user}
+            handleLoginSubmit={this.handleLoginSubmit}
+            handleLoginChange={this.handleLoginChange}
+            // isLoggedIn={this.props.isLoggedIn}
           />
           <div className={styles.container}>
             <MuiThemeProvider>
@@ -83,6 +102,7 @@ App.propTypes = {
   dispatch: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
   isLoggedIn: PropTypes.bool.isRequired,
+  user: PropTypes.object.isRequired,
   // isAuthenticated: PropTypes.bool.isRequired,
   // errorMessage: PropTypes.string,
 };
@@ -93,6 +113,7 @@ function mapStateToProps(store) {
   return {
     intl: store.intl,
     isLoggedIn: true,
+    user: getUser(store),
     // isAuthenticated,
     // errorMessage,
   };

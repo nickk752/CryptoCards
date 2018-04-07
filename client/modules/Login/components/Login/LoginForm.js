@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux'
 import { Field, reduxForm } from 'redux-form';
 // import { Link } from 'react-router';
@@ -23,7 +24,7 @@ let LoginForm = props => {
 };
 
 LoginForm.contextTypes = {
-  router: React.PropTypes.object,
+  router: PropTypes.object,
 };
 
 LoginForm.PropTypes = {

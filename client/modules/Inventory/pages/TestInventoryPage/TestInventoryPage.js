@@ -1,4 +1,5 @@
-import React, { Component, PropTypes } from 'react';
+import React, { Component } from 'react';
+import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
 //import { Tabs, Tab } from 'react-bootstrap';
@@ -22,22 +23,18 @@ import { getDecks, getShowAddCardDeck } from '../../DeckReducer';
 
 class TestInventoryPage extends Component {
 
-    constructor(props){
-        super(props);
-        this.state = { value: 0 };   
-    }
+  constructor(props) {
+    super(props);
+    this.state = { value: 0 };
+  }
 
-    handleChange = (value) => {
-        this.setState({
-          value: value,
-        });
-      };
-    
-    componentDidMount() {
-        this.props.dispatch(fetchCards());
-        this.props.dispatch(fetchDecks());
-    }
+  handleChange = (value) => {
+    this.setState({
+      value: value,
+    });
+  };
 
+<<<<<<< HEAD
     handleAddDeckToCard = (cardCuid, deckCuid) => {
         this.props.dispatch(addDeckToCardRequest( cardCuid, deckCuid ));
     }
@@ -49,11 +46,26 @@ class TestInventoryPage extends Component {
     handleToggleAddCardDeck = () => {
         this.props.dispatch(toggleAddCardDeck());
     } 
+=======
+  componentDidMount() {
+    this.props.dispatch(fetchCards());
+    this.props.dispatch(fetchDecks());
+  }
 
-    render(){
-        return (
-            <h1> Inventory
+  handleAddCard = (name, owner) => {
+    this.props.dispatch(addCardRequest({ name, owner }));
+  };
+>>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
+
+  handleAddDeck = (number, name) => {
+    this.props.dispatch(addDeckRequest({ number, name }));
+  };
+
+  render() {
+    return (
+      <h1> Inventory
                 <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+<<<<<<< HEAD
                     <Tabs
                         value={this.state.value}
                         onChange={this.handleChange}
@@ -89,24 +101,67 @@ class TestInventoryPage extends Component {
             </h1>    
         );
     }
+=======
+          <Tabs
+            value={this.state.value}
+            onChange={this.handleChange}
+          >
+            <Tab label="All Cards" value={0}>
+              {/* Card List */}
+              <CardList cards={this.props.cards} />
+            </Tab>
+            <Tab label="Deck 1" value={1}>
+              {/* Deck List */}
+              <DeckListItem cards={this.props.cards} deck={this.props.decks[0]} />
+            </Tab>
+            <Tab label="Deck 2" value={2}>
+              {/* Deck List */}
+              <DeckListItem cards={this.props.cards} deck={this.props.decks[0]} />
+            </Tab>
+            <Tab label="Deck 3" value={3}>
+              {/* Deck List */}
+              <DeckListItem cards={this.props.cards} deck={this.props.decks[0]} />
+            </Tab>
+            <Tab label="Deck 4" value={4}>
+              {/* Deck List */}
+              <DeckListItem cards={this.props.cards} deck={this.props.decks[1]} />
+            </Tab>
+            <Tab label="Deck 5" value={5}>
+              {/* Deck List */}
+              <DeckListItem cards={this.props.cards} deck={this.props.decks[1]} />
+            </Tab>
+          </Tabs>
+        </MuiThemeProvider>
+      </h1>
+    );
+  }
+>>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
 }
 
 // Actions required to provide data for this component to render in sever side.
-TestInventoryPage.need = [() => { 
-    return fetchCards(), fetchDecks();
+TestInventoryPage.need = [() => {
+  return fetchCards(), fetchDecks();
 }];
 
 // Retrieve data from store as props
 const mapStateToProps = (state) => {
+<<<<<<< HEAD
     return {
         showAddCardDeck: getShowAddCardDeck(state), 
         cards: getCards(state),
         decks: getDecks(state),
     };
+=======
+  return {
+    cards: getCards(state),
+    decks: getDecks(state),
+  };
+>>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
 }
 
 //
 TestInventoryPage.propTypes = {
+<<<<<<< HEAD
     cards: PropTypes.arrayOf(PropTypes.shape({
         name: PropTypes.string.isRequired,
         owner: PropTypes.string.isRequired,
@@ -121,10 +176,27 @@ TestInventoryPage.propTypes = {
         owner: PropTypes.string.isRequired,
     })).isRequired,
     dispatch: PropTypes.func.isRequired,
+=======
+  cards: PropTypes.arrayOf(PropTypes.shape({
+    name: PropTypes.string.isRequired,
+    owner: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
+    attack: PropTypes.string.isRequired,
+    defense: PropTypes.string.isRequired,
+    decks: PropTypes.array.isRequired,
+  })).isRequired,
+  decks: PropTypes.arrayOf(PropTypes.shape({
+    number: PropTypes.number.isRequired,
+    name: PropTypes.string.isRequired,
+    owner: PropTypes.string.isRequired,
+    cards: PropTypes.array.isRequired,
+  })).isRequired,
+  dispatch: PropTypes.func.isRequired,
+>>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
 };
 
 TestInventoryPage.contextTypes = {
-    router: React.PropTypes.object,
+  router: PropTypes.object,
 };
 
 export default connect(mapStateToProps)(TestInventoryPage);

@@ -1,52 +1,75 @@
 import callApi from '../../util/apiCaller';
+import { Redirect } from 'react-router';
 
-export const SESSION_LOGIN_SUCCESS = 'SESSION_LOGIN_SUCCESS';
-export const SESSION_LOGIN_FAIL = 'SESSION_LOGIN_FAIL';
+export const LOGIN_REQUEST = 'LOGIN_REQUEST';
+export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
+export const LOGIN_FAIL = 'LOGIN_FAIL';
+export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
+export const REGISTER_FAIL = 'REGISTER_FAIL';
+export const REGISTER_REQUEST = 'REGISTER_REQUEST';
 
 // Actions
 export function loginSuccess(user) {
   return {
-    type: SESSION_LOGIN_SUCCESS,
+    type: LOGIN_SUCCESS,
     user,
   };
 }
 
 export function loginFail(user) {
   return {
-    type: SESSION_LOGIN_FAIL,
+    type: LOGIN_FAIL,
     user,
   };
 }
 
-// export const loginRequest = async (login, password) => {
-//   return await new Promise((resolve) => {
-//     setTimeout(() => {
-//       resolve();
-//     }, 200);
-//   }).then(() => {
-//     if (login === 'nick' && password === 'nick') {
-//       return loginSuccess('www.cryptocards.com');
-//     } else {
-//       return loginFail('invalid');
-//     }
-//   });
-// };
 
-export function login(user) {
+export function registerSuccess(user) {
   return {
-    type: SESSION_LOGIN_SUCCESS,
+    type: REGISTER_SUCCESS,
     user,
+  };
+}
+
+export function registerFail() {
+  return {
+    type: REGISTER_FAIL,
+  };
+}
+
+export function registerRequest(user) {
+  return (dispatch) => {
+    callApi('users/register', 'POST', {
+      user: {
+        firstName: user.firstName,
+        lastName: user.lastName,
+        username: user.username,
+        password: user.password,
+      },
+    }).then((res, err) => {
+      if (err) {
+        dispatch(registerFail());
+      } else {
+        dispatch(registerSuccess(res.user));
+      }
+    });
   };
 }
 
 export function loginRequest(user) {
   return (dispatch) => {
-    return callApi('user', 'get', {
+    return callApi('users/authenticate', 'post', {
       user: {
-        username: user.username,
-        password: user.password,
+        firstName: user.firstName,
+        lastName: user.lastName,
       },
-    }).then(res => dispatch(login(res.user)));
+    }).then((res, err) => {
+      if (err) {
+        dispatch(loginFail());
+      } else {
+        dispatch(loginSuccess(res.user));
+      }
+    });
   };
 }
 

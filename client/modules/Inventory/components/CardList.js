@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import { PropTypes } from 'prop-types';
 import { GridList } from 'material-ui/GridList';
 import MultiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 

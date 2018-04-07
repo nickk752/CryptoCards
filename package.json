@@ -35,7 +35,9 @@
     "body-parser": "^1.15.1",
     "compression": "^1.6.2",
     "cuid": "^1.3.8",
+    "dotenv": "^5.0.1",
     "express": "^4.13.4",
+    "express-session": "^1.15.6",
     "intl": "^1.2.4",
     "intl-locales-supported": "^1.0.0",
     "isomorphic-fetch": "^2.2.1",
@@ -59,11 +61,19 @@
     "react-phaser": "^0.1.6",
     "react-redux": "^4.4.5",
     "react-router": "^2.4.1",
+<<<<<<< HEAD
     "react-scroll": "^1.7.7",
     "redux": "^3.5.2",
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.1.0",
     "sanitize-html": "^1.11.4"
+=======
+    "redux": "^3.5.2",
+    "redux-form": "^7.3.0",
+    "redux-thunk": "^2.1.0",
+    "sanitize-html": "^1.11.4",
+    "truffle-hdwallet-provider": "0.0.3"
+>>>>>>> 9c2b121098fb33e456d23abdb51b11854baa671e
   },
   "devDependencies": {
     "ava": "^0.15.2",

@@ -20,7 +20,7 @@ contract Pausable is Ownable {
     }
 
     // @dev modifier to allow actions only when the contract IS paused
-    modifer whenPaused {
+    modifier whenPaused {
         require(paused);
         _;
     }

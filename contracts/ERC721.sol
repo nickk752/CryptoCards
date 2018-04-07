@@ -1,60 +1,26 @@
+/// @title Interface for contracts conforming to ERC-721: Non-Fungible Tokens
+/// @author Dieter Shirley <dete@axiomzen.co> (https://github.com/dete)
 pragma solidity ^0.4.18;
 
-
-/**
- * Interface for required functionality in the ERC721 standard
- * for non-fungible tokens.
- *
- * Author: Nadav Hollander (nadav at dharma.io)
- * https://github.com/dharmaprotocol/NonFungibleToken/blob/master/contracts/ERC721.sol
- */
 contract ERC721 {
+    // Required methods
+    function totalSupply() public view returns (uint256 total);
+    function balanceOf(address _owner) public view returns (uint256 balance);
+    function ownerOf(uint256 _tokenId) external view returns (address owner);
+    function approve(address _to, uint256 _tokenId) external;
+    function transfer(address _to, uint256 _tokenId) external;
+    function transferFrom(address _from, address _to, uint256 _tokenId) external;
+
     // Events
-    event Transfer(address indexed _from, address indexed _to, uint256 _tokenId);
-    event Approval(address indexed _owner, address indexed _approved, uint256 _tokenId);
+    event Transfer(address from, address to, uint256 tokenId);
+    event Approval(address owner, address approved, uint256 tokenId);
 
-    /// For querying totalSupply of token.
-    function totalSupply() public view returns (uint256 _totalSupply);
+    // Optional
+    // function name() public view returns (string name);
+    // function symbol() public view returns (string symbol);
+    // function tokensOfOwner(address _owner) external view returns (uint256[] tokenIds);
+    // function tokenMetadata(uint256 _tokenId, string _preferredTransport) public view returns (string infoUrl);
 
-    /// For querying balance of a particular account.
-    /// @param _owner The address for balance query.
-    /// @dev Required for ERC-721 compliance.
-    function balanceOf(address _owner) public view returns (uint256 _balance);
-
-    /// For querying owner of token.
-    /// @param _tokenId The tokenID for owner inquiry.
-    /// @dev Required for ERC-721 compliance.
-    function ownerOf(uint256 _tokenId) public view returns (address _owner);
-
-    /// @notice Grant another address the right to transfer token via takeOwnership() and transferFrom()
-    /// @param _to The address to be granted transfer approval. Pass address(0) to
-    ///  clear all approvals.
-    /// @param _tokenId The ID of the Token that can be transferred if this call succeeds.
-    /// @dev Required for ERC-721 compliance.
-    function approve(address _to, uint256 _tokenId) public;
-
-    // NOT IMPLEMENTED
-    // function getApproved(uint256 _tokenId) public view returns (address _approved);
-
-    /// Third-party initiates transfer of token from address _from to address _to.
-    /// @param _from The address for the token to be transferred from.
-    /// @param _to The address for the token to be transferred to.
-    /// @param _tokenId The ID of the Token that can be transferred if this call succeeds.
-    /// @dev Required for ERC-721 compliance.
-    function transferFrom(address _from, address _to, uint256 _tokenId) public;
-
-    /// Owner initates the transfer of the token to another account.
-    /// @param _to The address of the recipient, can be a user or contract.
-    /// @param _tokenId The ID of the token to transfer.
-    /// @dev Required for ERC-721 compliance.
-    function transfer(address _to, uint256 _tokenId) public;
-
-    ///
-    function implementsERC721() public view returns (bool _implementsERC721);
-
-    // EXTRA
-    /// @notice Allow pre-approved user to take ownership of a token.
-    /// @param _tokenId The ID of the token that can be transferred if this call succeeds.
-    /// @dev Required for ERC-721 compliance.
-    function takeOwnership(uint256 _tokenId) public;
+    // ERC-165 Compatibility (https://github.com/ethereum/EIPs/issues/165)
+    function supportsInterface(bytes4 _interfaceID) external view returns (bool);
 }
