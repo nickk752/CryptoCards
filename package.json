@@ -63,7 +63,8 @@
     "redux": "^3.5.2",
     "redux-form": "^7.3.0",
     "redux-thunk": "^2.1.0",
-    "sanitize-html": "^1.11.4"
+    "sanitize-html": "^1.11.4",
+    "truffle-hdwallet-provider": "0.0.3"
   },
   "devDependencies": {
     "ava": "^0.15.2",
