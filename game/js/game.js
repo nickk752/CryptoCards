@@ -16,14 +16,15 @@ Game.preload = function() {
     game.load.spritesheet('tileset', 'assets/map/gameboard_tilesheet.png',32,32);
     game.load.image('sprite','assets/sprites/sprite.png');
 		game.load.image('blank_card_sprite','assets/sprites/blank_card_sprite.png');
-		game.load.image('creaturezone_sprite','assets/sprites/test_creaturezone_sprite.png');
-		game.load.image('buildingzone_sprite','assets/sprites/test_buildingzone_sprite.png');
+		game.load.image('creaturezone_sprite','assets/sprites/creaturezone_sprite.png');
+		game.load.image('buildingzone_sprite','assets/sprites/buildingzone_sprite.png');
 
 };
 
 Game.create = function(){
     Game.playerMap = {};
 		Game.deck = {};
+		Game.deck2 = {};
 		Game.hand = {count: 0};
 		game.physics.startSystem(Phaser.Physics.ARCADE);
     var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
@@ -123,6 +124,18 @@ setUpDeck = function(){
 				charge: false
 			}
 		}
+
+		Game.deck2[i] = {
+			name: 'lil punchy',
+			type: 'creature',
+			lcost: 0, mcost: 1, rcost: 0,
+			atk: 1, def: 1,
+			traits: {
+				lifesteal: false,
+				taunt: false,
+				charge: false
+			}
+		}
 	}
 }
 
@@ -131,19 +144,19 @@ drawCards = function(numCards){
 		var deckIndex = Game.deck.curr + i;
 		//CHECK TO SEE IF YOU'VE OVEDRAWN
 		Game.deck[deckIndex].sprite = game.add.sprite(0,0,'blank_card_sprite');
-		Game.deck[deckIndex].nameText = game.add.text(11, 63, Game.deck[deckIndex].name, {font: "12px Arial", fill: "#000000"});
-		Game.deck[deckIndex].atkText = game.add.text(4, 113, Game.deck[deckIndex].atk, {font: "14px Arial", fill: "#000000"});
-		Game.deck[deckIndex].defText = game.add.text(80, 113, Game.deck[deckIndex].def, {font: "14px Arial", fill: "#000000"});
-		Game.deck[deckIndex].lcostText = game.add.text(7, 1, Game.deck[deckIndex].lcost, {font: "12px Arial", fill: "#000000"});
-		Game.deck[deckIndex].mcostText = game.add.text(37, 1, Game.deck[deckIndex].mcost, {font: "12px Arial", fill: "#000000"});
-		Game.deck[deckIndex].rcostText = game.add.text(74, 1, Game.deck[deckIndex].rcost, {font: "12px Arial", fill: "#000000"});
+		Game.deck[deckIndex].sprite.nameText = game.add.text(11, 63, Game.deck[deckIndex].name, {font: "12px Arial", fill: "#000000"});
+		Game.deck[deckIndex].sprite.atkText = game.add.text(4, 113, Game.deck[deckIndex].atk, {font: "14px Arial", fill: "#000000"});
+		Game.deck[deckIndex].sprite.defText = game.add.text(80, 113, Game.deck[deckIndex].def, {font: "14px Arial", fill: "#000000"});
+		Game.deck[deckIndex].sprite.lcostText = game.add.text(7, 1, Game.deck[deckIndex].lcost, {font: "12px Arial", fill: "#000000"});
+		Game.deck[deckIndex].sprite.mcostText = game.add.text(37, 1, Game.deck[deckIndex].mcost, {font: "12px Arial", fill: "#000000"});
+		Game.deck[deckIndex].sprite.rcostText = game.add.text(74, 1, Game.deck[deckIndex].rcost, {font: "12px Arial", fill: "#000000"});
 
-		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].nameText);
-		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].atkText);
-		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].defText);
-		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].lcostText);
-		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].mcostText);
-		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].rcostText);
+		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.nameText);
+		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.atkText);
+		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.defText);
+		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.lcostText);
+		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.mcostText);
+		Game.deck[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.rcostText);
 
 		Game.deck[deckIndex].sprite.inputEnabled = true;
 		Game.deck[deckIndex].sprite.input.enableDrag();
@@ -180,12 +193,166 @@ function onDragStop(sprite, pointer) {
 		var zone = Game.zoneSprites.crt.p1.lane1[i];
 		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
 				sprite.home = zone;
+				sprite.homeName = "p1crtl1" + i;
+
 		} else {
 			zone = Game.zoneSprites.crt.p1.lane2[i];
 			if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
 					sprite.home = zone;
+					sprite.homeName = "p1crtl2" + i;
+
+			} else {
+				zone = Game.zoneSprites.crt.p2.lane2[i];
+				if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+					sprite.home = zone;
+					sprite.homeName = "p2crtl2" + i;
+
+				} else {
+					zone = Game.zoneSprites.crt.p2.lane1[i];
+					if(Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)){
+						sprite.home = zone;
+						sprite.homeName = "p2crtl1" + i;
+					}
+				}
 			}
-			sprite.moveTo(sprite.home, sprite.dindex);
 		}
 	}
+	for (var i = 0; i < 5; i++){
+		zone = Game.zoneSprites.bld.p1[i];
+		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)){
+			sprite.home = zone;
+			sprite.homeName = "p1bld" + i;
+		} else {
+			zone =  Game.zoneSprites.bld.p2[i];
+			if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)){
+				sprite.home = zone;
+				sprite.homeName = "p2bld" + i;
+
+			}
+		}
+	}
+	sprite.moveTo(sprite.home, sprite.dindex);
+	//Client.sendMovedCard(sprite.dindex,sprite.homeName);
+}
+
+Game.placeCard = function(dindex, homeName) {
+	var deckIndex = dindex;
+	Game.deck2[deckIndex].sprite = game.add.sprite(0,0,'blank_card_sprite');
+	Game.deck2[deckIndex].sprite.nameText = game.add.text(11, 63, Game.deck[deckIndex].name, {font: "12px Arial", fill: "#000000"});
+	Game.deck2[deckIndex].sprite.atkText = game.add.text(4, 113, Game.deck[deckIndex].atk, {font: "14px Arial", fill: "#000000"});
+	Game.deck2[deckIndex].sprite.defText = game.add.text(80, 113, Game.deck[deckIndex].def, {font: "14px Arial", fill: "#000000"});
+	Game.deck2[deckIndex].sprite.lcostText = game.add.text(7, 1, Game.deck[deckIndex].lcost, {font: "12px Arial", fill: "#000000"});
+	Game.deck2[deckIndex].sprite.mcostText = game.add.text(37, 1, Game.deck[deckIndex].mcost, {font: "12px Arial", fill: "#000000"});
+	Game.deck2[deckIndex].sprite.rcostText = game.add.text(74, 1, Game.deck[deckIndex].rcost, {font: "12px Arial", fill: "#000000"});
+
+	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.nameText);
+	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.atkText);
+	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.defText);
+	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.lcostText);
+	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.mcostText);
+	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.rcostText);
+
+	Game.deck2[deckIndex].sprite.inputEnabled = true;
+	Game.deck2[deckIndex].sprite.input.enableDrag();
+	Game.deck2[deckIndex].sprite.events.onDragStop.add(onDragStop, this);
+
+	Game.deck2[deckIndex].sprite.moveTo = function(zone, deckIndex){
+		var cardBounds = Game.deck2[deckIndex].sprite.getBounds();
+		var zoneBounds = zone.getBounds();
+		var distance = Phaser.Math.distance(zoneBounds.x,zoneBounds.y,cardBounds.x,cardBounds.y);
+		var tween = game.add.tween(Game.deck[deckIndex].sprite);
+		var duration = distance*2;
+		tween.to({x:zoneBounds.x,y:zoneBounds.y}, duration);
+		tween.start();
+	}
+	switch (homeName) {
+		case 'p1crtl10':
+			zone = Game.zoneSprites.crt.p2.lane1[0];
+			break;
+		case 'p1crtl11':
+			zone = Game.zoneSprites.crt.p2.lane1[1];
+			break;
+		case 'p1crtl12':
+			zone = Game.zoneSprites.crt.p2.lane1[2];
+			break;
+		case 'p1crtl13':
+			zone = Game.zoneSprites.crt.p2.lane1[3];
+			break;
+
+		case 'p1crtl20':
+			zone = Game.zoneSprites.crt.p2.lane2[0];
+			break;
+		case 'p1crtl21':
+			zone = Game.zoneSprites.crt.p2.lane2[1];
+			break;
+		case 'p1crtl22':
+			zone = Game.zoneSprites.crt.p2.lane2[2];
+			break;
+		case 'p1crtl23':
+			zone = Game.zoneSprites.crt.p2.lane2[3];
+			break;
+
+		case 'p2crtl10':
+			zone = Game.zoneSprites.crt.p1.lane1[0];
+			break;
+		case 'p2crtl11':
+			zone = Game.zoneSprites.crt.p1.lane1[1];
+			break;
+		case 'p2crtl12':
+			zone = Game.zoneSprites.crt.p1.lane1[2];
+			break;
+		case 'p2crtl13':
+			zone = Game.zoneSprites.crt.p1.lane1[3];
+			break;
+
+
+		case 'p2crtl20':
+			zone = Game.zoneSprites.crt.p1.lane2[0];
+			break;
+		case 'p2crtl21':
+			zone = Game.zoneSprites.crt.p1.lane2[1];
+			break;
+		case 'p2crtl22':
+			zone = Game.zoneSprites.crt.p1.lane2[2];
+			break;
+		case 'p2crtl23':
+			zone = Game.zoneSprites.crt.p1.lane2[3];
+			break;
+
+		case 'p1bld0':
+			zone = Game.zoneSprites.bld.p2[0];
+			break;
+		case 'p1bld1':
+			zone = Game.zoneSprites.bld.p2[1];
+			break;
+		case 'p1bld2':
+			zone = Game.zoneSprites.bld.p2[2];
+			break;
+		case 'p1bld3':
+			zone = Game.zoneSprites.bld.p2[3];
+			break;
+		case 'p1bld4':
+			zone = Game.zoneSprites.bld.p2[4];
+			break;
+
+		case 'p2bld0':
+			zone = Game.zoneSprites.bld.p1[0];
+			break;
+		case 'p2bld1':
+			zone = Game.zoneSprites.bld.p1[1];
+			break;
+		case 'p2bld2':
+			zone = Game.zoneSprites.bld.p1[2];
+			break;
+		case 'p2bld3':
+			zone = Game.zoneSprites.bld.p1[3];
+			break;
+		case 'p2bld4':
+			zone = Game.zoneSprites.bld.p1[4];
+			break;
+
+	}
+
+	Game.deck2[deckIndex].sprite.dindex = deckIndex;
+	Game.deck2[deckIndex].sprite.moveTo(zone, deckIndex);
 }

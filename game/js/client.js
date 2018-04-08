@@ -14,6 +14,10 @@ Client.askNewPlayer = function(){
     Client.socket.emit('newplayer');
 };
 
+Client.sendMovedCard = function(dindex, homeName){
+	Client.socket.emit('movedCard', dindex, homeName);
+}
+
 Client.sendClick = function(x,y){
   Client.socket.emit('click',{x:x,y:y});
 };
@@ -30,6 +34,12 @@ Client.socket.on('allplayers',function(data){
     Client.socket.on('move',function(data){
         Game.movePlayer(data.id,data.x,data.y);
     });
+
+		Client.socket.on('place',function(data){
+			dindex = data.dindex;
+			homeName = data.dindex;
+			Game.placeCard(dindex, homeName);
+		});
 
     Client.socket.on('remove',function(id){
         Game.removePlayer(id);

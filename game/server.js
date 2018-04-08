@@ -40,9 +40,12 @@ io.on('connection',function(socket){
             io.emit('move',socket.player);
 
 						//check to see if they've clicked a card in their hand "select it"
-						
+
 						//check to see if they've clicked a card on their side of the field " select it"
         });
+				socket.on('movedCard', function(dindex, homeName){
+					io.emit('place',{dindex: dindex, homeName: homeName});
+				});
 
         socket.on('disconnect',function(){
             io.emit('remove',socket.player.id);
