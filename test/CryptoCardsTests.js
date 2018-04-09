@@ -1,5 +1,5 @@
 /* eslint no-undef: "off" */
-var CryptoCards = artifacts.require('../contracts/CryptoCardsCore.sol');
+var CryptoCards = artifacts.require('CryptoCardsCore');
 
 contract('CryptoCards', function (accounts) {
   var helpfulFunctions = require('./utils/CryptoCardsUtils')(CryptoCards, accounts);
@@ -27,9 +27,8 @@ contract('CryptoCards', function (accounts) {
 
   checksTotalSupply(0);
 
+  checkCardCreation(1000);
 
-  for (x = 0; x < 10; x++) {
-    checkCardCreation(1000 + x);
-  }
-  
+  checksTotalSupply(1);
+
 });

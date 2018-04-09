@@ -1000,7 +1000,7 @@ contract CryptoCardsCore is CardMinting {
     // @notice Creates the main CryptoKitties smart contract instance.
     function CryptoCardsCore() public {
         // Starts paused.
-        paused = true;
+        paused = false;
 
         // the creator of the contract is the initial CEO
         ceoAddress = msg.sender;
@@ -1008,6 +1008,7 @@ contract CryptoCardsCore is CardMinting {
         // the creator of the contract is also the intial COO
         cooAddress = msg.sender;
     }
+
 
     // @notice No tipping!
     // @dev Reject all Ether from being sent here, unless it's from one of the
