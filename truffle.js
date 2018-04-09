@@ -3,7 +3,7 @@ require('dotenv').config();
 const HDWalletProvider = require('truffle-hdwallet-provider');
 
 const providerWithMnemonic = (mnemonic, rpcEndpoint) =>
-  new HDWalletProvider(mnemonic, rpcEndpoint);
+  new HDWalletProvider(mnemonic, rpcEndpoint); 
 
 module.exports = {
   networks: {

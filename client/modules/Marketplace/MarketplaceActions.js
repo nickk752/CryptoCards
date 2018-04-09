@@ -4,6 +4,7 @@ import callApi from '../../util/apiCaller';
 export const ADD_AUCTION = 'ADD_AUCTION';
 export const ADD_AUCTIONS = 'ADD_AUCTIONS';
 export const DELETE_AUCTION = 'DELETE_AUCTION';
+export const TOGGLE_CREATE_AUCTION = 'TOGGLE_CREATE_AUCTION';
 
 // Export Actions
 export function addAuction(auction) {
@@ -45,6 +46,7 @@ export function fetchAuction(cuid) {
     return callApi(`auctions/${cuid}`).then(res => dispatch(addAuction(res.auction)));
   };
 }
+
 export function deleteAuction(cuid) {
   return {
     type: DELETE_AUCTION,
@@ -55,5 +57,11 @@ export function deleteAuction(cuid) {
 export function deleteAuctionRequest(cuid) {
   return (dispatch) => {
     return callApi(`auctions/${cuid}`, 'delete').then(() => dispatch(deleteAuction(cuid)));
+  };
+}
+
+export function toggleCreateAuction() {
+  return {
+    type: TOGGLE_CREATE_AUCTION,
   };
 }

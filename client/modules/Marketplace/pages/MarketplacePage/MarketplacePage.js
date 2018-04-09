@@ -4,11 +4,12 @@ import { connect } from 'react-redux';
 
 // Import Components
 import AuctionList from '../../components/AuctionList';
+import CreateAuctionWidget from '../../components/CreateAuctionWidget/CreateAuctionWIdget';
 
 // Import Actions
-import { fetchAuctions, deleteAuctionRequest, addAuctionRequest } from '../../MarketplaceActions';
+import { fetchAuctions, deleteAuctionRequest, addAuctionRequest, toggleCreateAuction } from '../../MarketplaceActions';
 // Import Selectors
-import { getAuctions } from '../../MarketplaceReducer';
+import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 
 
 class MarketplacePage extends Component {
@@ -22,6 +23,10 @@ class MarketplacePage extends Component {
     }
   };
 
+  handleToggleCreateAuction = () => {
+    this.props.dispatch(toggleCreateAuction());
+  }
+
   handleAddAuction = (seller, card) => {
     this.props.dispatch(addAuctionRequest({ seller, card }));
   };
@@ -29,6 +34,11 @@ class MarketplacePage extends Component {
   render() {
     return (
       <div>
+        <button onClick={this.handleToggleCreateAuction}> create auction </button>
+        <CreateAuctionWidget
+          showCreateAuction={this.props.showCreateAuction} />
+          <br/>
+          <br/>
         <AuctionList auctions={this.props.auctions} />
       </div>
     );
@@ -41,6 +51,7 @@ MarketplacePage.need = [() => { return fetchAuctions(); }];
 // Retrieve data from store as props
 function mapStateToProps(state) {
   return {
+    showCreateAuction: getShowCreateAuction(state),
     auctions: getAuctions(state),
   };
 }

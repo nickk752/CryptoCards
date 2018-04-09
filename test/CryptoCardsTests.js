@@ -29,6 +29,6 @@ contract('CryptoCards', function (accounts) {
 
   checkCardCreation(1000);
 
-  checksTotalSupply(1);
+  //checksTotalSupply(1);
 
 });
