@@ -6,6 +6,7 @@ export const ADD_CARD = 'ADD_CARD';
 export const ADD_CARDS = 'ADD_CARDS';
 export const DELETE_CARD = 'DELETE_CARD';
 export const ADD_DECK_TO_CARD = 'ADD_DECK_TO_CARD';
+export const TRANSFER_CARD = 'TRANSFER_CARD';
 // Decks
 export const ADD_DECK = 'ADD_DECK';
 export const ADD_DECKS = 'ADD_DECKS';
@@ -21,25 +22,39 @@ export function addCard(card) {
   };
 }
 
-export function addCardRequest(card){
-    return(dispatch) => {
-        return callApi('cards', 'post', {
-            card: {
-              name: card.name,
-              owner: card.owner,
-              type: card.type,
-              attack: card.attack,
-              defense: card.defense,
-              decks: card.decks,
-            },
-        }).then(res => dispatch(addCard(res.card)));
-    };
+export function addCardRequest(card) {
+  return (dispatch) => {
+    return callApi('cards', 'post', {
+      card: {
+        name: card.name,
+        owner: card.owner,
+        type: card.type,
+        attack: card.attack,
+        defense: card.defense,
+        decks: card.decks,
+      },
+    }).then(res => dispatch(addCard(res.card)));
+  };
 }
 
 export function addCards(cards) {
   return {
     type: ADD_CARDS,
     cards,
+  };
+}
+
+export function transferCardRequest(cardCuid, ownerCuid) {
+  return (dispatch) => {
+    return callApi(`cards/transfer/${cardCuid}-${ownerCuid}`, 'post')
+      .then(res => dispatch(transferCard(res.card)));
+  };
+}
+
+export function transferCard() {
+  return {
+    type: TRANSFER_CARD,
+    card,
   };
 }
 
@@ -86,17 +101,17 @@ export function addDeck(deck) {
   };
 }
 
-export function addDeckRequest(deck){
-    return(dispatch) => {
-        return callApi('decks', 'post', {
-            deck: {
-                number: deck.number,
-                name: deck.name,
-                owner: deck.owner,
-                cards: deck.cards,
-            },
-        }).then(res => dispatch(addDeck(res.deck)));
-    };
+export function addDeckRequest(deck) {
+  return (dispatch) => {
+    return callApi('decks', 'post', {
+      deck: {
+        number: deck.number,
+        name: deck.name,
+        owner: deck.owner,
+        cards: deck.cards,
+      },
+    }).then(res => dispatch(addDeck(res.deck)));
+  };
 }
 
 export function addDecks(decks) {
@@ -136,27 +151,28 @@ export function deleteDeck(cuid) {
 }
 
 export function deleteDeckRequest(cuid) {
-    return (dispatch) => {
-        return callApi(`decks/${cuid}`, 'delete').then(() => dispatch(deleteDeck(cuid)));
-    }
+  return (dispatch) => {
+    return callApi(`decks/${cuid}`, 'delete').then(() => dispatch(deleteDeck(cuid)));
+  }
 }
 
 export function toggleAddCardDeck() {
-    return {
-        type: TOGGLE_ADD_CARD_DECK,
-    };
+  return {
+    type: TOGGLE_ADD_CARD_DECK,
+  };
 }
 
 //TODO: figure this out
-export function addDeckToCardRequest(cardCuid, deckCuid){
-    return (dispatch) => {
-        return callApi(`cards/${cardCuid}-${deckCuid}`, 'post',).then(res => dispatch(addDeckToCard(res.card)));
-    };
+export function addDeckToCardRequest(cardCuid, deckCuid) {
+  return (dispatch) => {
+    return callApi(`cards/${cardCuid}-${deckCuid}`, 'post', )
+      .then(res => dispatch(addDeckToCard(res.card)));
+  };
 }
 
-export function addDeckToCard(card){
-    return{
-        type: ADD_DECK_TO_CARD,
-        card,
-    }
+export function addDeckToCard(card) {
+  return {
+    type: ADD_DECK_TO_CARD,
+    card,
+  }
 }

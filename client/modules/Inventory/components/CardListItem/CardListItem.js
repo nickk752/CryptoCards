@@ -4,26 +4,32 @@ import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 import { GridTile } from 'material-ui/GridList';
 import IconButton from 'material-ui/IconButton';
-import FontIcon from 'material-ui/FontIcon';
+import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 
 // Import styles
 
 // Import Wang
 import wang from '../../../../components/wang.jpg';
 
-function CardListItem(props){
-    return(
-        
-        <Link to={`/inventory/card/${props.card.cuid}`}>
-            <GridTile
-                key={props.card.slug}
-                title={props.card.name}
-                subtitle={props.card.type}
-                //find way to display attack and 
-            >
-                <img src={wang}/>
-            </GridTile>
-        </Link>
+function CardListItem(props) {
+  
+
+  return (
+    <GridTile
+      key={props.card.slug}
+      title={<Link to={`/inventory/card/${props.card.cuid}`}>{props.card.name}</Link>}
+      subtitle={props.card.type}
+      actionIcon={
+        <button
+          onClick={() => {props.transferCard(props.card.cuid, 'newGuy');}}>
+          transfer
+        </button>}
+    //find way to display attack and 
+    >
+      <img src={wang} />
+    </GridTile>
+          
+
         
     );
 }

@@ -8,6 +8,7 @@ import CreateAuctionWidget from '../../components/CreateAuctionWidget/CreateAuct
 
 // Import Actions
 import { fetchAuctions, deleteAuctionRequest, addAuctionRequest, toggleCreateAuction } from '../../MarketplaceActions';
+
 // Import Selectors
 import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 

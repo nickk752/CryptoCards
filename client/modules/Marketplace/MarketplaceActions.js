@@ -35,7 +35,6 @@ export function addAuctions(auctions) {
 export function fetchAuctions() {
   return (dispatch) => {
     return callApi('auctions').then(res => {
-      console.log('res:' + JSON.stringify(res.auctions));
       dispatch(addAuctions(res.auctions));
     });
   };
