@@ -1,10 +1,11 @@
 /* eslint no-undef: "off" */
-var CryptoCards = artifacts.require('CryptoCardsCore');
+const CryptoCards = artifacts.require('CryptoCardsCore');
+const SaleClockAuction = artifacts.require('SaleClockAuction');
 
-contract('CryptoCards', function (accounts) {
-  var helpfulFunctions = require('./utils/CryptoCardsUtils')(CryptoCards, accounts);
-  var hfn = Object.keys(helpfulFunctions);
-  for (var i = 0; i < hfn.length; i++) {
+contract('CryptoCards', () => {
+  const helpfulFunctions = require('./utils/CryptoCardsUtils')(CryptoCards, SaleClockAuction);
+  const hfn = Object.keys(helpfulFunctions);
+  for (let i = 0; i < hfn.length; i++) {
     global[hfn[i]] = helpfulFunctions[hfn[i]];
   }
 
@@ -27,8 +28,11 @@ contract('CryptoCards', function (accounts) {
 
   checksTotalSupply(0);
 
-  checkCardCreation(1000);
+  checkCardCreation(1234);
+  
 
-  //checksTotalSupply(1);
+  checkCardBid(0, 5);
+  
 
+  //checkWithdrawal(1.0);
 });

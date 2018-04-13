@@ -12,7 +12,7 @@ const cardSchema = new Schema({
     rCost: { type: 'Number', required: true}, */
     //effect: { type: 'String', required: true},
     // still very uncertain if we should store deck reference in card documents or the other way around
-    decks: [{type: 'String', required: true}],
+    decks: [{type: 'String', required: false}],
     slug: { type: 'String', required: true },
     cuid: { type: 'String', required: true },
     dateAdded: { type: 'Date', default: Date.now, required: true },

@@ -8,7 +8,9 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import lightBaseTheme from 'material-ui/styles/baseThemes/lightBaseTheme';
 
-// Import Componentsls
+const functions = require('../../../../util/TestAPI');
+
+// Import Components
 import CardList from '../../components/CardList';
 import DeckList from '../../components/DeckList';
 import DeckListItem from '../../components/DeckListItem/DeckListItem';
@@ -72,7 +74,6 @@ class TestInventoryPage extends Component {
       type: 'buttstuff',
       attack: 2,
       defense: 2,
-      decks: ['aaa', 'bbb']
     }));
     this.props.dispatch(fetchCards());
   }
@@ -81,11 +82,20 @@ class TestInventoryPage extends Component {
     this.props.dispatch(transferCardRequest(cardCuid, ownerCuid));
   }
 
+  handleCreateGen0 = () => {
+    functions.createGen0Auction();
+  }
+
+  handleGetCard = () => {
+    alert(functions.getCard());
+  }
+
   render() {
     return (
       <h1> Inventory
-                <button onClick={this.handleAddCard}> add card </button>
-        <button > update owner </button>
+        <button onClick={this.handleAddCard}> add card </button>
+        <button onClick={this.handleCreateGen0}> Create Gen0 </button>
+        <button onClick={this.handleGetCard}> Get Stuff </button>
         <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
           <Tabs
             value={this.state.value}
