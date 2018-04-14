@@ -1,4 +1,4 @@
-import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAIL, REGISTER_SUCCESS, REGISTER_REQUEST } from './LoginActions';
+import { LOGIN_REQUEST, LOGIN_SUCCESS, LOGIN_FAIL, REGISTER_SUCCESS, REGISTER_REQUEST, RECIEVE_ACCOUNT, CHANGE_ACCOUNT } from './LoginActions';
 
 // Initial State
 const initialState = {
@@ -41,6 +41,18 @@ const UserReducer = (state = initialState, action) => {
         data: action.data,
         registering: false,
       });
+
+    case RECIEVE_ACCOUNT:
+      return {
+        ...state,
+        ethAddress: action.address,
+      };
+
+    case CHANGE_ACCOUNT:
+      return {
+        ...state,
+        ethAddress: action.address,
+      };
 
     default:
       return state;

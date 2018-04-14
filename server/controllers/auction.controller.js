@@ -34,13 +34,18 @@ export function addAuction(req, res) {
   // Let's sanitize inputs
   newAuction.seller = sanitizeHtml(newAuction.seller);
   newAuction.card = sanitizeHtml(newAuction.card);
-
-  newAuction.slug = slug(newAuction.title.toLowerCase(), { lowercase: true });
+  newAuction.startPrice = sanitizeHtml(newAuction.startPrice);
+  newAuction.endPrice = sanitizeHtml(newAuction.endPrice);
+  newAuction.duration = sanitizeHtml(newAuction.duration);
+  newAuction.slug = slug(newAuction.card.toLowerCase(), { lowercase: true });
   newAuction.cuid = cuid();
   newAuction.save((err, saved) => {
     if (err) {
+      console.log("ERROR")
+      console.log(err);
       res.status(500).send(err);
     }
+    console.log("NO ERROR")
     res.json({ auction: saved });
   });
 }

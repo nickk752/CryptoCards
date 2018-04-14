@@ -40,7 +40,7 @@ module.exports = function (CryptoCards, SaleClockAuction) {
         });
       })
         .then(function (result) {
-          //assert.include(result.logs[0].event, 'Transfer', 'Transfer event was not triggered');
+          // assert.include(result.logs[0].event, 'Transfer', 'Transfer event was not triggered');
           // console.log('bidresult');
           // console.log(result.logs[0].args.tokenId.c);
           // console.log(tokenId);

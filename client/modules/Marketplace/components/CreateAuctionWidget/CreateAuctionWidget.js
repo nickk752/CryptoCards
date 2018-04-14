@@ -1,40 +1,40 @@
 import React, { Component, PropTypes } from 'react';
-import Web3 from 'web3';
-
-const CoreJSON = require("../../../../../build/contracts/CryptoCardsCore.json");
-const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
-//console.log(CoreABI.abi);
-const myContract = new web3.eth.Contract(CoreJSON.abi, '0xf12b5dd4ead5f743c6baa640b0216200e89b60da', { gas: 99999999999999999999999 });
-
+const createGen0Auctions = require('../../../../util/blockchainApiCaller').createGen0Auction;
+import { fetchAuctions, addAuctionRequest } from '../../MarketplaceActions';
 
 export class CreateAuctionWidget extends Component {
 
   constructor(props) {
     super(props);
+    this.state = { skills: 'aklsdfjl' };
     this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
-  handleSubmit = (e) => {
-    e.preventDefault();
-    myContract.methods.createGen0Auction(2000).send({
-      from: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57',
-      gas: 99999999999999999999999
-    }).on('receipt', function (receipt) {
-      console.log(receipt);
-    });
+  handleChange(event) {
+    const { name, value } = event.target;
+    this.setState({ [name]: value });
+  }
 
-    myContract.methods.getCard(1).call({
-      from: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57'
-    }).then(console.log);
-
+  handleSubmit(event) {
+    console.log("EVENT SUBMITTED");
+    console.log(this.state.skills);
+    let results = createGen0Auctions(this.state.skills);
+    console.log("return successful")
+    console.log(results);
+    this.props.handleAddAuction('CryptoCards Store', 'Gen0 Card', '4', '0', '100');
+    event.preventDefault();
   }
 
   render() {
+    //createGen0Auctions();
     return (
       <div>
         {this.props.showCreateAuction ?
-          <form onSumbit={this.handleSubmit}>
-            Starting Price: <br />
+          <form onSubmit={this.handleSubmit}>
+            Skills: <br />
+            <input type="number" step=".001" name="skills" value={this.state.skills} onChange={this.handleChange} /><br />
+            Ending Price: <br />
             <input type="number" step=".001" name="startingPrice" /><br />
             Ending Price: <br />
             <input type="number" step=".001" name="endingPrice" /><br />
@@ -49,5 +49,9 @@ export class CreateAuctionWidget extends Component {
     );
   }
 }
+
+CreateAuctionWidget.propTypes = {
+  handleAddAuction: PropTypes.func.isRequired,
+};
 
 export default CreateAuctionWidget;

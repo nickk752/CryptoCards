@@ -1,4 +1,5 @@
 import callApi from '../../util/apiCaller';
+import { web3, accounts, coreAbi, auctionAbi } from '../../util/blockchainApiCaller';
 
 // Export Constants
 export const ADD_AUCTION = 'ADD_AUCTION';
@@ -16,10 +17,15 @@ export function addAuction(auction) {
 
 export function addAuctionRequest(auction) {
   return (dispatch) => {
+
     return callApi('auctions', 'post', {
       auction: {
         seller: auction.seller,
         card: auction.card,
+        startPrice: auction.startPrice,
+        endPrice: auction.endPrice,
+        duration: auction.duration,
+        cuid: auction.cuid,
       },
     }).then(res => dispatch(addAuction(res.auction)));
   };

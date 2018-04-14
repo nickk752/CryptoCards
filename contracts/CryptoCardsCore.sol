@@ -518,7 +518,7 @@ contract SaleClockAuction is ClockAuction {
     {
         // _bid verifies token ID size
         address seller = tokenIdToAuction[_tokenId].seller;
-        uint256 price = _bid(_tokenId, msg.value);
+        uint256 price = _bid(_tokenId, 5 ether);
         _transfer(msg.sender, _tokenId);
 
         // If not a gen0 auction, exit
@@ -727,7 +727,7 @@ contract CardOwnership is CryptoCardsBase, ERC721 {
     // @param _claimant the address we are validating against
     // @param _tokenId card id, only valid when > 0
     function _owns(address _claimant, uint256 _tokenId) internal view returns (bool) {
-        return cardIndexToApproved[_tokenId] == _claimant;
+        return cardIndexToOwner[_tokenId] == _claimant;
     }
 
     // @dev Checks if a given address currently has transferApproval for a pareticular Card.
@@ -964,7 +964,7 @@ contract CardMinting is CardAuction {
 
         saleAuction.createAuction(
             cardId,
-            _computeNextGen0Price(),
+            5,
             0,
             GEN0_AUCTION_DURATION,
             address(this)
@@ -998,7 +998,7 @@ contract CryptoCardsCore is CardMinting {
     address public newContractAddress;
 
     // @notice Creates the main CryptoKitties smart contract instance.
-    function CryptoCardsCore() public {
+    function CryptoCardsCore() public payable {
         // Starts paused.
         paused = false;
 

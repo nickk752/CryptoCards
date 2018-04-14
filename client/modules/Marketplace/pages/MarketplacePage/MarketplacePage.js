@@ -4,16 +4,23 @@ import { connect } from 'react-redux';
 
 // Import Components
 import AuctionList from '../../components/AuctionList';
-import CreateAuctionWidget from '../../components/CreateAuctionWidget/CreateAuctionWIdget';
+import CreateAuctionWidget from '../../components/CreateAuctionWidget/CreateAuctionWidget';
+const bid = require('../../../../util/blockchainApiCaller').bid;
 
 // Import Actions
 import { fetchAuctions, deleteAuctionRequest, addAuctionRequest, toggleCreateAuction } from '../../MarketplaceActions';
-
 // Import Selectors
 import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 
 
 class MarketplacePage extends Component {
+
+  constructor(props) {
+    super(props);
+    this.handleAddAuction = this.handleAddAuction.bind(this);
+   // this.handleClick = this.handleClick.bind(this);
+  }
+
   componentDidMount() {
     this.props.dispatch(fetchAuctions());
   }
@@ -28,8 +35,20 @@ class MarketplacePage extends Component {
     this.props.dispatch(toggleCreateAuction());
   }
 
-  handleAddAuction = (seller, card) => {
-    this.props.dispatch(addAuctionRequest({ seller, card }));
+  handleClick = (event) => {
+    bid();
+    this.props.dispatch(deleteAuctionRequest('cjfs3p59v000164v4ksm05e24'));
+    event.preventDefault();
+  }
+
+  handleAddAuction = (seller, card, startPrice, endPrice, duration) => {
+    this.props.dispatch(addAuctionRequest({
+      seller,
+      card,
+      startPrice,
+      endPrice,
+      duration,
+    }));
   };
 
   render() {
@@ -37,10 +56,11 @@ class MarketplacePage extends Component {
       <div>
         <button onClick={this.handleToggleCreateAuction}> create auction </button>
         <CreateAuctionWidget
-          showCreateAuction={this.props.showCreateAuction} />
-          <br/>
-          <br/>
-        <AuctionList auctions={this.props.auctions} />
+          showCreateAuction={this.props.showCreateAuction}
+          handleAddAuction={this.handleAddAuction} />
+        <br />
+        <br />
+        <AuctionList handleClick={this.handleClick} auctions={this.props.auctions} />
       </div>
     );
   }

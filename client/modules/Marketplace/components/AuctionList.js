@@ -28,8 +28,8 @@ function AuctionList(props) {
       {
         props.auctions.map(auction => (
           <AuctionListItem
+            handleClick={props.handleClick}
             auction={auction}
-            key={auction.cuid}
           />
         ))
       }
@@ -43,6 +43,7 @@ AuctionList.propTypes = {
     seller: PropTypes.string.isRequired,
     card: PropTypes.string.isRequired,
   })).isRequired,
+  handleClick: PropTypes.func.isRequired,
 };
 
 export default AuctionList;
