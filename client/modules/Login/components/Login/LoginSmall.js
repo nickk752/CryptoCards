@@ -12,7 +12,8 @@ import { Link } from 'react-router';
 
 // import { getUser } from '../../UserReducer';
 
-export function LoginSmall(props) {
+export function LoginSmall(props, context) {
+  const web3Context = context.web3;
   const handleSubmit = props.handleSubmit;
   const handleChange = props.handleChange;
   const { user, submitted, loggingIn } = props;
@@ -41,6 +42,10 @@ export function LoginSmall(props) {
     </div>
   );
 }
+
+LoginSmall.contextTypes = {
+  web3: PropTypes.object,
+};
 
 LoginSmall.propTypes = {
   dispatch: PropTypes.func.isRequired,

@@ -18,7 +18,7 @@ function AuctionListItem(props) {
       key={props.auction.slug}
       title={<Link to={`/marketplace/${props.auction.cuid}`} >{props.auction.card}</Link>}
       subtitle={<span>by <b>{props.auction.seller}</b></span>}
-      actionIcon={<IconButton><FontIcon className="gavel" /></IconButton>}
+      actionIcon={<button onClick={props.handleClick}>Bid!</button>}
     >
       <img src={img} role="presentation" />;
     </GridTile>
@@ -43,6 +43,7 @@ AuctionListItem.propTypes = {
     slug: PropTypes.string.isRequired,
     cuid: PropTypes.string.isRequired,
   }).isRequired,
+  handleClick: PropTypes.func.isRequired,
 };
 
 export default AuctionListItem;

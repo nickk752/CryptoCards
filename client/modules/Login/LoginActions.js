@@ -7,6 +7,8 @@ export const LOGIN_FAIL = 'LOGIN_FAIL';
 export const REGISTER_SUCCESS = 'REGISTER_SUCCESS';
 export const REGISTER_FAIL = 'REGISTER_FAIL';
 export const REGISTER_REQUEST = 'REGISTER_REQUEST';
+export const RECEIVE_ACCOUNT = 'web3/RECEIVE_ACCOUNT';
+export const CHANGE_ACCOUNT = 'web3/CHANGE_ACCOUNT';
 
 // Actions
 export function loginSuccess(user) {
