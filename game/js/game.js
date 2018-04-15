@@ -1,87 +1,76 @@
-/*
- * Author: Jerome Renaux
- * E-mail: jerome.renaux@gmail.com
-
- IN THIS FILE "YOU" ARE ALWAYS PLAYER 1
+/**
+ * The Main Game Object, extends Phaser.State
+ * Uses structures from datastructures.js to represent 
+ * the game state, and uses the Client obj to communicate
+ * back and forth with the server. 
+ * 
+ * IN THIS FILE THE PLAYER (you) IS ALWAYS PLAYER 1 (if it comes up)
  */
 
 var Game = {};
 
+//called first, before preload
 Game.init = function(){
     game.stage.disableVisibilityChange = true;
 };
 
+//called after preload and before create()
 Game.preload = function() {
     game.load.tilemap('map', 'assets/map/desktop_board_map4.json', null, Phaser.Tilemap.TILED_JSON);
     game.load.spritesheet('tileset', 'assets/map/gameboard_tilesheet.png',32,32);
     game.load.image('sprite','assets/sprites/sprite.png');
-		game.load.image('blank_card_sprite','assets/sprites/blank_card_sprite.png');
-		game.load.image('creaturezone_sprite','assets/sprites/creaturezone_sprite.png');
-		game.load.image('buildingzone_sprite','assets/sprites/buildingzone_sprite.png');
+	game.load.image('blank_card_sprite','assets/sprites/blank_card_sprite.png');
+	game.load.image('creaturezone_sprite','assets/sprites/creaturezone_sprite.png');
+	game.load.image('buildingzone_sprite','assets/sprites/buildingzone_sprite.png');
 
 };
 
+// called after preload, right before we enter the main loop
+// since we all callbacks now, it's here where we set up most
+// of our logic, create game state and whatnot
 Game.create = function(){
-    Game.playerMap = {};
-		Game.deck = {};
-		Game.deck2 = {};
-		Game.hand = {count: 0};
-		game.physics.startSystem(Phaser.Physics.ARCADE);
-    var testKey = game.input.keyboard.addKey(Phaser.Keyboard.ENTER);
-    testKey.onDown.add(Client.sendTest, this);
-    var map = game.add.tilemap('map');
-    map.addTilesetImage('gameboard_tilesheet', 'tileset'); // tilesheet is the key of the tileset in map's JSON file
+	Game.deck = {};
+	Game.deck2 = {};
+	Game.hand = {count: 0};
+
+	//we need to do this dragging (i think?) - tim
+	game.physics.startSystem(Phaser.Physics.ARCADE);
+
+	//adding our map to the background
+	var map = game.add.tilemap('map');
+	// tilesheet is the key of the tileset in map's JSON file
+	map.addTilesetImage('gameboard_tilesheet', 'tileset'); 
+	//our map only has 1 layer for now
     var layer;
     for(var i = 0; i < map.layers.length; i++) {
         layer = map.createLayer(i);
-    }
-    layer.inputEnabled = true; // Allows clicking on the map ; it's enough to do it on the last layer
+	}
+	// Allows clicking on the map ; it's enough to do it on the last layer
+    layer.inputEnabled = true; 
     layer.events.onInputUp.add(Game.getCoordinates, this);
-		createZoneSprites();
-    Client.askNewPlayer();
+	createZoneSprites();
+	//join a lobby with our name, gameID, and deck
+    Client.joinLobby();
 };
 
-Game.getCoordinates = function(layer,pointer){
-    Client.sendClick(pointer.worldX,pointer.worldY);
-};
-
-Game.addNewPlayer = function(id,x,y,player){
-		Game.player2 = player;
-    Game.playerMap[id] = game.add.sprite(x,y,'sprite');
-
-		if (id == 2){
-			var starter = Math.floor(Math.random() * 2) + 1;
-			Game.setupGame();
-		}
-};
-
-Game.movePlayer = function(id,x,y){
-    var player = Game.playerMap[id];
-    var distance = Phaser.Math.distance(player.x,player.y,x,y);
-    var tween = game.add.tween(player);
-    var duration = distance*10;
-    tween.to({x:x,y:y}, duration);
-    tween.start();
-};
-
-Game.removePlayer = function(id){
-    Game.playerMap[id].destroy();
-    delete Game.playerMap[id];
+// called by Client when the server tells us we've found a match
+// passes us a name to call our opponent, and a deck to use as 
+// their card list
+Game.addOpponent = function(name, deck){
+	
+	Game.setupGame();
 };
 
 Game.setupGame = function(){
 		setUpDeck();
 		drawCards(8);
-}
-
-Game.useCard = function(card, start, dest){
-	//here would go internal logic checking and such
-
-}
-
+};
 
 //creates invisible sprites that represent any zones we might have to check
-//collision with.
+//collision with, used as reference to tell the Pile subclasses where to 
+//render themselves. This should also be the point of seperation for mobile,
+//so we should check somehow to see if we're on mobile and then create the 
+//zones in different places?
 createZoneSprites = function(){
 		Game.zoneSprites = {
 			//creatures
@@ -171,10 +160,10 @@ drawCards = function(numCards){
 			var cardBounds = Game.deck[deckIndex].sprite.getBounds();
 			var zoneBounds = zone.getBounds();
 			var distance = Phaser.Math.distance(zoneBounds.x,zoneBounds.y,cardBounds.x,cardBounds.y);
-	    var tween = game.add.tween(Game.deck[deckIndex].sprite);
-	    var duration = distance*2;
-	    tween.to({x:zoneBounds.x,y:zoneBounds.y}, duration);
-	    tween.start();
+	    	var tween = game.add.tween(Game.deck[deckIndex].sprite);
+	    	var duration = distance*2;
+	    	tween.to({x:zoneBounds.x,y:zoneBounds.y}, duration);
+	    	tween.start();
 		}
 		Game.deck[deckIndex].sprite.home = Game.zoneSprites.hand[Game.hand.count+i];
 		Game.deck[deckIndex].sprite.moveTo(Game.zoneSprites.hand[Game.hand.count+i], deckIndex);

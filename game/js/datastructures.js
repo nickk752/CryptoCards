@@ -1,8 +1,16 @@
+/**
+ * A bunch of Game Data Structures. Starts from Cards and builds up to various 
+ * Pile subclasses as well as an Opponent and Player class. Should really only
+ * be instantiated in the Game object. 
+ */
+
+
 //the Opponent (the person playing against "us")
 function Opponent(deckCards){
 	this.base = Participant;
 	this.base(deckCards);
-
+	//override the draw methods for all the pile subclasses? or tell them to draw in different spots.
+	//maybe include checking the type of the object we are in the functions?
 }
 Opponent.prototype = new Participant;
 
@@ -13,8 +21,17 @@ function Player(deckCards){
 }
 Player.prototype = new Participant;
 
+// ---PARTICIPANT---PARTICIPANT---PARTICIPANT---PARTICIPANT---PARTICIPANT
+// everything below this is Participant stuff
+// ---PARTICIPANT---PARTICIPANT---PARTICIPANT---PARTICIPANT---PARTICIPANT
+
 //Participant constructor
-function Participant(deckCards){
+// refZones are the zones for each of the pile subclasses to draw themselves
+// in reference to (an opponent wouldn't get passed anything for a hand, 
+// for example. A player would get passed a collection of cardslots that
+// correspond to where the player's hand goes)
+
+function Participant(deckCards, refZones){
 	this.currCard = null;
 	this.cardsInHand = 0;
 
@@ -43,6 +60,10 @@ function updateSelf(){
 	//this.baseHealth = this.buildings.cards[2].stats.def;
 }
 
+// PILE SUBCLASSES---PILE SUBCLASSES---PILE SUBCLASSES---PILE SUBCLASSES---
+// everything below this is pile subclass stuff
+// PILE SUBCLASSES---PILE SUBCLASSES---PILE SUBCLASSES---PILE SUBCLASSES---
+
 // BuildingRow Constructor
 function BuildingRow(cards){
 	this.base = Pile;
@@ -50,7 +71,7 @@ function BuildingRow(cards){
 }
 BuildingRow.prototype = new Pile;
 
-//Lane Constructor
+// Lane Constructor
 function Lane(cards){
 	this.base = Pile;
 	this.base(4, cards);
@@ -64,19 +85,23 @@ function Graveyard(cards){
 }
 Graveyard.prototype = new Pile;
 
-//Hand constructor
+// Hand constructor
 function Hand(cards){
 	this.base = Pile;
 	this.base(8, cards)
 }
 Hand.prototype = new Pile;
 
-//Deck constructor
+// Deck constructor
 function Deck(cards){
 	this.base = Pile;
 	this.base(25, cards);
 }
 Deck.prototype = new Pile;
+
+// ----PILE----PILE----PILE----PILE----PILE----PILE----PILE----
+// everything below this is Pile stuff
+// ----PILE----PILE----PILE----PILE----PILE----PILE----PILE----
 
 // constructor for a pile, takes an optional existing array of cards.
 // (the "top" of the pile (where you draw from) is the end of the array) as well
@@ -151,10 +176,12 @@ function addCard(card) {
 	return cardsInpile;
 }
 
+// ----CARD----CARD----CARD----CARD----CARD----CARD----CARD----
+// everything below this is card stuff
+// ----CARD----CARD----CARD----CARD----CARD----CARD----CARD----
 
-
-// Card constructor, takes an option CryptoCardsNumber (ccnum), or all the
-// necessary info to make a card.
+// Card constructor, takes an optional CryptoCardsNumber (ccnum), 
+// or all the necessary info to make a card.
 function Card(ccnum, name, desc, stats, cost) {
 	if (ccnum){
 		// fetch from DB?
@@ -165,6 +192,9 @@ function Card(ccnum, name, desc, stats, cost) {
 		this.cost = cost;
 	}
 	this.print = printCard;
+	this.render = renderCard;
+	this.enable = enableCard;
+	this.setCallbacks = setCardCallbacks;
 }
 
 function Cost(lcost, mcost, rcost){
@@ -182,10 +212,44 @@ function printCard(){
 	console.log("name: " + this.name);
 	console.log("desc: " + this.desc);
 }
+
 //takes a point (anything with x and y properties), and draws itself to the
-//screen with its bottom left corner at that point.
-function drawSelf(point){
-	
+//screen with its upper left corner at that point.
+function renderCard(point){
+	//the x and y point properties
+	var spot = point || {x:0, y:0};
+	var x = spot.x;
+	var y = spot.y;
+	var font = {font: "12px Arial", fill: "#000000"};
+	var font14 = {font: "14px Arial", fill: "#000000"};
+
+	//create the card sprite
+	this.sprite = game.add.sprite(x,y,'blank_card_sprite');
+
+	//add all the text to it
+	this.sprite.addChild(game.add.text(x+11, y+63, this.name, font));
+	this.sprite.addChild(game.add.text(x+4, y+113, this.stats.atk, font14));
+	this.sprite.addChild(game.add.text(x+80, y+113, this.stats.def, font14));
+	this.sprite.addChild(game.add.text(x+7, y+1, this.cost.lcost, font));
+	this.sprite.addChild(game.add.text(x+37, y+1, this.cost.mcost, font));
+	this.sprite.addChild(game.add.text(x+74, y+1, this.cost.rcost, font));
+
+}
+
+function setCardCallbacks(onDragStop){
+	//drag and dropping
+	this.sprite.input.enableDrag();
+	this.sprite.events.onDragStop.add(onDragStop, this);
+}
+
+function enableCard(){
+	this.sprite.inputEnabled = true;
+	//this.sprite.events.onDragStop.add(onDragStop, this);
+	//this.sprite.alignIn(Game.zoneSprites.deck, Phaser.CENTER, 0, 0);
+}
+
+function disableCard(){
+	this.sprite.inputEnabled = false;
 }
 
 //testing:

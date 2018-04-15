@@ -1,47 +1,58 @@
 /**
- * Created by Jerome on 03-03-17.
- */
+ * A client-side Client Abstraction for use in the Game object.
+ * The Game uses this Client object to communicate with the server
+ * as in Client.sendEndTurn() to tell the server you've ended your
+ * turn. It also lets the server communicate with the game, using
+ * similiar callbacks to the server and calling methods on the 
+ * Game object.
+ *  */
+
 var Client = {};
+
+//this is what calls on('connection') on the server
 Client.socket = io.connect();
 
-Client.sendTest = function(){
-    console.log("test sent");
-    Client.socket.emit('test');
+//call this to join the lobby, and either wait or get matched with an opponent
+//who has the same GameId. NAMES MUST BE UNIQUE!
+Client.joinLobby = function(name, gameId, deck){
+    //send a join with what that expects
+    Client.socket.emit('join', {name: name, gameId: gameId, deck: deck});
 };
 
-Client.askNewPlayer = function(){
-		//here we should pass our Username or some Identifier
-    Client.socket.emit('newplayer');
+Client.sendEndTurn = function(){
+    Client.socket.emit('endedMyTurn');
 };
 
-Client.sendMovedCard = function(dindex, homeName){
-	Client.socket.emit('movedCard', dindex, homeName);
-}
+//when both people with a certain gameId have joined the server
+Client.socket.on('matchFound', function(data){
 
-Client.sendClick = function(x,y){
-  Client.socket.emit('click',{x:x,y:y});
-};
+    //tell the Game we've got our opponent, pass in their deck
+    Game.addOpponent(data.name, data.deck);
 
-Client.socket.on('newplayer',function(data){
-    Game.addNewPlayer(data.id,data.x,data.y,data);
-});
-
-Client.socket.on('allplayers',function(data){
-    for(var i = 0; i < data.length; i++){
-        Game.addNewPlayer(data[i].id,data[i].x,data[i].y);
-    }
-
-    Client.socket.on('move',function(data){
-        Game.movePlayer(data.id,data.x,data.y);
+    //when our opponent ends their turn
+    Client.socket.on('itsYourTurn', function(){
+        //tell the game to start a turn
+        Game.startNextTurn()
     });
 
-		Client.socket.on('place',function(data){
-			dindex = data.dindex;
-			homeName = data.dindex;
-			Game.placeCard(dindex, homeName);
-		});
-
-    Client.socket.on('remove',function(id){
-        Game.removePlayer(id);
+    //as a confirmation after we've ended our turn
+    Client.socket.on('itsNotYourTurn', function(){
+        //probably don't have to do anything, would've
+        //set the Game to be 'unresponsive' when we called to 
+        //end our turn
     });
+
+    //we won (they lost)
+    Client.socket.on('youWon', function(){
+        //Game.displayWonScreen()?
+    });
+
+    //we lost (they won)
+    Client.socket.on('youLost', function(){
+        //Game.displayLostScreen()?
+    });
+
+
+//end on('matchFound')    
 });
+
