@@ -35,10 +35,10 @@ class MarketplacePage extends Component {
     this.props.dispatch(toggleCreateAuction());
   }
 
-  handleClick = (event) => {
+  handleClick = cuid => {
     bid();
-    this.props.dispatch(deleteAuctionRequest('cjfs3p59v000164v4ksm05e24'));
-    event.preventDefault();
+    this.props.dispatch(deleteAuctionRequest(cuid));
+    // event.preventDefault();
   }
 
   handleAddAuction = (seller, card, startPrice, endPrice, duration) => {

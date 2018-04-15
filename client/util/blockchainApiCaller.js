@@ -1,14 +1,10 @@
 const Web3 = require('Web3');
-// const contract = require('truffle-contract');
-
-// let reader = new FileReader();
-// const coreAbi = JSON.parse()
 
 export const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
 
 export const coreAbi = require('../../build/contracts/CryptoCardsCore.json');
 export const auctionAbi = require('../../build/contracts/SaleClockAuction.json');
-export const accounts = ['0x890555f2b90f57eec3289f514350da04e993d2af',
+export const accounts = ['0x627306090abaB3A6e1400e9345bC60c78a8BEf57',
 '0xa8c53b8e680e2218a37bf2573953013d69028aeb',
 '0xcc8ae5936c1292dc91601b50f51b5d6092f8024a',
 '0x86ad239585c76862c8e1f5963280c0100c1227b3',
@@ -21,10 +17,10 @@ export const accounts = ['0x890555f2b90f57eec3289f514350da04e993d2af',
 
 function createGen0Auction(skills) {
   
-
+  var retval = 'temp';
   
-  const CoreAddress = '0xa8e24c545b30a30b85e03397556d5aab603fe4ca';
-  const AuctionAddress = '0x5216da59290aa93b4152602a350dfec16e37933a';
+  const CoreAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
+  const AuctionAddress = '0xf25186b5081ff5ce73482ad761db0eb0d25abfbf';
   const CryptoCardsCore = new web3.eth.Contract(coreAbi.abi, CoreAddress, {
     from: accounts[0],
     gas: '4600000',
@@ -34,20 +30,27 @@ function createGen0Auction(skills) {
     gas: '4600000',
   });
   console.log(CryptoCardsCore);
-  CryptoCardsCore.methods.createGen0Auction(skills).send({ from: accounts[0] }).then((result) => {
+
+  return CryptoCardsCore.methods.createGen0Auction(skills).send({ from: accounts[0] }).then((result) => {
     console.log('results1');
     console.log(result);
-    return SaleClockAuction.methods.getAuction(0).call().then((result2) => {
+    return result.blockNumber;
+    // alert(result.blockNumber);
+    /* return SaleClockAuction.methods.getAuction(0).call().then((result2) => {
       console.log('results2');
-      console.log(result2.duration);
+      console.log(result2);
       return result2;
-    })
+    }); */
   });
-  // web3.eth.getBlock("latest", (error, result) => {
-  //   console.log('error:', error);
-  //   console.log('results', result);
-  // });
 
+}
+
+function getAuction(index) {
+  return SaleClockAuction.methods.getAuction(index).call().then((result2) => {
+    console.log('results2');
+    console.log(result2);
+    return result2;
+  });
 }
 
 function bid() {

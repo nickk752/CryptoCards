@@ -16,7 +16,7 @@ require('./main.css');
 
 export default function App(props) {
   return (
-    <Web3Provider>
+    <Web3Provider passive={true}>
       <Provider store={props.store}>
         <IntlWrapper>
           <Router history={browserHistory}>

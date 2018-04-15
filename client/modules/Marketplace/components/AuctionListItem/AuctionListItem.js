@@ -18,7 +18,7 @@ function AuctionListItem(props) {
       key={props.auction.slug}
       title={<Link to={`/marketplace/${props.auction.cuid}`} >{props.auction.card}</Link>}
       subtitle={<span>by <b>{props.auction.seller}</b></span>}
-      actionIcon={<button onClick={props.handleClick}>Bid!</button>}
+      actionIcon={<button onClick={() => props.handleClick(props.auction.cuid)}>Bid!</button>}
     >
       <img src={img} role="presentation" />;
     </GridTile>

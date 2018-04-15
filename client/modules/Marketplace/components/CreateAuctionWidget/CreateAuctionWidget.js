@@ -1,5 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 const createGen0Auctions = require('../../../../util/blockchainApiCaller').createGen0Auction;
+const getAuction = require('../../../../util/blockchainApiCaller').getAuction;
 import { fetchAuctions, addAuctionRequest } from '../../MarketplaceActions';
 
 export class CreateAuctionWidget extends Component {
@@ -19,9 +20,12 @@ export class CreateAuctionWidget extends Component {
   handleSubmit(event) {
     console.log("EVENT SUBMITTED");
     console.log(this.state.skills);
-    let results = createGen0Auctions(this.state.skills);
-    console.log("return successful")
-    console.log(results);
+    createGen0Auctions(this.state.skills).then(() => {
+      getAuction(0).then((data) => {
+        alert(data);
+      });
+    });
+    console.log("return successful");
     this.props.handleAddAuction('CryptoCards Store', 'Gen0 Card', '4', '0', '100');
     event.preventDefault();
   }
