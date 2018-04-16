@@ -32,6 +32,7 @@ export function addCardRequest(card) {
         attack: card.attack,
         defense: card.defense,
         decks: card.decks,
+        tokenId: card.tokenId,
       },
     }).then(res => dispatch(addCard(res.card)));
   };
@@ -44,9 +45,9 @@ export function addCards(cards) {
   };
 }
 
-export function transferCardRequest(cardCuid, ownerCuid) {
+export function transferCardRequest(tokenId, ownerCuid) {
   return (dispatch) => {
-    return callApi(`cards/transfer/${cardCuid}-${ownerCuid}`, 'post')
+    return callApi(`cards/transfer/${tokenId}-${ownerCuid}`, 'post')
       .then(res => dispatch(transferCard(res.card)));
   };
 }

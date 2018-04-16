@@ -9,13 +9,14 @@ const bid = require('../../../../util/blockchainApiCaller').bid;
 
 // Import Actions
 import { fetchAuctions, deleteAuctionRequest, addAuctionRequest, toggleCreateAuction } from '../../MarketplaceActions';
-import { addCardRequest } from '../../../Inventory/InventoryActions' ;
+import { addCardRequest, transferCardRequest } from '../../../Inventory/InventoryActions' ;
 // Import Selectors
 import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 
 // Web3 
 const createGen0Auctions = require('../../../../util/blockchainApiCaller').createGen0Auction;
 const getAuction = require('../../../../util/blockchainApiCaller').getAuction;
+const getCard = require('../../../../util/blockchainApiCaller').getCard;
 
 class MarketplacePage extends Component {
 
@@ -39,9 +40,10 @@ class MarketplacePage extends Component {
     this.props.dispatch(toggleCreateAuction());
   }
 
-  handleClick = cuid => {
+  handleClick = (cuid, tokenId) => {
     //bid();
     this.props.dispatch(deleteAuctionRequest(cuid));
+    this.handleTransferCard(tokenId, 'newGuy');
     // event.preventDefault();
   }
 
@@ -56,21 +58,36 @@ class MarketplacePage extends Component {
     }));
   };
 
-  handleAddCard = () => {
+  handleAddCard = (name, owner, type, attack, defense, decks, tokenId) => {
+    this.props.dispatch(addCardRequest({
+      name,
+      owner,
+      type,
+      attack,
+      defense,
+      decks,
+      tokenId,
+    }));
+  }
 
+  handleTransferCard = (tokenId, ownerCuid) => {
+    this.props.dispatch(transferCardRequest(tokenId, ownerCuid));
   }
 
   handleAddGen0Auction = () => {
    /*  creating Gen 0 auctions
     this could be moved somewhere else */
     for(var i = 0; i < 10; i++){
-      createGen0Auctions(i).then((result) => {
+      createGen0Auctions(1000 + i).then((result) => {
         var tokenId = result.events.Spawn.returnValues.tokenId;
         console.log('TOKEN ID CREATED: ' + tokenId);
+        getCard(tokenId).then((data) => {
+          this.handleAddCard(data, 'CryptoCardsCore', 'type1', 5, 5, [], tokenId);
+        });
         getAuction(tokenId).then((data) => {
           // figure out name decoding(eric)
           this.handleAddAuction(data.seller, tokenId, data.startingPrice, data.endingPrice, data.duration, tokenId);
-        });  
+        });
       });
     }
   }
@@ -86,7 +103,9 @@ class MarketplacePage extends Component {
           handleAddAuction={this.handleAddAuction} />
         <br />
         <br />
-        <AuctionList handleClick={this.handleClick} auctions={this.props.auctions} />
+        <AuctionList 
+          handleClick={this.handleClick} 
+          auctions={this.props.auctions} />
       </div>
     );
   }

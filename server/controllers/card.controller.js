@@ -52,6 +52,7 @@ newCard.defense = sanitizeHtml(newCard.defense);
 newCard.slug = slug(newCard.name.toLowerCase(), { lowercase: true });
 newCard.cuid = cuid();
 newCard.decks = sanitizeHtml(newCard.decks);
+newCard.tokenId = sanitizeHtml(newCard.tokenId);
 newCard.save((err, saved) => {
     if(err) {
         res.status(500).send(err);
@@ -62,8 +63,8 @@ newCard.save((err, saved) => {
 
 // transfer card to new owner
 export function transferCard(req, res) {
-    console.log('card: ' + req.params.cardCuid + ' owner: ' + req.params.ownerCuid);
-    Card.findOneAndUpdate({ cuid: req.params.cardCuid }, { $set: { owner: req.params.ownerCuid } }).exec((err, card) => {
+    console.log('card tokenId: ' + req.params.tokenId + ' owner: ' + req.params.ownerCuid);
+    Card.findOneAndUpdate({ tokenId: req.params.tokenId }, { $set: { owner: req.params.ownerCuid } }).exec((err, card) => {
         if(err){
             res.status(500).send(err);
         }

@@ -78,10 +78,6 @@ class TestInventoryPage extends Component {
     this.props.dispatch(fetchCards());
   }
 
-  handleTransferCard = (cardCuid, ownerCuid) => {
-    this.props.dispatch(transferCardRequest(cardCuid, ownerCuid));
-  }
-
   handleCreateGen0 = () => {
     functions.createGen0Auction();
   }
@@ -103,7 +99,7 @@ class TestInventoryPage extends Component {
           >
             <Tab label="All Cards" value={0}>
               {/* Card List */}
-              <CardList cards={this.props.cards} height={300} cols={4} transferCard={this.handleTransferCard} />
+              <CardList cards={this.props.cards} height={300} cols={4} />
             </Tab>
             <Tab label="Deck 1" value={1}>
               {/* Deck List */}

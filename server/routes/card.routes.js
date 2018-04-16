@@ -15,7 +15,7 @@ router.route('/cards/:cuid').get(CardController.getCard);
 router.route('/cards').post(CardController.addCard);
 
 // card transfer
-router.route('/cards/transfer/:cardCuid-:ownerCuid').post(CardController.transferCard);
+router.route('/cards/transfer/:tokenId-:ownerCuid').post(CardController.transferCard);
 
 // delete a card by cuid
 router.route('/cards/:cuid').delete(CardController.deleteCard);

@@ -15,6 +15,7 @@ const cardSchema = new Schema({
     decks: [{type: 'String', required: false}],
     slug: { type: 'String', required: true },
     cuid: { type: 'String', required: true },
+    tokenId: { type: 'String', required: true },
     dateAdded: { type: 'Date', default: Date.now, required: true },
 });
 

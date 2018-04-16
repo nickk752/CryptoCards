@@ -38,7 +38,7 @@ function createGen0Auction(skills) {
   // var auctionEvent = SaleClockAuction.AuctionCreated();
 
   return CryptoCardsCore.methods.createGen0Auction(skills).send({ from: accounts[0] }).then((result) => {
-    console.log('results1');
+    console.log('CREATE GEN 0 RESULTS');
     console.log(result);
     return result;
     /* return SaleClockAuction.methods.getAuction(0).call().then((result2) => {
@@ -58,11 +58,19 @@ function createGen0Auction(skills) {
   }); */
 }
 
-function getAuction(index) {
-  return SaleClockAuction.methods.getAuction(index).call().then((result2) => {
-    console.log('results2');
+function getAuction(tokenId) {
+  return SaleClockAuction.methods.getAuction(tokenId).call().then((result2) => {
+    console.log('GET AUCTION RESULTS');
     console.log(result2);
     return result2;
+  });
+}
+
+function getCard(tokenId) {
+  return CryptoCardsCore.methods.getCard(tokenId).call().then((result) => {
+    console.log('GET CARD RESULTS');
+    console.log(result);
+    return result;
   });
 }
 
@@ -77,6 +85,7 @@ module.exports = {
   createGen0Auction,
   getAuction,
   bid,
+  getCard,
 }
 
 

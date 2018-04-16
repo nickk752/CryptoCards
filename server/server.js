@@ -56,7 +56,7 @@ mongoose.connect(serverConfig.mongoURL, (error) => {
   }
 
   // feed some dummy data in DB.
-  dummyData();
+  //dummyData();
 });
 
 // Apply body Parser and server public assets and routes

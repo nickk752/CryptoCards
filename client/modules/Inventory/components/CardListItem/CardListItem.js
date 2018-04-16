@@ -19,11 +19,6 @@ function CardListItem(props) {
       key={props.card.slug}
       title={<Link to={`/inventory/card/${props.card.cuid}`}>{props.card.name}</Link>}
       subtitle={props.card.type}
-      actionIcon={
-        <button
-          onClick={() => {props.transferCard(props.card.cuid, 'newGuy');}}>
-          transfer
-        </button>}
     //find way to display attack and 
     >
       <img src={wang} />
