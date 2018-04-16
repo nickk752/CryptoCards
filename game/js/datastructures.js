@@ -9,7 +9,8 @@
 function Opponent(deckCards){
 	this.base = Participant;
 	this.base(deckCards);
-	//override the draw methods for all the pile subclasses? or tell them to draw in different spots.
+	//override the draw (render) methods for all the pile subclasses? or tell them to 
+	//render  in different spots.
 	//maybe include checking the type of the object we are in the functions?
 }
 Opponent.prototype = new Participant;

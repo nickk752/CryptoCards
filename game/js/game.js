@@ -16,12 +16,15 @@ Game.init = function(){
 
 //called after preload and before create()
 Game.preload = function() {
+	//load in the tilemap and spritesheet it
     game.load.tilemap('map', 'assets/map/desktop_board_map4.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.spritesheet('tileset', 'assets/map/gameboard_tilesheet.png',32,32);
-    game.load.image('sprite','assets/sprites/sprite.png');
+	game.load.spritesheet('tileset', 'assets/map/gameboard_tilesheet.png',32,32);
+	//load in all the other assets
 	game.load.image('blank_card_sprite','assets/sprites/blank_card_sprite.png');
 	game.load.image('creaturezone_sprite','assets/sprites/creaturezone_sprite.png');
 	game.load.image('buildingzone_sprite','assets/sprites/buildingzone_sprite.png');
+	game.load.image('endturnbutton_sprite','assets/sprites/endturnbutton_sprite.png');
+	game.load.image('yourturnbanner_sprite', 'assets/sprites/yourturn_sprite.png');
 };
 
 // called after preload, right before we enter the main loop
@@ -47,22 +50,43 @@ Game.create = function(){
 	// Allows clicking on the map ; it's enough to do it on the last layer
     layer.inputEnabled = true; 
     layer.events.onInputUp.add(Game.getCoordinates, this);
+	//create the zone and ref sprites
 	createZoneSprites();
+
+	//create the end turn button
+	Game.endTurnButton = game.add.button(25*32, 13 * 32, 'endturnbutton_sprite', Game.onEndTurnPressed, this);
+
+
 	//join a lobby with our name, gameID, and deck
     Client.joinLobby();
+};
+
+Game.startNextTurn = function(){
+	//here we should do all the start of turn checks and effects
+	//start by flashing up the "its your turn" banner
+	
+	//and re-enabling interactivity 
+
+};
+
+Game.onEndTurnPressed = function(){
+	//here we should do all the end of turn checks and effects
+
+	//and then disable interaction until it's our turn again
+
+	//tell the server we done.
+	Client.sendEndTurn();
 };
 
 // called by Client when the server tells us we've found a match
 // passes us a name to call our opponent, and a deck to use as 
 // their card list
 Game.addOpponent = function(name, deck){
-	
-	Game.setupGame();
-};
-
-Game.setupGame = function(){
-		setUpDeck();
-		drawCards(8);
+	//in here we need to set up our opponents state, generate their card list
+	//and also perform other start game actions, or cause them to be performed
+	//stuff like making bases and the two resource buildings, etc.
+	setUpDeck();
+	drawCards(8);
 };
 
 //creates invisible sprites that represent any zones we might have to check
