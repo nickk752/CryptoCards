@@ -1,10 +1,19 @@
 /* eslint no-undef: "off" */
-var CryptoCards = artifacts.require('../contracts/CryptoCardsCore.sol');
+const CryptoCards = artifacts.require('CryptoCardsCore');
+const SaleClockAuction = artifacts.require('SaleClockAuction');
 
-contract('CryptoCards', function (accounts) {
-  var helpfulFunctions = require('./utils/CryptoCardsUtils')(CryptoCards, accounts);
-  var hfn = Object.keys(helpfulFunctions);
-  for (var i = 0; i < hfn.length; i++) {
+// Web3 stuff
+const Web3 = require('web3');
+const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
+
+//BigNumber stuff
+const BigNumber = require('bignumber.js');
+
+contract('CryptoCards', () => {
+  const helpfulFunctions = require('./utils/CryptoCardsUtils')(CryptoCards, SaleClockAuction);
+  const hfn = Object.keys(helpfulFunctions);
+  for (let i = 0; i < hfn.length; i++) {
     global[hfn[i]] = helpfulFunctions[hfn[i]];
   }
 
@@ -25,12 +34,22 @@ contract('CryptoCards', function (accounts) {
    * ---------------------------------------------------
    */
 
+  
   checksTotalSupply(0);
 
+  //price used for testing
+  var price = new BigNumber(5);
 
-  /*for (x = 0; x < 10; x++) {
+  for (x = 0; x < 1; x++) {
     checkCardCreation(1000 + x);
   }
 
-  checksTotalSupply(10);*/
+  for (x = 0; x < 1; x++) {
+    checkCardBid(x, '5');
+  }
+
+  checkWithdrawal('5');
+
+  //checksTotalSupply(10);
+
 });

@@ -68,7 +68,7 @@ module.exports = function (CryptoCards, SaleClockAuction) {
         var prior = await web3.eth.getBalance(instance.address);
         console.log('priorBal:');
         console.log(prior);
-        instance.withdrawBalance('0x627306090abaB3A6e1400e9345bC60c78a8BEf57', web3.utils.toWei(withdrawAmount), {
+        instance.withdrawBalance('0x627306090abaB3A6e1400e9345bC60c78a8BEf57', withdrawAmount, {
           from: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57'
         })
           .then(function (result) {
