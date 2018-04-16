@@ -1,7 +1,14 @@
 import React, { Component, PropTypes } from 'react';
 const createGen0Auctions = require('../../../../util/blockchainApiCaller').createGen0Auction;
 const getAuction = require('../../../../util/blockchainApiCaller').getAuction;
+
+const apiFunctions = require('../../../../util/blockchainApiCaller');
 import { fetchAuctions, addAuctionRequest } from '../../MarketplaceActions';
+
+// testing Web.3.watch
+const Web3 = require('Web3');
+export const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
 
 export class CreateAuctionWidget extends Component {
 
@@ -10,6 +17,7 @@ export class CreateAuctionWidget extends Component {
     this.state = { skills: 'aklsdfjl' };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+
   }
 
   handleChange(event) {
@@ -20,18 +28,20 @@ export class CreateAuctionWidget extends Component {
   handleSubmit(event) {
     console.log("EVENT SUBMITTED");
     console.log(this.state.skills);
-    createGen0Auctions(this.state.skills).then(() => {
-      getAuction(0).then((data) => {
-        alert(data);
-      });
-    });
+    
+    /* createGen0Auctions(this.state.skills).then((result) => {
+      var tokenId = result.events.Spawn.returnValues.tokenId;
+      console.log('TOKEN ID CREATED: ' + tokenId);
+      getAuction(tokenId).then((data) => {
+        this.props.handleAddAuction(data.seller, tokenId, data.startingPrice, data.endingPrice, data.duration);
+      });  
+    }); */
+
     console.log("return successful");
-    this.props.handleAddAuction('CryptoCards Store', 'Gen0 Card', '4', '0', '100');
     event.preventDefault();
   }
 
   render() {
-    //createGen0Auctions();
     return (
       <div>
         {this.props.showCreateAuction ?

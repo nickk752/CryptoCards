@@ -9,6 +9,7 @@ const auctionSchema = new Schema({
   card: { type: 'String', required: true },
   slug: { type: 'String', required: true },
   cuid: { type: 'String', required: true },
+  tokenId: { type: 'String', required: true },
   dateAdded: { type: 'Date', default: Date.now, required: true },
 });
 

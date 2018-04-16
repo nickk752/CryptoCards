@@ -39,6 +39,7 @@ export function addAuction(req, res) {
   newAuction.duration = sanitizeHtml(newAuction.duration);
   newAuction.slug = slug(newAuction.card.toLowerCase(), { lowercase: true });
   newAuction.cuid = cuid();
+  newAuction.tokenId = sanitizeHtml(newAuction.tokenId);
   newAuction.save((err, saved) => {
     if (err) {
       console.log("ERROR")

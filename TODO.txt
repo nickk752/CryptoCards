@@ -1,2 +1,3 @@
-- test card contoller and actions for deck2card
-- figure out mongoose update
+- get tokenID of last created auction
+- create cards when gen0auction made
+- get info from cards

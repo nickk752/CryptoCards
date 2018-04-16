@@ -9,9 +9,13 @@ const bid = require('../../../../util/blockchainApiCaller').bid;
 
 // Import Actions
 import { fetchAuctions, deleteAuctionRequest, addAuctionRequest, toggleCreateAuction } from '../../MarketplaceActions';
+import { addCardRequest } from '../../../Inventory/InventoryActions' ;
 // Import Selectors
 import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 
+// Web3 
+const createGen0Auctions = require('../../../../util/blockchainApiCaller').createGen0Auction;
+const getAuction = require('../../../../util/blockchainApiCaller').getAuction;
 
 class MarketplacePage extends Component {
 
@@ -36,24 +40,46 @@ class MarketplacePage extends Component {
   }
 
   handleClick = cuid => {
-    bid();
+    //bid();
     this.props.dispatch(deleteAuctionRequest(cuid));
     // event.preventDefault();
   }
 
-  handleAddAuction = (seller, card, startPrice, endPrice, duration) => {
+  handleAddAuction = (seller, card, startPrice, endPrice, duration, tokenId) => {
     this.props.dispatch(addAuctionRequest({
       seller,
       card,
       startPrice,
       endPrice,
       duration,
+      tokenId,
     }));
   };
+
+  handleAddCard = () => {
+
+  }
+
+  handleAddGen0Auction = () => {
+   /*  creating Gen 0 auctions
+    this could be moved somewhere else */
+    for(var i = 0; i < 10; i++){
+      createGen0Auctions(i).then((result) => {
+        var tokenId = result.events.Spawn.returnValues.tokenId;
+        console.log('TOKEN ID CREATED: ' + tokenId);
+        getAuction(tokenId).then((data) => {
+          // figure out name decoding(eric)
+          this.handleAddAuction(data.seller, tokenId, data.startingPrice, data.endingPrice, data.duration, tokenId);
+        });  
+      });
+    }
+  }
 
   render() {
     return (
       <div>
+        <button onClick={this.handleAddGen0Auction}> create gen0 auctions</button>
+        <br/>
         <button onClick={this.handleToggleCreateAuction}> create auction </button>
         <CreateAuctionWidget
           showCreateAuction={this.props.showCreateAuction}

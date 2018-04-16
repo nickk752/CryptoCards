@@ -25,7 +25,7 @@ export function addAuctionRequest(auction) {
         startPrice: auction.startPrice,
         endPrice: auction.endPrice,
         duration: auction.duration,
-        cuid: auction.cuid,
+        tokenId: auction.tokenId,
       },
     }).then(res => dispatch(addAuction(res.auction)));
   };
