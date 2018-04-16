@@ -32,6 +32,7 @@ Client.socket.on('matchFound', function(data){
     //when our opponent ends their turn
     Client.socket.on('itsYourTurn', function(){
         //tell the game to start a turn
+        console.log("server said it's our turn");
         Game.startNextTurn()
     });
 

@@ -11,7 +11,9 @@ var Game = {};
 
 //called first, before preload
 Game.init = function(){
-    game.stage.disableVisibilityChange = true;
+	game.stage.disableVisibilityChange = true;
+	game.scale.pageAlignHorizontally = true;
+	game.scale.pageAlignVertically = true;
 };
 
 //called after preload and before create()
@@ -31,9 +33,12 @@ Game.preload = function() {
 // since we all callbacks now, it's here where we set up most
 // of our logic, create game state and whatnot
 Game.create = function(){
-	Game.deck = {};
-	Game.deck2 = {};
-	Game.hand = {count: 0};
+
+	//Game.deck = {};
+	//Game.deck2 = {};
+	//Game.hand = {count: 0};
+
+	//Game.onEndTurnPressed = onEndTurnPressed;
 
 	//we need to do this for dragging (i think?) - tim
 	game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -48,24 +53,30 @@ Game.create = function(){
         layer = map.createLayer(i);
 	}
 	// Allows clicking on the map ; it's enough to do it on the last layer
-    layer.inputEnabled = true; 
-    layer.events.onInputUp.add(Game.getCoordinates, this);
+	layer.inputEnabled = true; 
 	//create the zone and ref sprites
-	createZoneSprites();
+	//createZoneSprites();
 
 	//create the end turn button
-	Game.endTurnButton = game.add.button(25*32, 13 * 32, 'endturnbutton_sprite', Game.onEndTurnPressed, this);
+	Game.endTurnButton = game.add.button(25*32 , 13 * 32, 'endturnbutton_sprite', Game.onEndTurnPressed);
 
+	//Load our deck from JSON
+	Game.cardList = [].concat(DeckLoader.loadDeck());
+	console.log("local First Cards name: " + Game.cardList[0].name);
 
 	//join a lobby with our name, gameID, and deck
-    Client.joinLobby();
+	name = randomInt(1,1000);
+    Client.joinLobby(name, "12", Game.cardList);
 };
 
 Game.startNextTurn = function(){
+	console.log("in Game.startNextTurn");
 	//here we should do all the start of turn checks and effects
 	//start by flashing up the "its your turn" banner
-	
+	var yourTurnBanner = game.add.sprite(9 * 32, 6 * 32, 'yourturnbanner_sprite');
+	game.add.tween(yourTurnBanner).to({alpha: 0}, 2000, null, true, 500);
 	//and re-enabling interactivity 
+
 
 };
 
@@ -74,7 +85,7 @@ Game.onEndTurnPressed = function(){
 
 	//and then disable interaction until it's our turn again
 
-	//tell the server we done.
+	//tell the server we're done.
 	Client.sendEndTurn();
 };
 
@@ -85,8 +96,13 @@ Game.addOpponent = function(name, deck){
 	//in here we need to set up our opponents state, generate their card list
 	//and also perform other start game actions, or cause them to be performed
 	//stuff like making bases and the two resource buildings, etc.
-	setUpDeck();
-	drawCards(8);
+	Game.opponent = new Opponent(name, deck);
+	//console.log("Opponents name: " + Game.opponent.name);
+	//console.log("Opponents 4th card name: " + deck[3].name);
+
+
+	//setUpDeck();
+	//drawCards(8);
 };
 
 //creates invisible sprites that represent any zones we might have to check
@@ -367,4 +383,8 @@ Game.placeCard = function(dindex, homeName) {
 
 	Game.deck2[deckIndex].sprite.dindex = deckIndex;
 	Game.deck2[deckIndex].sprite.moveTo(zone, deckIndex);
+}
+
+function randomInt (low, high) {
+    return Math.floor(Math.random() * (high - low) + low);
 }

@@ -6,7 +6,8 @@
 
 
 //the Opponent (the person playing against "us")
-function Opponent(deckCards){
+function Opponent(name, deckCards){
+	this.name = name;
 	this.base = Participant;
 	this.base(deckCards);
 	//override the draw (render) methods for all the pile subclasses? or tell them to 
@@ -183,7 +184,7 @@ function addCard(card) {
 
 // Card constructor, takes an optional CryptoCardsNumber (ccnum), 
 // or all the necessary info to make a card.
-function Card(ccnum, name, desc, stats, cost) {
+function Card(ccnum, name, desc, stats, cost, effects) {
 	if (ccnum){
 		// fetch from DB?
 	} else {
@@ -192,11 +193,14 @@ function Card(ccnum, name, desc, stats, cost) {
 		this.stats = stats;
 		this.cost = cost;
 	}
+	//expecting effects to be an array of strings.
+	this.effects = effects;
 	this.print = printCard;
 	this.render = renderCard;
 	this.enable = enableCard;
 	this.setCallbacks = setCardCallbacks;
 }
+
 
 function Cost(lcost, mcost, rcost){
 	this.lcost = lcost;

@@ -40,22 +40,30 @@ io.on('connection',function(socket){
             deck: data.deck,
             isTheirTurn: false,
         };
+        console.log("set player name to: " + socket.player.name);
+        console.log("set player gameId to: " + socket.player.gameId);
 
         //going to be their opponents socket object
         //but when they join we just set it to be {}
-        socket.opponent = {};
 
         //try to find their opponent (if they've already connected)
         Object.keys(io.sockets.connected).forEach(function(socketID){
             var player = io.sockets.connected[socketID].player;
-            //if they have the same GameID but a diff name, they're opponents
-            if (player.gameId == socket.player.gameId && player.name != socket.player.name){
-                socket.opponent = io.sockets.connected[socketID];
+            if (player){
+                //if they have the same GameID but a diff name, they're opponents
+                if (player.gameId == socket.player.gameId && player.name != socket.player.name){
+                    console.log("player gameID: " + player.gameId);
+                    console.log("socket.player.name: " + socket.player.name);
+                    socket.opponent = io.sockets.connected[socketID];
+                    //gotta also set us as their opponent 
+                    io.sockets.connected[socketID].opponent = socket;
+                }
             }
         });
         
         //if we've found a match (both players with the same gameID joined)
-        if (socket.opponent != {}) {
+        if (socket.opponent) {
+            console.log("found a match?");
             //send them down their opponents deck and ID and such
             socket.emit("matchFound", socket.opponent.player);
             socket.opponent.emit("matchFound", socket.player);
@@ -70,6 +78,7 @@ io.on('connection',function(socket){
 
     //when a player ends their turn 
     socket.on('endedMyTurn', function(data){
+        console.log("ended turn");
         socket.player.isTheirTurn = false;
         socket.opponent.player.isTheirTurn = true;
         socket.opponent.emit("itsYourTurn");
