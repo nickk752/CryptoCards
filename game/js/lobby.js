@@ -1,5 +1,7 @@
 /**
- * 
+ * Lobby object, implements Phaser.State.
+ * Collects the player's name and GameID, as well as possibley decklist? 
+ * then starts the Game state.
  */
 
 var Lobby = {};
