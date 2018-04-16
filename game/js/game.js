@@ -66,7 +66,14 @@ Game.create = function(){
 
 	//join a lobby with our name, gameID, and deck
 	name = randomInt(1,1000);
-    Client.joinLobby(name, "12", Game.cardList);
+    //Client.joinLobby(name, "12", Game.cardList);
+};
+
+//gets called by Client when Lobby tries to join a game (when we know our name and deck and gameId)
+Game.createPlayer = function(name, deck){
+	console.log("createplayer");
+	Game.player = new Player(name, deck);
+	console.log(Game.player);
 };
 
 Game.startNextTurn = function(){

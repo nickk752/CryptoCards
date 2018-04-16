@@ -15,7 +15,9 @@ Client.socket = io.connect();
 //call this to join the lobby, and either wait or get matched with an opponent
 //who has the same GameId. NAMES MUST BE UNIQUE!
 Client.joinLobby = function(name, gameId, deck){
-    //send a join with what that expects
+    //tell the game to set up our player info.
+    Game.createPlayer(name, deck);
+    //and send a join with what that expects
     Client.socket.emit('join', {name: name, gameId: gameId, deck: deck});
 };
 
@@ -26,6 +28,7 @@ Client.sendEndTurn = function(){
 //when both people with a certain gameId have joined the server
 Client.socket.on('matchFound', function(data){
 
+    Lobby.startGame();
     //tell the Game we've got our opponent, pass in their deck
     Game.addOpponent(data.name, data.deck);
 

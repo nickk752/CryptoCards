@@ -7,9 +7,8 @@
 
 //the Opponent (the person playing against "us")
 function Opponent(name, deckCards){
-	this.name = name;
 	this.base = Participant;
-	this.base(deckCards);
+	this.base(name, deckCards);
 	//override the draw (render) methods for all the pile subclasses? or tell them to 
 	//render  in different spots.
 	//maybe include checking the type of the object we are in the functions?
@@ -17,9 +16,9 @@ function Opponent(name, deckCards){
 Opponent.prototype = new Participant;
 
 //the Player (the person playing on "our" side of the table)
-function Player(deckCards){
+function Player(name, deckCards){
 	this.base = Participant;
-	this.base(deckCards);
+	this.base(name, deckCards);
 }
 Player.prototype = new Participant;
 
@@ -33,7 +32,8 @@ Player.prototype = new Participant;
 // for example. A player would get passed a collection of cardslots that
 // correspond to where the player's hand goes)
 
-function Participant(deckCards, refZones){
+function Participant(name, deckCards){
+	this.name = name;
 	this.currCard = null;
 	this.cardsInHand = 0;
 
