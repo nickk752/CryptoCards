@@ -22,7 +22,6 @@ Game.preload = function() {
 	game.load.image('blank_card_sprite','assets/sprites/blank_card_sprite.png');
 	game.load.image('creaturezone_sprite','assets/sprites/creaturezone_sprite.png');
 	game.load.image('buildingzone_sprite','assets/sprites/buildingzone_sprite.png');
-
 };
 
 // called after preload, right before we enter the main loop
@@ -33,7 +32,7 @@ Game.create = function(){
 	Game.deck2 = {};
 	Game.hand = {count: 0};
 
-	//we need to do this dragging (i think?) - tim
+	//we need to do this for dragging (i think?) - tim
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
 	//adding our map to the background
