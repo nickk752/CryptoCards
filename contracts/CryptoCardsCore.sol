@@ -727,7 +727,7 @@ contract CardOwnership is CryptoCardsBase, ERC721 {
     // @param _claimant the address we are validating against
     // @param _tokenId card id, only valid when > 0
     function _owns(address _claimant, uint256 _tokenId) internal view returns (bool) {
-        return cardIndexToApproved[_tokenId] == _claimant;
+        return cardIndexToOwner[_tokenId] == _claimant;
     }
 
     // @dev Checks if a given address currently has transferApproval for a pareticular Card.
@@ -950,7 +950,8 @@ contract CardAuction is CardOwnership {
 contract CardMinting is CardAuction {
 
     // Constants for gen0 auctions.
-    uint256 public constant GEN0_STARTING_PRICE = 10 finney;
+    // DANGER CHANGED THESE CONSTANTS
+    uint256 public constant GEN0_STARTING_PRICE = 1 wei;
     uint256 public constant GEN0_AUCTION_DURATION = 1 days;
 
     // Counts the number of cards the contract owner has created.
@@ -964,7 +965,7 @@ contract CardMinting is CardAuction {
 
         saleAuction.createAuction(
             cardId,
-            _computeNextGen0Price(),
+            5 wei,
             0,
             GEN0_AUCTION_DURATION,
             address(this)
@@ -998,7 +999,7 @@ contract CryptoCardsCore is CardMinting {
     address public newContractAddress;
 
     // @notice Creates the main CryptoKitties smart contract instance.
-    function CryptoCardsCore() public {
+    function CryptoCardsCore() public payable {
         // Starts paused.
         paused = true;
 
