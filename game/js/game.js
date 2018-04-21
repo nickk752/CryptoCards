@@ -2,7 +2,7 @@
  * The Main Game Object, extends Phaser.State
  * Uses structures from datastructures.js to represent 
  * the game state, and uses the Client obj to communicate
- * back and forth with the server. 
+ * back and forth with the server.  
  * 
  * IN THIS FILE THE PLAYER (you) IS ALWAYS PLAYER 1 (if it comes up)
  */
@@ -38,8 +38,6 @@ Game.create = function(){
 	//Game.deck2 = {};
 	//Game.hand = {count: 0};
 
-	//Game.onEndTurnPressed = onEndTurnPressed;
-
 	//we need to do this for dragging (i think?) - tim
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -55,7 +53,9 @@ Game.create = function(){
 	// Allows clicking on the map ; it's enough to do it on the last layer
 	layer.inputEnabled = true; 
 	//create the zone and ref sprites
-	//createZoneSprites();
+	//var refZones = createZoneSprites();
+	//Game.player.associateRefZones(refZones.playerZones);
+	//Game.opponent.associateRefZones(refZones.opponentZones);
 
 	//create the end turn button
 	Game.endTurnButton = game.add.button(25*32 , 13 * 32, 'endturnbutton_sprite', Game.onEndTurnPressed);
@@ -63,10 +63,6 @@ Game.create = function(){
 	//Load our deck from JSON
 	Game.cardList = [].concat(DeckLoader.loadDeck());
 	console.log("local First Cards name: " + Game.cardList[0].name);
-
-	//join a lobby with our name, gameID, and deck
-	name = randomInt(1,1000);
-    //Client.joinLobby(name, "12", Game.cardList);
 };
 
 //gets called by Client when Lobby tries to join a game (when we know our name and deck and gameId)
@@ -106,8 +102,6 @@ Game.addOpponent = function(name, deck){
 	Game.opponent = new Opponent(name, deck);
 	//console.log("Opponents name: " + Game.opponent.name);
 	//console.log("Opponents 4th card name: " + deck[3].name);
-
-
 	//setUpDeck();
 	//drawCards(8);
 };
@@ -117,7 +111,50 @@ Game.addOpponent = function(name, deck){
 //render themselves. This should also be the point of seperation for mobile,
 //so we should check somehow to see if we're on mobile and then create the 
 //zones in different places?
-createZoneSprites = function(){
+RefZones = function(){
+	//have to look up how to check which platform we're on.
+	//if (desktop){
+	//	doZonesForDesktop
+	//} else {
+	//	doZonesForAndroid
+	//}
+	this.opponentZones = {
+		graveyard: null,
+		hand: null,
+		deck: null,
+		leftLane: [],
+		rightLane: [],
+		buildings: [],
+	};
+
+	this.playerZones = {
+		graveyard: [],
+		hand: [],
+		deck: [],
+		leftLane: [],
+		rightLane: [],
+		buildings: [],
+	}
+
+	//assign the singletons (deck, graveyard)
+	this.playerZones.deck.push(game.add.sprite(25*32, 18*32, 'creaturezone_sprite'));
+	this.playerZones.graveyard.push(game.add.sprite(25*32, 14*32, 'creaturezone_sprite'));
+
+	for (var i = 0; i < 4; i++){
+		//assign the players lanes
+		this.playerZones.leftLane.push(game.add.sprite(0+(32*3*i), 320, 'creaturezone_sprite'));
+		this.playerZones.rightLane.push(game.add.sprite(416+(32*3*i), 320, 'creaturezone_sprite'));
+		//assign the opponents lanes
+		this.opponentZones.leftLane.push(game.add.sprite(416+(32*3*i), 128, 'creaturezone_sprite'));
+		this.opponentZones.rightLane.push(game.add.sprite(0+(32*3*i), 128, 'creaturezone_sprite'));
+	}
+
+	for (var j = 0; j < 5; j++){
+		//assign the building zones
+		this.playerZones.buildings.push(game.add.sprite(0+(32*5*j), 14*32, 'buildingzone_sprite'));
+		this.opponentZones.buildings.push(game.add.sprite(0+(32*5*j), 0, 'buildingzone_sprite'));
+	}
+		/*
 		Game.zoneSprites = {
 			//creatures
 			crt: { p1: { lane1: {}, lane2: {}}, p2: {lane1: {}, lane2: {}}},
@@ -143,7 +180,8 @@ createZoneSprites = function(){
 
 		Game.zoneSprites.deck = game.add.sprite(25*32, 18*32, 'creaturezone_sprite');
 		Game.zoneSprites.graveyard = game.add.sprite(25*32, 14*32, 'creaturezone_sprite');
-}
+		*/
+};
 
 setUpDeck = function(){
 	Game.deck = {curr: 0}
@@ -172,7 +210,7 @@ setUpDeck = function(){
 			}
 		}
 	}
-}
+};
 
 drawCards = function(numCards){
 	for (var i = 0; i < numCards; i++){

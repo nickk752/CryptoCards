@@ -6,6 +6,12 @@
 
 
 //the Opponent (the person playing against "us")
+//The idea behind updating the opponent state is this:
+	// the opponent has an array of cards, since we don't care about their in-depth 
+	// state, and we trust them not to lie about the feasibility of their actions
+	// we'll track card state in that array. They say cardlist[13] is now this new 
+	// card object? perf, we'll set it. Each card in the list will also have a 
+	// location property, and they can update that as well.
 function Opponent(name, deckCards){
 	this.base = Participant;
 	this.base(name, deckCards);
@@ -46,10 +52,19 @@ function Participant(name, deckCards){
 	this.graveyard = new Graveyard();
 
 	this.drawCard = drawParticipantCard;
-	//the Participant's drawcard method
 	this.updateSelf = updateSelf;
+	this.associateRefZones = associateRefZones;
 
 }
+function associateRefZones(refZones) {
+	this.deck.associateRefZones(refZones.deck);
+	this.hand.associateRefZones(refZones.hand);
+	this.graveyard.associateRefZones(refZones.graveyard);
+	this.leftLane.associateRefZones(refZones.leftLane);
+	this.rightLane.associateRefZones(refZones.rightLane);
+	this.buildings.associateRefZones(refZones.buildings);
+}
+
 function drawParticipantCard() {
 	var card = this.deck.drawCard();
 	this.hand.addCard(card);
@@ -57,7 +72,7 @@ function drawParticipantCard() {
 //Participant's update method
 function updateSelf(){
 	this.cardsInHand = this.hand.cards.length;
-	console.log("player cards in hand: " + this.hand.cards.length);
+	//console.log("player cards in hand: " + this.hand.cards.length);
 	this.cardsInDeck = this.deck.cards.length;
 	//this.baseHealth = this.buildings.cards[2].stats.def;
 }
@@ -240,7 +255,8 @@ function renderCard(point){
 	this.sprite.addChild(game.add.text(x+74, y+1, this.cost.rcost, font));
 
 }
-
+// for setting card callbacks dynamically, as they may require references to 
+// direct game objects.
 function setCardCallbacks(onDragStop){
 	//drag and dropping
 	this.sprite.input.enableDrag();

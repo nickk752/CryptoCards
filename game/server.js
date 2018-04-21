@@ -33,7 +33,7 @@ io.on('connection',function(socket){
         //set up their representation in the server as a "player" object
         //not to be confused with Player from datastructures, this is basically
         //just some metadata we stick onto a socket (we can put whatever we 
-        // want to on the socket)
+        //want to on the socket)
         socket.player = {
             name: data.name,
             gameId: data.gameId,
@@ -83,6 +83,11 @@ io.on('connection',function(socket){
         socket.opponent.player.isTheirTurn = true;
         socket.opponent.emit("itsYourTurn");
         socket.emit("itsNotYourTurn");
+    });
+
+    socket.on('updateCard', function(data){
+        console.log("updated card");
+        socket.opponent.emit('updateCard', data);
     });
 
     //when a player knows they won

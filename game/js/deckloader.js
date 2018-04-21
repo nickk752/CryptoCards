@@ -30,7 +30,7 @@ DeckLoader.loadDeck = function(){
         }
     });
 
-    console.log("Deckloader says deck is: " + deck);
+    //console.log("Deckloader says deck is: " + deck);
     return deck;
 };
 
