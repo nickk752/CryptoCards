@@ -158,11 +158,7 @@
       "wrap-regex": 0,
       // Legacy
       "max-depth": 0,
-      "max-len": [2, 120, {
-        "ignoreStrings": true,
-        "ignoreTemplateLiterals": true,
-        "ignoreComments": true,
-      }],
+      "max-len": [2, 120, 4],
       "max-params": 0,
       "max-statements": 0,
       "no-plusplus": 0,
