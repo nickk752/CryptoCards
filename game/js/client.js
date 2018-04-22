@@ -17,6 +17,7 @@ Client.socket = io.connect();
 Client.joinLobby = function(name, gameId, deck){
     
     //tell the game to set up our player info.
+    console.log("about to create player with deck: " + deck);
     Game.createPlayer(name, deck);
     //and send a join with what that expects
     Client.socket.emit('join', {name: name, gameId: gameId, deck: deck});

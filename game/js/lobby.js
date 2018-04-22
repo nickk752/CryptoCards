@@ -1,6 +1,6 @@
 /**
  * Lobby object, implements Phaser.State.
- * Collects the player's name and GameID, as well as possibley decklist? 
+ * Collects the player's name and GameID, as well as possibly decklist? 
  * then starts the Game state.
  */
 
@@ -28,12 +28,12 @@ Lobby.onJoinGamePressed = function(){
     //get our name
     var nameEntry = document.getElementById('playerNameEntry');
     var name = nameEntry.value;
-    //name = randomInt(1,1000);
+    name = randomInt(1,1000);
 
     //get our gameId
     var gameIdEntry = document.getElementById('gameIDEntry');
     var gameId = gameIdEntry.value;
-    //gameId = "12"
+    gameId = "12"
 
     //they have to enter a name to continue
     if (name == "" || gameId == ""){
@@ -46,7 +46,7 @@ Lobby.onJoinGamePressed = function(){
         }
 
         //try to join the match
-        Client.joinLobby(name, gameId, Game.cardList);
+        Client.joinLobby(name, gameId, deckList);
 
         //put up a message if they're still around
         var style = { font: "bold 32px Arial", fill: "#2f2" };

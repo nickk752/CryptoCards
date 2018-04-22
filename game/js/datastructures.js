@@ -54,19 +54,27 @@ function Participant(name, deckCards){
 	this.drawCard = drawParticipantCard;
 	this.updateSelf = updateSelf;
 	this.associateRefZones = associateRefZones;
+	this.render = participantRender;
 
+};
+
+function participantRender(){
+	this.hand.render();
+	this.deck.render();
+	this.graveyard.render();
 }
 function associateRefZones(refZones) {
 	this.deck.associateRefZones(refZones.deck);
 	this.hand.associateRefZones(refZones.hand);
 	this.graveyard.associateRefZones(refZones.graveyard);
-	this.leftLane.associateRefZones(refZones.leftLane);
-	this.rightLane.associateRefZones(refZones.rightLane);
-	this.buildings.associateRefZones(refZones.buildings);
+	//this.leftLane.associateRefZones(refZones.leftLane);
+	//this.rightLane.associateRefZones(refZones.rightLane);
+	//this.buildings.associateRefZones(refZones.buildings);
 }
 
 function drawParticipantCard() {
-	var card = this.deck.drawCard();
+	let card = this.deck.drawCard();
+	console.log("in drawCard, cardname is: " + card.name);
 	this.hand.addCard(card);
 };
 //Participant's update method
@@ -99,22 +107,92 @@ Lane.prototype = new Pile;
 function Graveyard(cards){
 	this.base = Pile;
 	this.base(40, cards);
+	this.targetZone = null;
+	this.render = graveRender;
+	this.associateRefZones = graveAssociateRefZones;
 }
 Graveyard.prototype = new Pile;
+
+function graveAssociateRefZones(refZones){
+	this.targetZone = refZones[0];
+};
+
+function graveRender(){
+	let x = this.targetZone.x;
+	let y = this.targetZone.y;
+
+	if (this.cards.length > 0){
+		let card = cards[cards.length - 1];
+		card.render({x:x, y:y});
+	} else {
+		// TODO display empty grave?
+	}
+};
 
 // Hand constructor
 function Hand(cards){
 	this.base = Pile;
 	this.base(8, cards)
-}
+	this.targetZones = null;
+	this.associateRefZones = handAssociateRefZones;
+	this.render = handRender;
+	this.enable = handEnable;
+};
 Hand.prototype = new Pile;
+
+// the render function for the Hand
+function handRender(){	
+	//check to see if we're a player or Opponent 
+	if (this.targetZones){
+		let i = 0;
+		console.log("handRender, length is: " + this.targetZones.length);
+		console.log("handRender, [0].x = " + this.targetZones[1].x);
+		for (let i = 0; i < this.cards.length; i++){
+			this.cards[i].render({x: this.targetZones[i].x, y: this.targetZones[i].y});
+		}
+	}
+}
+
+function handAssociateRefZones(refZones){
+	console.log("hand associating: refzones length: " + refZones.length);
+	this.targetZones = refZones;
+};
+
+function handEnable(bool){
+	for (let i = 0; i < this.cards.length; i++){
+		if (bool){
+			this.cards[i].enable();
+		} else {
+			this.cards[i].disable();
+		}
+	}
+}
 
 // Deck constructor
 function Deck(cards){
 	this.base = Pile;
 	this.base(25, cards);
-}
+	this.targetZone = null;
+	this.render = deckRender;
+	this.associateRefZones = deckAssociateRefZones;
+};
 Deck.prototype = new Pile;
+
+function deckAssociateRefZones(refZones){
+	this.targetZone = refZones[0];
+};
+
+function deckRender(){
+	let x = this.targetZone.x;
+	let y = this.targetZone.y;
+
+		if (this.cards.length >= 0){
+			// TODO show cardback instead of blank.
+			this.sprite = game.add.sprite(x,y,'blank_card_sprite');
+		} else {
+			// TODO show empty deck sprite
+		}
+}
 
 // ----PILE----PILE----PILE----PILE----PILE----PILE----PILE----
 // everything below this is Pile stuff
@@ -175,12 +253,14 @@ function addCardToBottom(card) {
 
 // draws from the top (end) of the array, returns the card.
 function drawPileCard() {
-	var card = this.cards.pop();
+	let card = this.cards.pop();
+	console.log("in drawPileCard, card is: " + card);
 	return card;
 }
 
 // adds a card to the top of the pile, returns num cards in pile
 function addCard(card) {
+	console.log("in addCard, card is: " + card);
 	if (!card) {
 		console.log("addCard requires argument: card");
 		return;
@@ -213,6 +293,7 @@ function Card(ccnum, name, desc, stats, cost, effects) {
 	this.print = printCard;
 	this.render = renderCard;
 	this.enable = enableCard;
+	this.disable = disableCard;
 	this.setCallbacks = setCardCallbacks;
 }
 
@@ -247,12 +328,13 @@ function renderCard(point){
 	this.sprite = game.add.sprite(x,y,'blank_card_sprite');
 
 	//add all the text to it
-	this.sprite.addChild(game.add.text(x+11, y+63, this.name, font));
-	this.sprite.addChild(game.add.text(x+4, y+113, this.stats.atk, font14));
-	this.sprite.addChild(game.add.text(x+80, y+113, this.stats.def, font14));
-	this.sprite.addChild(game.add.text(x+7, y+1, this.cost.lcost, font));
-	this.sprite.addChild(game.add.text(x+37, y+1, this.cost.mcost, font));
-	this.sprite.addChild(game.add.text(x+74, y+1, this.cost.rcost, font));
+	//console.log("renderCard: cardname: " + this.name);
+	this.sprite.addChild(game.add.text(11, 63, this.name, font));
+	this.sprite.addChild(game.add.text(4, 113, this.stats.atk, font14));
+	this.sprite.addChild(game.add.text(80, 113, this.stats.def, font14));
+	this.sprite.addChild(game.add.text(7, 1, this.cost.lcost, font));
+	this.sprite.addChild(game.add.text(37, 1, this.cost.mcost, font));
+	this.sprite.addChild(game.add.text(74, 1, this.cost.rcost, font));
 
 }
 // for setting card callbacks dynamically, as they may require references to 
@@ -265,14 +347,16 @@ function setCardCallbacks(onDragStop){
 
 function enableCard(){
 	this.sprite.inputEnabled = true;
+	this.sprite.input.enableDrag();
 	//this.sprite.events.onDragStop.add(onDragStop, this);
 	//this.sprite.alignIn(Game.zoneSprites.deck, Phaser.CENTER, 0, 0);
 }
 
 function disableCard(){
 	this.sprite.inputEnabled = false;
+	this.sprite.input.disableDrag();
 }
-
+/*
 //testing:
 var i = 0;
 var cards = [];
@@ -292,3 +376,4 @@ player.drawCard();
 player.updateSelf();
 console.log("should be 3: " + player.cardsInHand);
 player.hand.print();
+*/
