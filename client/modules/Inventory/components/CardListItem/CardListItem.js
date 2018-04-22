@@ -23,9 +23,6 @@ function CardListItem(props) {
     >
       <img src={wang} />
     </GridTile>
-          
-
-        
     );
 }
 

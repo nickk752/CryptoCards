@@ -1,3 +1,1 @@
-- get tokenID of last created auction
-- create cards when gen0auction made
-- get info from cards
+- keep work on skillz encoding and decoding

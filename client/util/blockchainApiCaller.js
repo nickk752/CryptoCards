@@ -19,43 +19,36 @@ const CoreAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
 const AuctionAddress = '0xf25186b5081ff5ce73482ad761db0eb0d25abfbf';
 const CryptoCardsCore = new web3.eth.Contract(coreAbi.abi, CoreAddress, {
   from: accounts[0],
-  gas: '4600000',
+  gas: '3000000',
 }); // contract(abi);
 const SaleClockAuction = new web3.eth.Contract(auctionAbi.abi, AuctionAddress, {
   from: accounts[0],
-  gas: '4600000',
+  gas: '3000000',
 });
 
-function createGen0Auction(skills) {
-  var retval = 'temp';
-  console.log(CryptoCardsCore);
-  //Event Listeners
-  /*  SaleClockAuction.once('AuctionCreated', function(error, event) {
-     console.log('AUCTION CREATED HANDLER');
-     console.log(error);
-   }); */
+function ownerOf(tokenId) {
+  return CryptoCardsCore.methods.ownerOf(tokenId).call().then((result) => {
+    console.log('OWNER OF TOKEN ID', tokenId);
+    console.log(result);
+    return result;
+  });
+}
 
-  // var auctionEvent = SaleClockAuction.AuctionCreated();
-
-  return CryptoCardsCore.methods.createGen0Auction(skills).send({ from: accounts[0] }).then((result) => {
+//Need to get it so that it sends from address of the loged in user
+function createGen0Auction(skills, name) {
+  return CryptoCardsCore.methods.createGen0Auction(skills, name).send({ from: accounts[0] }).then((result) => {
     console.log('CREATE GEN 0 RESULTS');
     console.log(result);
     return result;
-    /* return SaleClockAuction.methods.getAuction(0).call().then((result2) => {
-      console.log('results2');
-      console.log(result2);
-      return result2;
-    }); */
   });
+}
 
-  /* auctionEvent.watch(function(error, result) {
-    if(!error){
-      console.log('AUCTION CREATED HANDLER');
-      console.log(result);
-    } else {
-      console.log(error);
-    }
-  }); */
+function createSaleAuction(tokenId, startingPrice, endingPrice, duration){
+  return CryptoCardsCore.methods.createSaleAuction(tokenId, startingPrice, endingPrice, duration).send({ from: accounts[0] }).then((result) => {
+    console.log('CREATE SALE AUCTION RESULTS');
+    console.log(result);
+    return result;
+  });
 }
 
 function getAuction(tokenId) {
@@ -74,18 +67,30 @@ function getCard(tokenId) {
   });
 }
 
-function bid() {
-  AuctionContract.methods.bid(0).send({ from: accounts[0] }).then((result) => {
+function bid(tokenId, currentPrice) {
+  return SaleClockAuction.methods.bid(tokenId).send({ from: accounts[0], value: currentPrice }).then((result) => {
     console.log("bid result");
     console.log(result);
+    return result;
   });
+}
+
+function getCurrentPrice(tokenId) {
+  return SaleClockAuction.methods.getCurrentPrice(tokenId).call().then((results) => {
+    console.log("GET CURRENT PRICE: ");
+    console.log(results);
+    return results;
+  }) 
 }
 
 module.exports = {
   createGen0Auction,
+  createSaleAuction,
   getAuction,
   bid,
   getCard,
+  getCurrentPrice,
+  ownerOf,
 }
 
 
