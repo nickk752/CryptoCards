@@ -33,7 +33,7 @@ contract Ownable {
 
     // @dev The Ownable constructor sets the original 'onwer' of the contract to the sender
     //  account
-    function Ownable() {
+    function Ownable() public {
         owner = msg.sender;
     }
 
@@ -45,7 +45,7 @@ contract Ownable {
 
     // @dev Allows the current owner to transfer control of the contract to a newOwner.
     // @param newOwner The address to transfer ownership to.
-    function transferOwnership(address newOwner) onlyOwner {
+    function transferOwnership(address newOwner) public onlyOwner {
         if (newOwner != address(0)) {
             owner = newOwner;
         }
@@ -71,14 +71,14 @@ contract Pausable is Ownable {
     }
 
     // @dev called by the owner to puase. Triggers stopped state
-    function pause() onlyOwner whenNotPaused returns (bool) {
+    function pause() public onlyOwner whenNotPaused returns (bool) {
         paused = true;
         Pause();
         return true;
     }
 
     // @dev called by the owner to unpause, returns to normal state
-    function unpause() onlyOwner whenPaused returns (bool) {
+    function unpause() public onlyOwner whenPaused returns (bool) {
         paused = false;
         Unpause();
         return true;
@@ -606,7 +606,7 @@ contract CryptoCardsBase is AccessControl {
     /*** EVENTS ***/
 
     // @dev The spawn event is fired whenever a new card is minted
-    event Spawn(address owner, uint256 tokenId, uint128 skills);
+    event Spawn(address owner, uint256 tokenId, uint128 skills, bytes32 name);
 
     // @dev Transfer event as defined in current draft of ERC721. Emitted evry time a 
     //  card ownership is assigned, including minting
@@ -620,6 +620,7 @@ contract CryptoCardsBase is AccessControl {
     struct Card {
         // @dev Placeholder/potentially valid variable to store relvant card info
         uint128 skills;
+        bytes32 name;
     }
 
     /*** CONSTANTS ***/
@@ -669,14 +670,15 @@ contract CryptoCardsBase is AccessControl {
     //   and a Transfer event.
     // @param _skills contains crucial info about card
     // @param _owner The initial owner of this card, must be nonzero
-    function _createCard(uint128 _skills, address _owner) internal returns(uint256) {
+    function _createCard(uint128 _skills, bytes32 _name, address _owner) internal returns(uint256) {
         Card memory _card = Card({
-            skills: _skills
+            skills: _skills,
+            name: _name
         });
         uint256 newCardId = cards.push(_card) - 1;
 
         // emit the Spawn event
-        Spawn(_owner, newCardId, _card.skills);
+        Spawn(_owner, newCardId, _card.skills, _card.name);
 
         // This will assign ownership, and also emit the Transfer event as 
         // per ERC721 draft
@@ -959,13 +961,13 @@ contract CardMinting is CardAuction {
 
     // @dev Creates a new gen0 card with the given skills and
     //  creates an auction for it.
-    function createGen0Auction(uint128 _skills) external onlyCLevel {
-        uint256 cardId = _createCard(_skills, address(this));
+    function createGen0Auction(uint128 _skills, bytes32 _name) external onlyCLevel {
+        uint256 cardId = _createCard(_skills, _name, address(this));
         _approve(cardId, saleAuction);
 
         saleAuction.createAuction(
             cardId,
-            5 wei,
+            _computeNextGen0Price(),
             0,
             GEN0_AUCTION_DURATION,
             address(this)

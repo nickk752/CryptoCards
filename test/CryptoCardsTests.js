@@ -41,6 +41,7 @@ contract('CryptoCards', () => {
   var price = new BigNumber(5);
 
   for (x = 0; x < 1; x++) {
+<<<<<<< Updated upstream
     checkCardCreation(1000 + x);
   }
 
@@ -49,6 +50,16 @@ contract('CryptoCards', () => {
   }
 
   checkWithdrawal('5');
+=======
+    checkCardCreation(1000 + x, 'jawn' + x);
+  }
+
+  for (x = 0; x < 1; x++) {
+    checkCardBid(x, 5);
+  }
+
+  checkWithdrawal(3);
+>>>>>>> Stashed changes
 
   //checksTotalSupply(10);
 

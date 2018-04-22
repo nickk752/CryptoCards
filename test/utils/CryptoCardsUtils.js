@@ -17,13 +17,14 @@ module.exports = function (CryptoCards, SaleClockAuction) {
     });
   }
 
-  function checkCardCreation(skills) {
+  function checkCardCreation(skills, name) {
     it('createGen0Auction should create an auction with a new card with skills ' + skills, (done) => {
       CryptoCards.deployed().then((instance) => {
-        return instance.createGen0Auction(skills);
+        return instance.createGen0Auction(skills, name);
       }).then((result) => {
          console.log('RESULT');
          console.log(result.logs[0]);
+         console.log(result.logs[0].args.name);
         //assert.include(result.logs[0].event, 'Auction and token created', 'TokenCreated event was not triggered');
         assert.equal(result.logs[0].args.skills, skills);
       }).then(done).catch(done);
@@ -39,7 +40,7 @@ module.exports = function (CryptoCards, SaleClockAuction) {
         var auctionEvent = Auction.AuctionSuccessful();
         var result = await Auction.bid(tokenId, {
           from: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57',
-          value: 5,
+          value: price,
         });
        /*auctionEvent.watch(function(error, result) {
           if(!error) {
@@ -73,6 +74,8 @@ module.exports = function (CryptoCards, SaleClockAuction) {
         })
           .then(function (result) {
             var contractBalance = web3.utils.toWei(web3.eth.getBalance(instance.address));
+            console.log(contractBalance);
+            console.log(withdrawAmount);
             assert.equal(contractBalance, 0.0);
           });
       }).then(done).catch(done);
