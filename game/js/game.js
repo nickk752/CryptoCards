@@ -35,10 +35,6 @@ Game.preload = function () {
 //  by the time we get here, the Player and Opp have been created
 Game.create = function () {
 
-	// Game.deck = {};
-	// Game.deck2 = {};
-	// Game.hand = {count: 0};
-
 	// we need to do this for dragging (i think?) - tim
 	game.physics.startSystem(Phaser.Physics.ARCADE);
 
@@ -66,14 +62,14 @@ Game.create = function () {
 	var refZones = new RefZones();
 	Game.player.associateRefZones(refZones.playerZones);
 	//Game.opponent.associateRefZones(refZones.opponentZones);
+	Game.player.deck.shuffle();
 	Game.player.drawCard();
 	Game.player.drawCard();
 	Game.player.drawCard();
 	Game.player.drawCard();
 	Game.player.drawCard();	
 	Game.player.render();
-	Game.player.hand.enable(true);
-
+	//Game.player.setInteractable(true);
 	console.log("local First Cards name: " + Game.cardList[0].name);
 };
 
@@ -91,15 +87,14 @@ Game.startNextTurn = function () {
 	var yourTurnBanner = game.add.sprite(9 * 32, 6 * 32, 'yourturnbanner_sprite');
 	game.add.tween(yourTurnBanner).to({ alpha: 0 }, 2000, null, true, 500);
 	// and re-enabling interactivity 
-
-
+	Game.player.setInteractable(true);
 };
 
 Game.onEndTurnPressed = function () {
 	// here we should do all the end of turn checks and effects
 
 	// and then disable interaction until it's our turn again
-
+	Game.player.setInteractable(false);
 	// tell the server we're done.
 	Client.sendEndTurn();
 };
@@ -112,8 +107,8 @@ Game.addOpponent = function (name, deck) {
 	// and also perform other start game actions, or cause them to be performed
 	// stuff like making bases and the two resource buildings, etc.
 	Game.opponent = new Opponent(name, deck);
-	// console.log("Opponents name: " + Game.opponent.name);
-	// console.log("Opponents 4th card name: " + deck[3].name);
+	console.log("Opponents name: " + Game.opponent.name);
+	console.log("Opponents 4th card name: " + deck[3].name);
 	// setUpDeck();
 	// drawCards(8);
 };
@@ -170,35 +165,103 @@ RefZones = function () {
 		// assign the hand zones
 		this.playerZones.hand.push(game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite'))
 	}
-	/*
-	Game.zoneSprites = {
-		// creatures
-		crt: { p1: { lane1: {}, lane2: {}}, p2: {lane1: {}, lane2: {}}},
-		// buildings
-		bld: { p1: {}, p2: {}},
-		hand: {}
-	};
-	for (var i = 0; i < 4; i++){
-		Game.zoneSprites.crt.p1.lane1[i] = game.add.sprite(0+(32*3*i), 320, 'creaturezone_sprite');
-		Game.zoneSprites.crt.p1.lane2[i] = game.add.sprite(416+(32*3*i), 320, 'creaturezone_sprite');
-		Game.zoneSprites.crt.p2.lane2[i] = game.add.sprite(0+(32*3*i), 128, 'creaturezone_sprite');
-		Game.zoneSprites.crt.p2.lane1[i] = game.add.sprite(416+(32*3*i), 128, 'creaturezone_sprite');
-	}
-
-	for (var j = 0; j < 5; j++){
-		Game.zoneSprites.bld.p1[j] = game.add.sprite(0+(32*5*j), 14*32, 'buildingzone_sprite');
-		Game.zoneSprites.bld.p2[j] = game.add.sprite(0+(32*5*j), 0, 'buildingzone_sprite');
-	}
-
-	for (var k = 0; k < 8; k++){
-		Game.zoneSprites.hand[k] = game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite');
-	}
-
-	Game.zoneSprites.deck = game.add.sprite(25*32, 18*32, 'creaturezone_sprite');
-	Game.zoneSprites.graveyard = game.add.sprite(25*32, 14*32, 'creaturezone_sprite');
-	*/
 };
 
+
+function onDragStop(sprite, pointer) {
+	for (var i = 0; i < 4; i++) {
+		var zone = Game.zoneSprites.crt.p1.lane1[i];
+		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+			sprite.home = zone;
+			sprite.homeName = "p1crtl1" + i;
+
+		} else {
+			zone = Game.zoneSprites.crt.p1.lane2[i];
+			if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+				sprite.home = zone;
+				sprite.homeName = "p1crtl2" + i;
+
+			} else {
+				zone = Game.zoneSprites.crt.p2.lane2[i];
+				if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+					sprite.home = zone;
+					sprite.homeName = "p2crtl2" + i;
+
+				} else {
+					zone = Game.zoneSprites.crt.p2.lane1[i];
+					if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+						sprite.home = zone;
+						sprite.homeName = "p2crtl1" + i;
+					}
+				}
+			}
+		}
+	}
+	for (var i = 0; i < 5; i++) {
+		zone = Game.zoneSprites.bld.p1[i];
+		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+			sprite.home = zone;
+			sprite.homeName = "p1bld" + i;
+		} else {
+			zone = Game.zoneSprites.bld.p2[i];
+			if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
+				sprite.home = zone;
+				sprite.homeName = "p2bld" + i;
+
+			}
+		}
+	}
+	sprite.moveTo(sprite.home, sprite.dindex);
+	// Client.sendMovedCard(sprite.dindex,sprite.homeName);
+}
+
+function randomInt(low, high) {
+	return Math.floor(Math.random() * (high - low) + low);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
 setUpDeck = function () {
 	Game.deck = { curr: 0 }
 	for (var i = 0; i < 25; i++) {
@@ -276,176 +339,4 @@ drawCards = function (numCards) {
 	Game.deck.curr += numCards;
 	Game.hand.count += numCards;
 }
-
-function onDragStop(sprite, pointer) {
-	for (var i = 0; i < 4; i++) {
-		var zone = Game.zoneSprites.crt.p1.lane1[i];
-		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
-			sprite.home = zone;
-			sprite.homeName = "p1crtl1" + i;
-
-		} else {
-			zone = Game.zoneSprites.crt.p1.lane2[i];
-			if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
-				sprite.home = zone;
-				sprite.homeName = "p1crtl2" + i;
-
-			} else {
-				zone = Game.zoneSprites.crt.p2.lane2[i];
-				if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
-					sprite.home = zone;
-					sprite.homeName = "p2crtl2" + i;
-
-				} else {
-					zone = Game.zoneSprites.crt.p2.lane1[i];
-					if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
-						sprite.home = zone;
-						sprite.homeName = "p2crtl1" + i;
-					}
-				}
-			}
-		}
-	}
-	for (var i = 0; i < 5; i++) {
-		zone = Game.zoneSprites.bld.p1[i];
-		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
-			sprite.home = zone;
-			sprite.homeName = "p1bld" + i;
-		} else {
-			zone = Game.zoneSprites.bld.p2[i];
-			if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
-				sprite.home = zone;
-				sprite.homeName = "p2bld" + i;
-
-			}
-		}
-	}
-	sprite.moveTo(sprite.home, sprite.dindex);
-	// Client.sendMovedCard(sprite.dindex,sprite.homeName);
-}
-
-Game.placeCard = function (dindex, homeName) {
-	var deckIndex = dindex;
-	Game.deck2[deckIndex].sprite = game.add.sprite(0, 0, 'blank_card_sprite');
-	Game.deck2[deckIndex].sprite.nameText = game.add.text(11, 63, Game.deck[deckIndex].name, { font: "12px Arial", fill: "#000000" });
-	Game.deck2[deckIndex].sprite.atkText = game.add.text(4, 113, Game.deck[deckIndex].atk, { font: "14px Arial", fill: "#000000" });
-	Game.deck2[deckIndex].sprite.defText = game.add.text(80, 113, Game.deck[deckIndex].def, { font: "14px Arial", fill: "#000000" });
-	Game.deck2[deckIndex].sprite.lcostText = game.add.text(7, 1, Game.deck[deckIndex].lcost, { font: "12px Arial", fill: "#000000" });
-	Game.deck2[deckIndex].sprite.mcostText = game.add.text(37, 1, Game.deck[deckIndex].mcost, { font: "12px Arial", fill: "#000000" });
-	Game.deck2[deckIndex].sprite.rcostText = game.add.text(74, 1, Game.deck[deckIndex].rcost, { font: "12px Arial", fill: "#000000" });
-
-	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.nameText);
-	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.atkText);
-	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.defText);
-	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.lcostText);
-	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.mcostText);
-	Game.deck2[deckIndex].sprite.addChild(Game.deck[deckIndex].sprite.rcostText);
-
-	Game.deck2[deckIndex].sprite.inputEnabled = true;
-	Game.deck2[deckIndex].sprite.input.enableDrag();
-	Game.deck2[deckIndex].sprite.events.onDragStop.add(onDragStop, this);
-
-	Game.deck2[deckIndex].sprite.moveTo = function (zone, deckIndex) {
-		var cardBounds = Game.deck2[deckIndex].sprite.getBounds();
-		var zoneBounds = zone.getBounds();
-		var distance = Phaser.Math.distance(zoneBounds.x, zoneBounds.y, cardBounds.x, cardBounds.y);
-		var tween = game.add.tween(Game.deck[deckIndex].sprite);
-		var duration = distance * 2;
-		tween.to({ x: zoneBounds.x, y: zoneBounds.y }, duration);
-		tween.start();
-	}
-	switch (homeName) {
-		case 'p1crtl10':
-			zone = Game.zoneSprites.crt.p2.lane1[0];
-			break;
-		case 'p1crtl11':
-			zone = Game.zoneSprites.crt.p2.lane1[1];
-			break;
-		case 'p1crtl12':
-			zone = Game.zoneSprites.crt.p2.lane1[2];
-			break;
-		case 'p1crtl13':
-			zone = Game.zoneSprites.crt.p2.lane1[3];
-			break;
-
-		case 'p1crtl20':
-			zone = Game.zoneSprites.crt.p2.lane2[0];
-			break;
-		case 'p1crtl21':
-			zone = Game.zoneSprites.crt.p2.lane2[1];
-			break;
-		case 'p1crtl22':
-			zone = Game.zoneSprites.crt.p2.lane2[2];
-			break;
-		case 'p1crtl23':
-			zone = Game.zoneSprites.crt.p2.lane2[3];
-			break;
-
-		case 'p2crtl10':
-			zone = Game.zoneSprites.crt.p1.lane1[0];
-			break;
-		case 'p2crtl11':
-			zone = Game.zoneSprites.crt.p1.lane1[1];
-			break;
-		case 'p2crtl12':
-			zone = Game.zoneSprites.crt.p1.lane1[2];
-			break;
-		case 'p2crtl13':
-			zone = Game.zoneSprites.crt.p1.lane1[3];
-			break;
-
-
-		case 'p2crtl20':
-			zone = Game.zoneSprites.crt.p1.lane2[0];
-			break;
-		case 'p2crtl21':
-			zone = Game.zoneSprites.crt.p1.lane2[1];
-			break;
-		case 'p2crtl22':
-			zone = Game.zoneSprites.crt.p1.lane2[2];
-			break;
-		case 'p2crtl23':
-			zone = Game.zoneSprites.crt.p1.lane2[3];
-			break;
-
-		case 'p1bld0':
-			zone = Game.zoneSprites.bld.p2[0];
-			break;
-		case 'p1bld1':
-			zone = Game.zoneSprites.bld.p2[1];
-			break;
-		case 'p1bld2':
-			zone = Game.zoneSprites.bld.p2[2];
-			break;
-		case 'p1bld3':
-			zone = Game.zoneSprites.bld.p2[3];
-			break;
-		case 'p1bld4':
-			zone = Game.zoneSprites.bld.p2[4];
-			break;
-
-		case 'p2bld0':
-			zone = Game.zoneSprites.bld.p1[0];
-			break;
-		case 'p2bld1':
-			zone = Game.zoneSprites.bld.p1[1];
-			break;
-		case 'p2bld2':
-			zone = Game.zoneSprites.bld.p1[2];
-			break;
-		case 'p2bld3':
-			zone = Game.zoneSprites.bld.p1[3];
-			break;
-		case 'p2bld4':
-			zone = Game.zoneSprites.bld.p1[4];
-			break;
-
-	}
-
-	Game.deck2[deckIndex].sprite.dindex = deckIndex;
-	Game.deck2[deckIndex].sprite.moveTo(zone, deckIndex);
-}
-
-function randomInt(low, high) {
-	return Math.floor(Math.random() * (high - low) + low);
-}
+*/

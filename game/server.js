@@ -63,7 +63,8 @@ io.on('connection',function(socket){
         
         //if we've found a match (both players with the same gameID joined)
         if (socket.opponent) {
-            console.log("found a match?");
+            
+            console.log("found a match");
             //send them down their opponents deck and ID and such
             socket.emit("matchFound", socket.opponent.player);
             socket.opponent.emit("matchFound", socket.player);

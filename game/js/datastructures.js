@@ -25,8 +25,17 @@ Opponent.prototype = new Participant;
 function Player(name, deckCards){
 	this.base = Participant;
 	this.base(name, deckCards);
+	this.setInteractable = playerSetInteractable;
 }
 Player.prototype = new Participant;
+
+function playerSetInteractable(bool){
+	this.hand.setInteractable(bool);
+	this.leftLane.setInteractable(bool);
+	this.rightLane.setInteractable(bool);
+	// buildings can't be dragged, but they can be activated 
+	this.buildings.setInteractable(bool);
+}
 
 // ---PARTICIPANT---PARTICIPANT---PARTICIPANT---PARTICIPANT---PARTICIPANT
 // everything below this is Participant stuff
@@ -67,9 +76,9 @@ function associateRefZones(refZones) {
 	this.deck.associateRefZones(refZones.deck);
 	this.hand.associateRefZones(refZones.hand);
 	this.graveyard.associateRefZones(refZones.graveyard);
-	//this.leftLane.associateRefZones(refZones.leftLane);
-	//this.rightLane.associateRefZones(refZones.rightLane);
-	//this.buildings.associateRefZones(refZones.buildings);
+	this.leftLane.associateRefZones(refZones.leftLane);
+	this.rightLane.associateRefZones(refZones.rightLane);
+	this.buildings.associateRefZones(refZones.buildings);
 }
 
 function drawParticipantCard() {
@@ -93,6 +102,11 @@ function updateSelf(){
 function BuildingRow(cards){
 	this.base = Pile;
 	this.base(5, cards);
+	// same as hand because they work the same
+	this.associateRefZones = handAssociateRefZones;
+	this.render = handRender;
+	this.setInteractable = rowPileSetInteractable;
+
 }
 BuildingRow.prototype = new Pile;
 
@@ -100,6 +114,11 @@ BuildingRow.prototype = new Pile;
 function Lane(cards){
 	this.base = Pile;
 	this.base(4, cards);
+	// same as hand because they work the same
+	this.associateRefZones = handAssociateRefZones;
+	this.render = handRender;
+	this.setInteractable = rowPileSetInteractable;
+
 }
 Lane.prototype = new Pile;
 
@@ -136,34 +155,40 @@ function Hand(cards){
 	this.targetZones = null;
 	this.associateRefZones = handAssociateRefZones;
 	this.render = handRender;
-	this.enable = handEnable;
+	this.setInteractable = rowPileSetInteractable;
 };
 Hand.prototype = new Pile;
 
+// TODO rename b/c its used by more than hand.
 // the render function for the Hand
 function handRender(){	
 	//check to see if we're a player or Opponent 
 	if (this.targetZones){
 		let i = 0;
-		console.log("handRender, length is: " + this.targetZones.length);
-		console.log("handRender, [0].x = " + this.targetZones[1].x);
+		console.log("rowRender, length is: " + this.targetZones.length);
+		console.log("rowRender, [0].x = " + this.targetZones[1].x);
 		for (let i = 0; i < this.cards.length; i++){
-			this.cards[i].render({x: this.targetZones[i].x, y: this.targetZones[i].y});
+			//because certain zones (buildings, lanes) can have empty spots
+			if(this.cards[i]){
+				this.cards[i].render({x: this.targetZones[i].x, y: this.targetZones[i].y});
+			}
 		}
 	}
 }
 
 function handAssociateRefZones(refZones){
-	console.log("hand associating: refzones length: " + refZones.length);
 	this.targetZones = refZones;
 };
 
-function handEnable(bool){
+//for hands lanes and building rows.
+function rowPileSetInteractable(bool){
 	for (let i = 0; i < this.cards.length; i++){
-		if (bool){
-			this.cards[i].enable();
-		} else {
-			this.cards[i].disable();
+		if (this.cards[i]){
+			if (bool){
+				this.cards[i].enable();
+			} else {
+				this.cards[i].disable();
+			}
 		}
 	}
 }
@@ -327,8 +352,9 @@ function renderCard(point){
 	//create the card sprite
 	this.sprite = game.add.sprite(x,y,'blank_card_sprite');
 
-	//add all the text to it
-	//console.log("renderCard: cardname: " + this.name);
+	// TODO better common/rarity indicator/text?
+	// TODO include description on card?
+	// add all the text to it
 	this.sprite.addChild(game.add.text(11, 63, this.name, font));
 	this.sprite.addChild(game.add.text(4, 113, this.stats.atk, font14));
 	this.sprite.addChild(game.add.text(80, 113, this.stats.def, font14));
@@ -341,39 +367,21 @@ function renderCard(point){
 // direct game objects.
 function setCardCallbacks(onDragStop){
 	//drag and dropping
-	this.sprite.input.enableDrag();
-	this.sprite.events.onDragStop.add(onDragStop, this);
-}
+	if (onDragStop) {
+		this.sprite.events.onDragStop.add(onDragStop, this);
+	}
+};
 
 function enableCard(){
 	this.sprite.inputEnabled = true;
 	this.sprite.input.enableDrag();
 	//this.sprite.events.onDragStop.add(onDragStop, this);
 	//this.sprite.alignIn(Game.zoneSprites.deck, Phaser.CENTER, 0, 0);
-}
+};
 
 function disableCard(){
 	this.sprite.inputEnabled = false;
-	this.sprite.input.disableDrag();
-}
-/*
-//testing:
-var i = 0;
-var cards = [];
-for (i ; i < 25; i = i + 5){
-	cards[i] = new Card(null, "Timbo", "a loser", new Stats(1,3), new Cost(1,1,1));
-	cards[i+1] = new Card(null, "Q", "QQ", new Stats(2,2), new Cost(1,0,2));
-	cards[i+2] = new Card(null, "L'Eric", "EEEEEEEEric", new Stats(2,2), new Cost(1,0,2));
-	cards[i+3] = new Card(null, "asdf", "ghjkl", new Stats(2,2), new Cost(1,0,2));
-	cards[i+4] = new Card(null, "Lan", "Local Area Lan", new Stats(2,2), new Cost(1,0,2));
-}
-
-var player = new Player(cards);
-player.deck.shuffle();
-player.drawCard();
-player.drawCard();
-player.drawCard();
-player.updateSelf();
-console.log("should be 3: " + player.cardsInHand);
-player.hand.print();
-*/
+	if (this.sprite.input){
+		this.sprite.input.disableDrag();
+	}
+};
