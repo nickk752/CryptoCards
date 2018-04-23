@@ -16,6 +16,9 @@ function Opponent(name, deckCards){
 	this.base = Participant;
 	this.base(name, deckCards);
 	this.deckList = deckCards;
+	console.log("in Opponent Constructor: ");
+	console.log("deckList[0].name:" + this.deckList[0].name);
+	console.log("deckList[0].render: " + this.deckList[0].render);
 
 	this.render = opponentRender;
 	this.updateToMatchState = updateToMatchState;
@@ -30,6 +33,8 @@ Opponent.prototype = new Participant;
 // right after or else shit'll b fucked 4 real m80
 function updateToMatchState(){
 	let state = this.state;
+	console.log("in updateToMatchState");
+	console.log("state.deck: " + state.deck);
 
 	this.deck.cards = [];
 	state.deck.forEach(cardInd => {
@@ -45,6 +50,8 @@ function updateToMatchState(){
 	});
 	this.leftLane.cards = [];
 	state.leftLane.forEach(cardInd => {
+		console.log("updateToMatchState leftLane card:" + this.deckList[cardInd].name)
+		console.log( this.deckList[cardInd].render);
 		this.leftLane.cards.push(this.deckList[cardInd]);
 	});
 	this.rightLane.cards = [];
@@ -97,6 +104,7 @@ function playerSetInteractable(bool){
 function Participant(name, deckCards){
 	this.name = name;
 	this.currCard = null;
+	this.currSource = null;
 	this.cardsInHand = 0;
 
 	this.deck = new Deck(deckCards);
@@ -206,6 +214,7 @@ function Hand(cards){
 };
 Hand.prototype = new Pile;
 
+
 // TODO rename b/c its used by more than hand.
 // the render function for the Hand
 function handRender(){	
@@ -217,7 +226,13 @@ function handRender(){
 		for (let i = 0; i < this.cards.length; i++){
 			//because certain zones (buildings, lanes) can have empty spots
 			if(this.cards[i]){
+				if (this.cards[i].render == undefined){
+					let oldCard = this.cards[i];
+					this.cards[i] = new Card(null, oldCard.name, oldCard.desc, oldCard.stats, oldCard.cost, oldCard.effects);
+				}
+				console.log("rowRender: " + this.cards[i].renderCard);
 				this.cards[i].render({x: this.targetZones[i].x, y: this.targetZones[i].y});
+				this.cards[i].home = {x: this.targetZones[i].x, y: this.targetZones[i].y};
 			}
 		}
 	}
@@ -284,6 +299,15 @@ function Pile(max, cards) {
 	this.shuffle = shuffle;
 	this.swapCards = swapCards;
 	this.print = printCards;
+	this.removeAtIndex = removeAtIndex;
+	this.insertCardAtIndex = insertCardAtIndex;
+}
+function insertCardAtIndex(card, index){
+	this.cards.splice(index, 0, card);
+}
+
+function removeAtIndex(index){
+	this.cards.splice(index, 1);
 }
 
 //prints all the cards in the pile
@@ -369,9 +393,9 @@ function Card(ccnum, name, desc, stats, cost, effects) {
 	this.render = renderCard;
 	this.enable = enableCard;
 	this.disable = disableCard;
-	this.setCallbacks = setCardCallbacks;
 	this.setId = setId;
 	this.getSprite = getSprite;
+	this.moveTo = moveTo;
 }
 
 function getSprite(){
@@ -396,6 +420,17 @@ function Stats(atk, def){
 function printCard(){
 	console.log("name: " + this.name);
 	console.log("desc: " + this.desc);
+}
+
+
+function moveTo(point){
+	let x = point.x;
+	let y = point.y;
+	let distance = Phaser.Math.distance(x,y,this.sprite.centerX,this.sprite.centerY);
+	let duration = distance*2;
+	let tween = game.add.tween(this.sprite);
+	tween.to({x:x,y:y}, duration);
+	tween.start();
 }
 
 //takes a point (anything with x and y properties), and draws itself to the
@@ -424,21 +459,76 @@ function renderCard(point){
 	//id is set in deckloader atm
 	this.sprite.parentCard = this;
 
+	this.sprite.events.onDragStop.add(onDragStop, this);
 	this.sprite.events.onDragStart.add(onDragStart, this);
 
 
 }
-// for setting card callbacks dynamically, as they may require references to 
-// direct game objects.
-function setCardCallbacks(onDragStop){
-	//drag and dropping
-	if (onDragStop) {
-		this.sprite.events.onDragStop.add(onDragStop, this);
-	}
-};
-function onDragStart(sprite, pointer) {
+
+function onDragStart(sprite, pointer, startX, startY) {
 	let card = sprite.parentCard;
 	console.log("parent card name: " + card.name);
+	//TODO find source by point (startX, startY)?
+	let source = findSourceByPoint({x:startX, y:startY});
+
+	Game.player.currCard = card;
+	Game.player.currSource = source;
+
+
+
+}
+
+function onDragStop(sprite, pointer) {
+	let card = sprite.parentCard;
+	let target = findTargetByPoint({x:sprite.centerX, y:sprite.centerY});
+
+	//if target is null, it's invalid, just put it back where it was
+	if (target == null){
+		card.moveTo(card.home);
+	} else {
+		card.home = target.zone;
+		card.moveTo(card.home);
+
+		//Remove the card from the source and put it in the target;
+		let source = Game.player.currSource;
+		switch (source.zoneName){
+			case 'playerLeftLane' :
+				Game.player.leftLane.removeAtIndex(source.zoneIndex);
+				break;
+			case 'playerRightLane' :
+				Game.player.rightLane.removeAtIndex(source.zoneIndex);
+				break;
+			case 'playerHand' :
+				Game.player.hand.removeAtIndex(source.zoneIndex);
+				break;
+			default :
+				console.log("got to the bottom of onDragStop source switch");
+		}
+		
+		switch (target.zoneName){
+			case 'playerLeftLane' :
+				Game.player.leftLane.insertCardAtIndex(card, target.zoneIndex);
+				break;
+			case 'playerRightLane' :
+				Game.player.rightLane.insertCardAtIndex(card, target.zoneIndex);
+				break;
+			case 'opponentLeftLane' :
+				Game.opponent.leftLane.insertCardAtIndex(card, target.zoneIndex);
+				break;
+			case 'opponentRightLane' :
+				Game.opponent.rightLane.insertCardAtIndex(card, target.zoneIndex);
+				break;
+			case 'playerBuildings' :
+				Game.player.buildings.insertCardAtIndex(card, target.zoneIndex);
+				break;
+			case 'opponentBuildings' :
+				Game.opponent.buildings.insertCardAtIndex(card, target.zoneIndex);
+				break;
+			default :
+				console.log("got to the bottom of onDragStop target switch");
+		}
+	}
+	Client.updatePileStates(Game.getPlayerPileState());
 }
 
 function enableCard(){
@@ -454,3 +544,108 @@ function disableCard(){
 		this.sprite.input.disableDrag();
 	}
 };
+
+function findTargetByPoint(point){
+	let x = point.x;
+	let y = point.y;
+
+	let target = null;
+
+	console.log("in findTargetByPoint");
+	Game.player.leftLane.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			target = {};
+			target.zone = zone;
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.action = 'cast';
+		}
+	});
+	Game.player.rightLane.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			target = {};
+			target.zone = zone;
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.action = 'cast';
+		}
+	});
+	Game.player.buildings.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			target = {};
+			target.zone = zone;
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.action = 'cast';
+		}
+	});
+	Game.opponent.leftLane.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			target = {};
+			target.zone = zone;
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.action = 'fight';
+		}
+	});
+	Game.opponent.rightLane.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			target = {};
+			target.zone = zone;
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.action = 'fight';
+		}
+	});
+	Game.opponent.buildings.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			target = {};
+			target.zone = zone;
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.action = 'fight';
+		}
+	});
+
+	return target;
+}
+
+function findSourceByPoint(point){
+	let x = point.x;
+	let y = point.y;
+
+	let target = null;
+	console.log("in findSourceByPoint");
+	Game.player.leftLane.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			console.log("source is in left lane");
+			target = {};
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.action = 'cast';
+		}
+	});
+	Game.player.rightLane.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			console.log("source is in right lane");
+			target = {};
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.zone = zone;
+			target.action = 'cast';
+		}
+	});
+	Game.player.hand.targetZones.forEach(zone => {
+		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
+			console.log("source is in hand");
+			target = {};
+			target.zoneName = zone.zoneName;
+			target.zoneIndex = zone.zoneIndex;
+			target.zone = zone;
+			target.action = 'cast';
+		}
+	});
+
+
+	return target;
+}

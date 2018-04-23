@@ -39,12 +39,20 @@ Client.updatePileStates = function(state){
     Client.socket.emit('updatePileState', state);
 }
 
+Client.sendReady = function(){
+    Client.socket.emit('ready');
+}
+
 //when both people with a certain gameId have joined the server
 Client.socket.on('matchFound', function(data){
 
     Lobby.startGame();
     //tell the Game we've got our opponent, pass in their deck
     Game.addOpponent(data.name, data.deck);
+
+    Client.socket.on('opponentReady', function(){
+        Game.startGame();
+    });
 
     //when our opponent ends their turn
     Client.socket.on('itsYourTurn', function(){

@@ -75,15 +75,24 @@ Game.create = function () {
 	// render 
 	Game.player.render();
 
-	// send our initial state
-	let state = Game.getPlayerPileState();
-	Client.updatePileStates(state);
+	Client.sendReady();
+
+
 
 	//console.log("local First Cards name: " + Game.cardList[0].name);
 };
 
+Game.startGame = function(){
+	// send our initial state
+	let state = Game.getPlayerPileState();
+	Client.updatePileStates(state);
+	// start next turn
+	Game.startNextTurn();
+};
+
 // Called by Client when our opponent updates their pile state
 Game.updateOpponentPileState = function(state){
+	console.log("in UpdateOpponentPileState");
 	Game.opponent.setState(state);
 	Game.opponent.updateToMatchState();
 	Game.opponent.render();
@@ -238,13 +247,14 @@ Game.addOpponent = function (name, deck) {
 	Game.opponent = new Opponent(name, deck);
 	console.log("Opponents name: " + Game.opponent.name);
 	console.log("Opponents 4th card name: " + deck[3].name);
+	console.log("Opponents 4th card render: " + deck[3].render);
 	// setUpDeck();
 	// drawCards(8);
 };
 
 // Get a list of which cards go where, to send to our opponent
 Game.getPlayerPileState = function(){
-	let state = {
+	var state = {
 		hand: [],
 		deck: [],
 		graveyard: [],
@@ -271,6 +281,10 @@ Game.getPlayerPileState = function(){
 	Game.player.buildings.cards.forEach(card => {
 		state.buildings.push(card.id);
 	});
+
+	console.log("getPlayerPileState:");
+	console.log("state.deck: " + state.deck);
+	console.log("state.leftLane: " + state.leftLane);
 
 	return state;
 };
@@ -309,35 +323,68 @@ RefZones = function () {
 	this.playerZones.deck.push(game.add.sprite(25 * 32, 18 * 32, 'creaturezone_sprite'));
 	this.playerZones.graveyard.push(game.add.sprite(25 * 32, 14 * 32, 'creaturezone_sprite'));
 
+	let zone;
+
 	for (var i = 0; i < 4; i++) {
 		// assign the players lanes
-		this.playerZones.leftLane.push(game.add.sprite(0 + (32 * 3 * i), 320, 'creaturezone_sprite'));
-		this.playerZones.rightLane.push(game.add.sprite(416 + (32 * 3 * i), 320, 'creaturezone_sprite'));
+		zone = game.add.sprite(0 + (32 * 3 * i), 320, 'creaturezone_sprite');
+		zone.zoneName = "playerLeftLane"
+		zone.zoneIndex = i;
+		this.playerZones.leftLane.push(zone);
+
+		zone = game.add.sprite(416 + (32 * 3 * i), 320, 'creaturezone_sprite');
+		zone.zoneName = "playerRightLane"
+		zone.zoneIndex = i;
+		this.playerZones.rightLane.push(zone);
+
+		//this.playerZones.rightLane.push(game.add.sprite(416 + (32 * 3 * i), 320, 'creaturezone_sprite'));
 		// assign the opponents lanes
-		this.opponentZones.leftLane.push(game.add.sprite(416 + (32 * 3 * i), 128, 'creaturezone_sprite'));
-		this.opponentZones.rightLane.push(game.add.sprite(0 + (32 * 3 * i), 128, 'creaturezone_sprite'));
+		zone = game.add.sprite(416 + (32 * 3 * i), 128, 'creaturezone_sprite');
+		zone.zoneName = "opponentLeftLane"
+		zone.zoneIndex = i;
+		this.opponentZones.leftLane.push(zone);
+
+		zone = game.add.sprite(0 + (32 * 3 * i), 128, 'creaturezone_sprite');
+		zone.zoneName = "opponentRightLane"
+		zone.zoneIndex = i;
+		this.opponentZones.rightLane.push(zone);
+
+		//this.opponentZones.leftLane.push(game.add.sprite(416 + (32 * 3 * i), 128, 'creaturezone_sprite'));
+		//this.opponentZones.rightLane.push(game.add.sprite(0 + (32 * 3 * i), 128, 'creaturezone_sprite'));
 	}
 
 	for (var j = 0; j < 5; j++) {
 		// assign the building zones
-		this.playerZones.buildings.push(game.add.sprite(0 + (32 * 5 * j), 14 * 32, 'buildingzone_sprite'));
-		this.opponentZones.buildings.push(game.add.sprite(0 + (32 * 5 * j), 0, 'buildingzone_sprite'));
+		zone = game.add.sprite(0 + (32 * 5 * j), 14 * 32, 'buildingzone_sprite');
+		zone.zoneName = "playerBuildings"
+		zone.zoneIndex = i;
+		this.playerZones.buildings.push(zone);
+
+		zone = game.add.sprite(0 + (32 * 5 * j), 0, 'buildingzone_sprite');
+		zone.zoneName = "opponentBuildings"
+		zone.zoneIndex = i;
+		this.opponentZones.buildings.push(zone);
+
+		//this.playerZones.buildings.push(game.add.sprite(0 + (32 * 5 * j), 14 * 32, 'buildingzone_sprite'));
+		//this.opponentZones.buildings.push(game.add.sprite(0 + (32 * 5 * j), 0, 'buildingzone_sprite'));
 	}
 	for (let k = 0; k < 8; k++) {
 		// assign the hand zones
-		this.playerZones.hand.push(game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite'))
+		zone = game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite');
+		zone.zoneName = "playerHand"
+		zone.zoneIndex = i;
+		this.playerZones.hand.push(zone);
+		//this.playerZones.hand.push(game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite'))
 	}
 };
 
-function onDragStart(sprite, pointer) {
-	let card = sprite.parentCard;
-	console.log("parent card name: " + card.name);
+
+
+function randomInt(low, high) {
+	return Math.floor(Math.random() * (high - low) + low);
 }
 
-function onDragStop(sprite, pointer) {
-
-
-
+/*
 	for (var i = 0; i < 4; i++) {
 		var zone = Game.zoneSprites.crt.p1.lane1[i];
 		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
@@ -381,12 +428,7 @@ function onDragStop(sprite, pointer) {
 		}
 	}
 	sprite.moveTo(sprite.home, sprite.dindex);
-}
-
-function randomInt(low, high) {
-	return Math.floor(Math.random() * (high - low) + low);
-}
-
+*/
 
 
 
