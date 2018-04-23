@@ -22,10 +22,10 @@ module.exports = deployer => {
 
 
 const CryptoCards = artifacts.require('CryptoCardsCore');
-
+const SkillScience = artifacts.require('SkillScience');
 const SaleClockAuction = artifacts.require('SaleClockAuction');
 
-let core;
+let core, skill;
 
 module.exports = deployer => {
 
@@ -38,8 +38,18 @@ module.exports = deployer => {
     CryptoCards.deployed().then((instance) => {
       core = instance;
       return core.setSaleAuctionAddress(SaleClockAuction.address);
-    }).then((result) => {
-      return core.unpause();
     })
+      .then(() => {
+        return core.unpause();
+      })
+      .then(() => {
+        return deployer.deploy(SkillScience);
+      })
+      .then(() => {
+        SkillScience.deployed().then((instance) => {
+          skill = instance;
+          return core.setSkillScienceAddress(skill.address);
+        });
+      });
   });
 };

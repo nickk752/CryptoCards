@@ -1088,8 +1088,8 @@ contract CardCombining is CardOwnership {
         view
         returns(bool)
     {
-        require(_firstIngredientId > 0);
-        require(_secondIngredientId > 0);
+        require(_firstIngredientId >= 0);
+        require(_secondIngredientId >= 0);
         Card storage firstIngredient = cards[_firstIngredientId];
         Card storage secondIngredient = cards[_secondIngredientId];
         return _isValidCombination(firstIngredient, _firstIngredientId, secondIngredient, _secondIngredientId);
@@ -1160,7 +1160,7 @@ contract CardCombining is CardOwnership {
     }
 }
 
-contract CardAuction is CardOwnership {
+contract CardAuction is CardCombining {
     // @notice The auction contract variables are defined in CryptoCardsBase to allow
     //  us to refer to them in CardOwnership to prevent accidental transfers.
     

@@ -1,10 +1,10 @@
 // Import Actions
-import { 
-    ADD_CARD, 
-    ADD_CARDS, 
-    DELETE_CARD,
-    ADD_DECK_TO_CARD, 
-    } from './InventoryActions';
+import {
+  ADD_CARD,
+  ADD_CARDS,
+  DELETE_CARD,
+  ADD_DECK_TO_CARD,
+} from './InventoryActions';
 
 // Initial State
 const initialState = { data: [] };
@@ -12,28 +12,28 @@ const initialState = { data: [] };
 const CardReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_CARD:
-        return {
-            data: [action.card, ...state.data],
-        };
+      return {
+        data: [action.card, ...state.data],
+      };
 
     case ADD_CARDS:
-        return {
-            data: action.cards,
-        };
+      return {
+        data: action.cards,
+      };
 
     case DELETE_CARD:
-        return {
-            data: state.data.filter(card => card.cuid !== action.cuid),
-        };
+      return {
+        data: state.data.filter(card => card.cuid !== action.cuid),
+      };
 
     case ADD_DECK_TO_CARD:
-        return{
-            data: state.data.filter(card => card.cuid !== action.card.cuid),
-            data: [action.card, ...state.data],
-        };    
+      return {
+        data: state.data.filter(card => card.cuid !== action.card.cuid),
+        data: [action.card, ...state.data],
+      };
 
     default:
-        return state;
+      return state;
   }
 };
 
@@ -43,7 +43,7 @@ const CardReducer = (state = initialState, action) => {
 export const getCards = state => state.cards.data;
 
 // get cards by user
-export const getUserCards = (state,cuid) => state.cards.data.filter(card => card.owner === cuid);
+export const getUserCards = (state, cuid) => state.cards.data.filter(card => card.owner === cuid);
 
 // get card by cuid
 export const getCard = (state, cuid) => state.cards.data.filter(card => card.cuid === cuid)[0];
