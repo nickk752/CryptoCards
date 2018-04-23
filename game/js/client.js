@@ -27,8 +27,16 @@ Client.sendEndTurn = function(){
     Client.socket.emit('endedMyTurn');
 };
 
-Client.sendUpdateCard = function(cardInd, card){
-    Client.socket.emit('updateCard', {cardInd: cardInd, card: card});
+Client.sendUpdatePlayerCard = function(cardInd, card){
+    Client.socket.emit('updatePlayerCard', {cardInd: cardInd, card: card});
+};
+
+Client.sendUpdateOppCard = function(cardInd, card){
+    Client.socket.emit('updateOppCard', {cardInd: cardInd, card: card});
+}
+
+Client.updatePileStates = function(state){
+    Client.socket.emit('updatePileState', state);
 }
 
 //when both people with a certain gameId have joined the server
@@ -52,9 +60,24 @@ Client.socket.on('matchFound', function(data){
         //end our turn
     });
 
-    Client.socket.on('updateCard', function(data){
-        var cardInd = data.cardInd;
-        var card = data.card;
+    //the server telling us to update one of our own cards
+    Client.socket.on('updatePlayerCard', function(data){
+        let cardInd = data.cardInd;
+        let card = data.card;
+        Game.updatePlayerCard(cardInd, card);
+    });
+
+    //the server telling us to update one of our opponents cards
+    Client.socket.on('updateOppCard', function(data){
+        let cardInd = data.cardInd;
+        let card = data.card;
+        Game.updateOpponentCard(cardInd, card);
+
+    });
+
+    // updating the list of the whereabouts of our opponents cards
+    Client.socket.on('updatePileState', function(data){
+        Game.updateOpponentPileState(data);
     });
 
     //we won (they lost)

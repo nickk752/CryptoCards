@@ -29,7 +29,9 @@ DeckLoader.loadDeck = function(){
             deck.push(new Card(null, rawCard.Name, desc, stats, cost, effects));
         }
     });
-
+    for (let i = 0; i < deck.length; i++){
+        deck[i].setId(i);
+    }
     //console.log("Deckloader says deck is: " + deck);
     return deck;
 };

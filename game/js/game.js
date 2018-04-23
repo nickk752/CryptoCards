@@ -27,6 +27,8 @@ Game.preload = function () {
 	game.load.image('buildingzone_sprite', 'assets/sprites/buildingzone_sprite.png');
 	game.load.image('endturnbutton_sprite', 'assets/sprites/endturnbutton_sprite.png');
 	game.load.image('yourturnbanner_sprite', 'assets/sprites/yourturn_sprite.png');
+	game.load.image('cardback_sprite', 'assets/sprites/cardback_sprite.png');
+	game.load.image('resourcetracker_sprite', 'assets/sprites/resourcetracker_sprite.png');
 };
 
 //  called after preload, right before we enter the main loop
@@ -49,28 +51,155 @@ Game.create = function () {
 	}
 	//  Allows clicking on the map ; it's enough to do it on the last layer
 	layer.inputEnabled = true;
-	// create the zone and ref sprites
-	// Game.player.associateRefZones(refZones.playerZones);
-	// Game.opponent.associateRefZones(refZones.opponentZones);
 
 	// create the end turn button
+	// TODO use button ref sprite instead;
 	Game.endTurnButton = game.add.button(25 * 32, 13 * 32, 'endturnbutton_sprite', Game.onEndTurnPressed);
+
+	//create resource tracker
 
 	// Load our deck from JSON
 	Game.cardList = [].concat(DeckLoader.loadDeck());
 
+	// create the reference zones
 	var refZones = new RefZones();
+
+	// associate the zones for rendering purposes
 	Game.player.associateRefZones(refZones.playerZones);
-	//Game.opponent.associateRefZones(refZones.opponentZones);
+	Game.opponent.associateRefZones(refZones.opponentZones);
+
+	// shuffle the deck, and draw 8 cards
 	Game.player.deck.shuffle();
-	Game.player.drawCard();
-	Game.player.drawCard();
-	Game.player.drawCard();
-	Game.player.drawCard();
-	Game.player.drawCard();	
+	Game.initialDraw();
+
+	// render 
 	Game.player.render();
-	//Game.player.setInteractable(true);
-	console.log("local First Cards name: " + Game.cardList[0].name);
+
+	// send our initial state
+	let state = Game.getPlayerPileState();
+	Client.updatePileStates(state);
+
+	//console.log("local First Cards name: " + Game.cardList[0].name);
+};
+
+// Called by Client when our opponent updates their pile state
+Game.updateOpponentPileState = function(state){
+	Game.opponent.setState(state);
+	Game.opponent.updateToMatchState();
+	Game.opponent.render();
+};
+
+// Called by Client when our opponent updates one of their cards 
+Game.updateOpponentCard = function(cardInd, card){
+	Game.opponent.deckList[cardInd] = card;
+
+	Game.player.deck.cards.forEach(oldCard => {
+		if (oldCard.id == arguments[0]){
+			oldCard = card;
+			Game.player.deck.render();
+		}
+	});
+	Game.player.hand.cards.forEach(oldCard => {
+			if (oldCard.id == arguments[0]){
+				oldCard = card;
+				Game.player.hand.render();
+			}
+	});
+	Game.player.leftlane.cards.forEach(oldCard => {
+		if (oldCard){
+			if (oldCard.id == arguments[0]){
+				oldCard = card;
+				Game.player.leftlane.render();
+			}
+		}
+	});
+	Game.player.rightlane.cards.forEach(oldCard => {
+		if (oldCard){
+			if (oldCard.id == arguments[0]){
+				oldCard = card;
+				Game.player.rightlane.render();
+			}
+		}
+	});
+	Game.player.graveyard.cards.forEach(oldCard => {
+		if (oldCard.id == arguments[0]){
+			oldCard = card;
+			Game.player.graveyard.render();
+		}
+	});
+	Game.player.buildings.cards.forEach(oldCard => {
+		if (oldCard){
+			if (oldCard.id == arguments[0]){
+				oldCard = card;
+				Game.player.buildings.render();
+			}
+		}
+	});
+};
+
+// called by Client when our opponent update one of our cards
+// (as the result of a fight or something)
+// in here we change our deckList, then find the card in our 
+// actual data structures and update it?
+Game.updatePlayerCard = function(cardInd, card){
+	Game.player.deckList[cardInd] = card;
+	// arguments[0] = cardInd cause arrow funcs don't have their
+	// own arguments
+
+	Game.player.deck.cards.forEach(oldCard => {
+		if (oldCard.id == arguments[0]){
+			oldCard = card;
+			Game.player.deck.render();
+		}
+	});
+	Game.player.hand.cards.forEach(oldCard => {
+			if (oldCard.id == arguments[0]){
+				oldCard = card;
+				Game.player.hand.render();
+			}
+	});
+	Game.player.leftlane.cards.forEach(oldCard => {
+		if (oldCard){
+			if (oldCard.id == arguments[0]){
+				oldCard = card;
+				Game.player.leftlane.render();
+			}
+		}
+	});
+	Game.player.rightlane.cards.forEach(oldCard => {
+		if (oldCard){
+			if (oldCard.id == arguments[0]){
+				oldCard = card;
+				Game.player.rightlane.render();
+			}
+		}
+	});
+	Game.player.graveyard.cards.forEach(oldCard => {
+		if (oldCard.id == arguments[0]){
+			oldCard = card;
+			Game.player.graveyard.render();
+		}
+	});
+	Game.player.buildings.cards.forEach(oldCard => {
+		if (oldCard){
+			if (oldCard.id == arguments[0]){
+				oldCard = card;
+				Game.player.buildings.render();
+			}
+		}
+	});
+	
+};
+
+Game.initialDraw = function(){
+	Game.player.drawCard();
+	Game.player.drawCard();
+	Game.player.drawCard();
+	Game.player.drawCard();
+	Game.player.drawCard();
+	Game.player.drawCard();
+	Game.player.drawCard();
+	Game.player.drawCard();
 };
 
 // gets called by Client when Lobby tries to join a game (when we know our name and deck and gameId)
@@ -111,6 +240,39 @@ Game.addOpponent = function (name, deck) {
 	console.log("Opponents 4th card name: " + deck[3].name);
 	// setUpDeck();
 	// drawCards(8);
+};
+
+// Get a list of which cards go where, to send to our opponent
+Game.getPlayerPileState = function(){
+	let state = {
+		hand: [],
+		deck: [],
+		graveyard: [],
+		leftLane: [],
+		rightLane: [],
+		buildings: [],
+	};
+
+	Game.player.deck.cards.forEach(card => {
+		state.deck.push(card.id);
+	});
+	Game.player.hand.cards.forEach(card => {
+		state.hand.push(card.id);
+	});
+	Game.player.graveyard.cards.forEach(card => {
+		state.graveyard.push(card.id);
+	});
+	Game.player.leftLane.cards.forEach(card => {
+		state.leftLane.push(card.id);
+	});
+	Game.player.rightLane.cards.forEach(card => {
+		state.rightLane.push(card.id);
+	});
+	Game.player.buildings.cards.forEach(card => {
+		state.buildings.push(card.id);
+	});
+
+	return state;
 };
 
 // creates invisible sprites that represent any zones we might have to check
@@ -167,8 +329,15 @@ RefZones = function () {
 	}
 };
 
+function onDragStart(sprite, pointer) {
+	let card = sprite.parentCard;
+	console.log("parent card name: " + card.name);
+}
 
 function onDragStop(sprite, pointer) {
+
+
+
 	for (var i = 0; i < 4; i++) {
 		var zone = Game.zoneSprites.crt.p1.lane1[i];
 		if (Phaser.Rectangle.contains(zone.getBounds(), sprite.centerX, sprite.centerY)) {
@@ -212,7 +381,6 @@ function onDragStop(sprite, pointer) {
 		}
 	}
 	sprite.moveTo(sprite.home, sprite.dindex);
-	// Client.sendMovedCard(sprite.dindex,sprite.homeName);
 }
 
 function randomInt(low, high) {

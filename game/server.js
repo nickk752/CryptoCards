@@ -63,7 +63,7 @@ io.on('connection',function(socket){
         
         //if we've found a match (both players with the same gameID joined)
         if (socket.opponent) {
-            
+
             console.log("found a match");
             //send them down their opponents deck and ID and such
             socket.emit("matchFound", socket.opponent.player);
@@ -73,33 +73,43 @@ io.on('connection',function(socket){
             //the one who joined first goes first
             socket.emit("itsNotYourTurn");
             socket.opponent.emit("itsYourTurn");
+             //when a player ends their turn 
+            socket.on('endedMyTurn', function(data){
+                console.log("ended turn");
+                socket.player.isTheirTurn = false;
+                socket.opponent.player.isTheirTurn = true;
+                socket.opponent.emit("itsYourTurn");
+                socket.emit("itsNotYourTurn");
+            });
+
+            socket.on('updatePlayerCard', function(data){
+                console.log("updated Player's card");
+                socket.opponent.emit('updateOppCard', data);
+            });
+
+            socket.on('updateOppCard', function(data){
+                console.log("updated Opponents card");
+                socket.opponent.emit('updatePlayerCard', data);
+            });
+
+            socket.on('updatePileState', function(data){
+                socket.opponent.emit('updatePileState', data);
+            });
+
+            //when a player knows they won
+            socket.on("iWon", function(){
+                socket.opponent.emit("youLost");
+            });
+
+            //when a player knows they lost
+            socket.on("iLost", function(){
+                socket.opponent.emit("youWon");
+            });
         }
     //end on join
     });
 
-    //when a player ends their turn 
-    socket.on('endedMyTurn', function(data){
-        console.log("ended turn");
-        socket.player.isTheirTurn = false;
-        socket.opponent.player.isTheirTurn = true;
-        socket.opponent.emit("itsYourTurn");
-        socket.emit("itsNotYourTurn");
-    });
-
-    socket.on('updateCard', function(data){
-        console.log("updated card");
-        socket.opponent.emit('updateCard', data);
-    });
-
-    //when a player knows they won
-    socket.on("iWon", function(){
-        socket.opponent.emit("youLost");
-    });
-
-    //when a player knows they lost
-    socket.on("iLost", function(){
-        socket.opponent.emit("youWon");
-    });
+   
 });
 
 //does what it says on the tin

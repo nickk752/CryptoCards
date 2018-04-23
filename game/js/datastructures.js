@@ -15,19 +15,66 @@
 function Opponent(name, deckCards){
 	this.base = Participant;
 	this.base(name, deckCards);
+	this.deckList = deckCards;
+
+	this.render = opponentRender;
+	this.updateToMatchState = updateToMatchState;
 	//override the draw (render) methods for all the pile subclasses? or tell them to 
 	//render  in different spots.
 	//maybe include checking the type of the object we are in the functions?
+
 }
 Opponent.prototype = new Participant;
 
-//the Player (the person playing on "our" side of the table)
+// if you call this make sure you call Game.opponent.render()
+// right after or else shit'll b fucked 4 real m80
+function updateToMatchState(){
+	let state = this.state;
+
+	this.deck.cards = [];
+	state.deck.forEach(cardInd => {
+		this.deck.cards.push(this.deckList[cardInd]);
+	});
+	this.hand.cards = [];
+	state.hand.forEach(cardInd => {
+		this.hand.cards.push(this.deckList[cardInd]);
+	});
+	this.buildings.cards = [];
+	state.buildings.forEach(cardInd => {
+		this.buildings.cards.push(this.deckList[cardInd]);
+	});
+	this.leftLane.cards = [];
+	state.leftLane.forEach(cardInd => {
+		this.leftLane.cards.push(this.deckList[cardInd]);
+	});
+	this.rightLane.cards = [];
+	state.rightLane.forEach(cardInd => {
+		this.rightLane.cards.push(this.deckList[cardInd]);
+	});
+};
+
+function opponentRender(){
+	this.leftLane.render();
+	this.rightLane.render();
+	this.buildings.render();
+}
+
+// the Player (the person playing on "our" side of the table)
 function Player(name, deckCards){
 	this.base = Participant;
 	this.base(name, deckCards);
 	this.setInteractable = playerSetInteractable;
+	this.render = playerRender;
 }
 Player.prototype = new Participant;
+
+function playerRender(){
+	this.hand.render();
+	this.deck.render();
+	this.graveyard.render();
+	this.leftLane.render();
+	this.rightLane.render();
+}
 
 function playerSetInteractable(bool){
 	this.hand.setInteractable(bool);
@@ -63,15 +110,13 @@ function Participant(name, deckCards){
 	this.drawCard = drawParticipantCard;
 	this.updateSelf = updateSelf;
 	this.associateRefZones = associateRefZones;
-	this.render = participantRender;
+	this.setState = setState;
 
 };
+function setState(state){
+	this.state = state;
+};
 
-function participantRender(){
-	this.hand.render();
-	this.deck.render();
-	this.graveyard.render();
-}
 function associateRefZones(refZones) {
 	this.deck.associateRefZones(refZones.deck);
 	this.hand.associateRefZones(refZones.hand);
@@ -133,7 +178,9 @@ function Graveyard(cards){
 Graveyard.prototype = new Pile;
 
 function graveAssociateRefZones(refZones){
-	this.targetZone = refZones[0];
+	if (refZones){
+		this.targetZone = refZones[0];
+	}
 };
 
 function graveRender(){
@@ -204,7 +251,9 @@ function Deck(cards){
 Deck.prototype = new Pile;
 
 function deckAssociateRefZones(refZones){
-	this.targetZone = refZones[0];
+	if (refZones){
+		this.targetZone = refZones[0];
+	}
 };
 
 function deckRender(){
@@ -213,7 +262,7 @@ function deckRender(){
 
 		if (this.cards.length >= 0){
 			// TODO show cardback instead of blank.
-			this.sprite = game.add.sprite(x,y,'blank_card_sprite');
+			this.sprite = game.add.sprite(x,y,'cardback_sprite');
 		} else {
 			// TODO show empty deck sprite
 		}
@@ -302,6 +351,7 @@ function addCard(card) {
 // everything below this is card stuff
 // ----CARD----CARD----CARD----CARD----CARD----CARD----CARD----
 
+
 // Card constructor, takes an optional CryptoCardsNumber (ccnum), 
 // or all the necessary info to make a card.
 function Card(ccnum, name, desc, stats, cost, effects) {
@@ -320,8 +370,17 @@ function Card(ccnum, name, desc, stats, cost, effects) {
 	this.enable = enableCard;
 	this.disable = disableCard;
 	this.setCallbacks = setCardCallbacks;
+	this.setId = setId;
+	this.getSprite = getSprite;
 }
 
+function getSprite(){
+	return this.sprite;
+}
+
+function setId(id){
+	this.id = id;
+}
 
 function Cost(lcost, mcost, rcost){
 	this.lcost = lcost;
@@ -362,6 +421,12 @@ function renderCard(point){
 	this.sprite.addChild(game.add.text(37, 1, this.cost.mcost, font));
 	this.sprite.addChild(game.add.text(74, 1, this.cost.rcost, font));
 
+	//id is set in deckloader atm
+	this.sprite.parentCard = this;
+
+	this.sprite.events.onDragStart.add(onDragStart, this);
+
+
 }
 // for setting card callbacks dynamically, as they may require references to 
 // direct game objects.
@@ -371,6 +436,10 @@ function setCardCallbacks(onDragStop){
 		this.sprite.events.onDragStop.add(onDragStop, this);
 	}
 };
+function onDragStart(sprite, pointer) {
+	let card = sprite.parentCard;
+	console.log("parent card name: " + card.name);
+}
 
 function enableCard(){
 	this.sprite.inputEnabled = true;

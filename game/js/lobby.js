@@ -8,6 +8,8 @@ var Lobby = {};
 
 Lobby.init = function(){
     game.stage.disableVisibilityChange = true;
+    game.scale.pageAlignHorizontally = true;
+	game.scale.pageAlignVertically = true;
 };
 
 Lobby.preload = function(){
