@@ -22,6 +22,9 @@ const getCurrentPrice = require('../../../../util/blockchainApiCaller').getCurre
 const createSaleAuction = require('../../../../util/blockchainApiCaller').createSaleAuction;
 const ownerOf = require('../../../../util/blockchainApiCaller').ownerOf;
 
+const json = require('../../components/Cards.json');
+const Cards = json.cards;
+
 class MarketplacePage extends Component {
 
   constructor(props) {
@@ -34,6 +37,8 @@ class MarketplacePage extends Component {
     this.props.dispatch(fetchAuctions());
     // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
     this.props.dispatch(fetchUserCards('newGuy'));
+    console.log(Cards[0].name);
+    console.log(Cards[0].string);
   }
 
   handleFetchUserCards = () => {
@@ -95,11 +100,18 @@ class MarketplacePage extends Component {
   handleAddGen0Auction = () => {
     /*  creating Gen 0 auctions
      this could be moved somewhere else */
-    var hex = '000100011300000C';
+     
+    /* var hex = '000100011300000C';
     var skills = this.hex2int(hex);
-    var name = '0x504c5a20574f524b';
-    console.log('SKILLS: ', skills);
-    for (var i = 0; i < 3; i++) {
+    var name = 'This is a card';
+    var nameInHex = this.ascii2hex(name); */
+
+    var skills;
+    var name;
+    for (var i = 0; i < Cards.length; i++) {
+      skills = this.hex2int(Cards[i].string);
+      name = this.ascii2hex(Cards[i].name);
+      
       createGen0Auctions(skills, name).then((result) => {
         var tokenId = result.events.Spawn.returnValues.tokenId;
         console.log('TOKEN ID CREATED: ' + tokenId);
@@ -155,8 +167,19 @@ class MarketplacePage extends Component {
     var hex = hexx.toString();
     var str = '';
     for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
-        str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
     return str;
+  }
+
+  ascii2hex = (text) => {
+    var arr = [];
+    for (var i = 0, l = text.length; i < l; i++) {
+      var hex = Number(text.charCodeAt(i)).toString(16);
+      arr.push(hex);
+    }
+    var hex = arr.join('');
+    var betterHex = '0x' + hex;
+    return betterHex;
   }
 
   decodeSkills = (skills) => {
@@ -171,7 +194,7 @@ class MarketplacePage extends Component {
   }
 
   getType = (type) => {
-    switch(type) {
+    switch (type) {
       case 1:
         return 'Machine';
         break;
@@ -182,7 +205,7 @@ class MarketplacePage extends Component {
         return 'Building';
         break;
       default:
-        return 'INVALID TYPE';      
+        return 'INVALID TYPE';
     }
   }
 
@@ -195,7 +218,7 @@ class MarketplacePage extends Component {
         <button onClick={this.handleToggleCreateAuction}> create auction </button>
         <CreateAuctionWidget
           showCreateAuction={this.props.showCreateAuction}
-          createSaleAuction={this.handleCreateSaleAuction} 
+          createSaleAuction={this.handleCreateSaleAuction}
           cards={this.props.cards}
           fetchCards={this.handleFetchUserCards}
         />

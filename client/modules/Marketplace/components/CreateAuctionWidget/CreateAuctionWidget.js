@@ -51,7 +51,6 @@ export class CreateAuctionWidget extends Component {
               cards={this.props.cards}
               selectCard={this.handleSelectCard}
             />
-            <button onClick={() => {this.handleSelectCard(3)}} > test </button>
             <form onSubmit={this.handleSubmit}>
               TokenId: <br />
               <input type="number" name="tokenId" value={this.state.tokenId} onChange={this.handleChange} /><br />
