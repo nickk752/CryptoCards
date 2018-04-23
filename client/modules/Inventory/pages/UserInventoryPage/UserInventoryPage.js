@@ -36,7 +36,7 @@ class UserInventoryPage extends Component {
     this.setState({
       value: value,
     });
-  };
+  }
 
   handleToggleAddCardDeck = () => {
     this.props.dispatch(toggleAddCardDeck());

@@ -1023,10 +1023,11 @@ contract CryptoCardsCore is CardMinting {
 
     // @notice Returns all the relevant info about a specific card.
     // @param _id The ID of the card of interest.
-    function getCard(uint256 _id) external view returns (uint128 skills) {
+    function getCard(uint256 _id) external view returns (uint128 skills, bytes32 name) {
         Card storage card = cards[_id];
 
         skills = card.skills;
+        name = card.name;
     }
 
     // @dev Override unpause so it requires all external contract addresses

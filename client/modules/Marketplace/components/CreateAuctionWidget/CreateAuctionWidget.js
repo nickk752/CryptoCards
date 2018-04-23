@@ -14,15 +14,17 @@ export class CreateAuctionWidget extends Component {
     super(props);
     this.state = { 
       tokenId: 0,
-      startingPrice: 3,
+      startingPrice: 0,
       endingPrice: 0,
-      duration: 4
+      duration: 0
     };
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.handleSelectCard = this.handleSelectCard.bind(this);
   }
 
   handleChange(event) {
+    event.preventDefault();
     const { name, value } = event.target;
     this.setState({ [name]: value });
   }
@@ -33,9 +35,11 @@ export class CreateAuctionWidget extends Component {
     console.log(this.state);
 
     this.props.createSaleAuction(this.state.tokenId, this.state.startingPrice, this.state.endingPrice, this.state.duration);
-    //this.props.createSaleAuction(1, 1000, 100, 500000);
-
     console.log("return successful");
+  }
+
+  handleSelectCard(selectedTokenId) {
+    this.setState({tokenId: selectedTokenId});
   }
 
   render() {
@@ -43,15 +47,19 @@ export class CreateAuctionWidget extends Component {
       <div>
         {this.props.showCreateAuction ?
           <div>
-          <SelectCardWidget cards={this.props.cards}/>
+            <SelectCardWidget 
+              cards={this.props.cards}
+              selectCard={this.handleSelectCard}
+            />
+            <button onClick={() => {this.handleSelectCard(3)}} > test </button>
             <form onSubmit={this.handleSubmit}>
               TokenId: <br />
               <input type="number" name="tokenId" value={this.state.tokenId} onChange={this.handleChange} /><br />
-              Ending Price: <br />
+              Starting Price(Wei): <br />
               <input type="number" step=".001" name="startingPrice" value={this.state.startingPrice} onChange={this.handleChange}/><br />
-              Ending Price: <br />
+              Ending Price(Wei): <br />
               <input type="number" step=".001" name="endingPrice" value={this.state.endingPrice} onChange={this.handleChange}/><br />
-              Duration: <br />
+              Duration(Seconds): <br />
               <input type="number" step=".001" name="duration" value={this.state.duration} onChange={this.handleChange}/><br />
               <input type="submit" value="Submit" /><br />
             </form>

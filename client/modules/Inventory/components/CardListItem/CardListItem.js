@@ -1,10 +1,7 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 import { Link } from 'react-router';
-import { FormattedMessage } from 'react-intl';
 import { GridTile } from 'material-ui/GridList';
-import IconButton from 'material-ui/IconButton';
-import StarBorder from 'material-ui/svg-icons/toggle/star-border';
 
 // Import styles
 
@@ -13,7 +10,6 @@ import wang from '../../../../components/wang.jpg';
 
 function CardListItem(props) {
   
-
   return (
     <GridTile
       key={props.card.slug}

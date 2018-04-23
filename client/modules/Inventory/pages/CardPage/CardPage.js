@@ -23,6 +23,7 @@ export function CardPage(props) {
         <img src={wang} />
         <h3> {props.card.name} </h3>
         <p> Owner: {props.card.owner} </p>
+        <p> TokenId: {props.card.tokenId} </p>
         <p> Type: {props.card.type} </p>
         <p> Attack: {props.card.attack} </p>
         <p> Defense: {props.card.defense} </p>

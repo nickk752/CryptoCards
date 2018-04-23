@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { Element, animateScroll as scroll } from 'react-scroll';
 
 // Import Components
-import CardList from '../../../Inventory/components/CardList';
+import SelectCardList from '../../../../components/SelectCardList/SelectCardList';
 
 export class SelectCardWidget extends Component {
   constructor(props) {
@@ -16,18 +16,22 @@ export class SelectCardWidget extends Component {
 
   render() {
     return (
-      <div>
-        <h2> Pick Card to Add to Deck
+
+      <h2> Pick card to put up for auction
           <Element name="cardList" className="element" id="container" style={{
-            position: 'relative',
-            height: '200px',
-            overflow: 'scroll',
-            marginBottom: '50px'
-          }}>
-            <CardList cards={this.props.cards}  height={150} cols={4} type={'selectCard'} />
-          </Element>
-        </h2>
-      </div>
+          position: 'relative',
+          height: '200px',
+          overflow: 'scroll',
+          marginBottom: '50px'
+        }}>
+          <SelectCardList
+            cards={this.props.cards}
+            height={150}
+            cols={4}
+            selectCard={this.props.selectCard} />
+        </Element>
+      </h2>
+
     );
   }
 }
