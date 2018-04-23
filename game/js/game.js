@@ -29,6 +29,9 @@ Game.preload = function () {
 	game.load.image('yourturnbanner_sprite', 'assets/sprites/yourturn_sprite.png');
 	game.load.image('cardback_sprite', 'assets/sprites/cardback_sprite.png');
 	game.load.image('resourcetracker_sprite', 'assets/sprites/resourcetracker_sprite.png');
+	game.load.image('quitbutton_sprite', 'assets/sprites/quitbutton_sprite.png');
+	game.load.image('winbanner_sprite', 'assets/sprites/winbanner_sprite.png');
+	game.load.image('losebanner_sprite', 'assets/sprites/losebanner_sprite.png');
 	game.load.spritesheet('leftresourcebar', 'assets/sprites/leftresourcebar_spritesheet.png', 24, 195, 10);
 	game.load.spritesheet('midresourcebar', 'assets/sprites/midresourcebar_spritesheet.png', 24, 195, 10);
 	game.load.spritesheet('rightresourcebar', 'assets/sprites/rightresourcebar_spritesheet.png', 24, 195, 10);
@@ -61,16 +64,16 @@ Game.create = function () {
 	Game.endTurnButton = game.add.button(25 * 32, 12 * 32, 'endturnbutton_sprite', Game.onEndTurnPressed);
 	Game.endTurnButton.input.enabled = false;
 
+	Game.quitButton = game.add.button(25 * 32, 3 * 32, 'quitbutton_sprite', Game.onQuitPressed);
+
 	//initialize the resource tracker
 	Game.resourceTracker = game.add.sprite(25 * 32, 5 * 32, 'resourcetracker_sprite');
 	Game.leftResourceBar = Game.resourceTracker.addChild(game.add.sprite(5,5,'leftresourcebar'));
-	Game.leftResourceBar.frame = 0;
 	Game.midResourceBar = Game.resourceTracker.addChild(game.add.sprite(36,5,'midresourcebar'));
-	Game.midResourceBar.frame = 0;
 	Game.rightResourceBar = Game.resourceTracker.addChild(game.add.sprite(68,5,'rightresourcebar'));
-	Game.rightResourceBar.frame = 0;
-
 	Game.currentTurn = 0;
+	Game.player.updateResourceTracker();
+
 
 	//create resource tracker
 
@@ -98,7 +101,24 @@ Game.create = function () {
 	//console.log("local First Cards name: " + Game.cardList[0].name);
 };
 
+Game.displayWinScreen = function(){
+	var youWinBanner = game.add.sprite(9 * 32, 6 * 32, 'winbanner_sprite');
+}
+
+Game.onQuitPressed = function(){
+	Client.sendQuit();
+	var youLostBanner = game.add.sprite(9 * 32, 6 * 32, 'losebanner_sprite');
+
+}
+
 Game.startGame = function(){
+	//place our bases
+	//Game.player.buildings.setCardAtIndex(Game.player.deckList[0], 2);
+	//Game.player.buildings.setCardAtIndex(Game.player.deckList[1], 0);
+	//Game.player.buildings.setCardAtIndex(Game.player.deckList[2], 4);
+
+	//Game.player.render();
+
 	// send our initial state
 	let state = Game.getPlayerPileState();
 	Client.updatePileStates(state);
@@ -241,6 +261,14 @@ Game.startNextTurn = function () {
 	// updating resources
 	Game.currentTurn++;
 	Game.player.resources.mid = Game.currentTurn;
+	if (Game.currentTurn % 2 == 0){
+		Game.player.resources.left = Game.currentTurn / 2;
+		Game.player.resources.right = Game.currentTurn / 2;
+	} else {
+		Game.player.resources.left = (Game.currentTurn - 1) / 2;
+		Game.player.resources.right = (Game.currentTurn - 1) / 2;
+
+	}
 	Game.player.updateResourceTracker();
 	// and re-enabling interactivity 
 	Game.player.setInteractable(true);

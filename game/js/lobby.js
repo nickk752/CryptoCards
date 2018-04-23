@@ -30,12 +30,12 @@ Lobby.onJoinGamePressed = function(){
     //get our name
     var nameEntry = document.getElementById('playerNameEntry');
     var name = nameEntry.value;
-    name = randomInt(1,1000);
+    //name = randomInt(1,1000);
 
     //get our gameId
     var gameIdEntry = document.getElementById('gameIDEntry');
     var gameId = gameIdEntry.value;
-    gameId = "12"
+    //gameId = "12"
 
     //they have to enter a name to continue
     if (name == "" || gameId == ""){

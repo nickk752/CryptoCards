@@ -94,6 +94,10 @@ function opponentRender(){
 
 // the Player (the person playing on "our" side of the table)
 function Player(name, deckCards){
+	this.deckList = deckCards;
+	deckCards.shift();
+	deckCards.shift();
+	deckCards.shift();
 	this.base = Participant;
 	this.base(name, deckCards);
 
@@ -112,6 +116,11 @@ function Player(name, deckCards){
 Player.prototype = new Participant;
 
 function updateResourceTracker(){
+	console.log("in updateResourceTracker():");
+	console.log("resources.left: " + this.resources.left);
+	console.log("resources.mid: " + this.resources.mid);
+	console.log("resources.right: " + this.resources.right);
+
 	if (this.resources.left == 0){
 		Game.leftResourceBar.visible = false;
 	} else {
@@ -132,14 +141,19 @@ function updateResourceTracker(){
 		Game.rightResourceBar.visible = true;
 		Game.rightResourceBar.frame = this.resources.right - 1;
 	}
-	
+	console.log("leaving updateResourceTracker()...");
 
 }
 
 function pay(cost){
+	console.log("in pay():");
+	console.log("lcost: " + cost.lcost);
 	this.resources.left = this.resources.left - cost.lcost;
+	console.log("mcost: " + cost.mcost);
 	this.resources.mid = this.resources.mid - cost.mcost;
+	console.log("rcost: " + cost.rcost);
 	this.resources.right = this.resources.right - cost.rcost;
+	console.log("leaving pay()...")
 
 }
 
@@ -551,15 +565,13 @@ function renderCard(point){
 
 function onDragStart(sprite, pointer, startX, startY) {
 	let card = sprite.parentCard;
+	Game.player.currCard = card;
 	console.log("parent card name: " + card.name);
+
 	//TODO find source by point (startX, startY)?
 	let source = findSourceByPoint({x:startX, y:startY});
 
-	Game.player.currCard = card;
 	Game.player.currSource = source;
-
-
-
 }
 
 function onDragStop(sprite, pointer) {
@@ -569,57 +581,107 @@ function onDragStop(sprite, pointer) {
 	//if target is null, it's invalid, just put it back where it was
 	if (target == null){
 		card.moveTo(card.home);
+	} else if (target.action == 'cast') {
+		console.log("casting a spell");
+		if (Game.player.canPay(card.cost)){
+			console.log("player can afford it");
+			Game.player.pay(card.cost);
+			Game.player.updateResourceTracker();
+			card.home = target.zone;
+			card.moveTo(card.home);
+		} else {
+			card.moveTo(card.home);
+		}
+	} else if (target.action == 'fight') {
+		//get the card we're trying to fight
+		console.log("fighting a creature");
+		if (target.card){
+			console.log("targeted cards name: " + target.card.name);
+			fight(target.card, card);
+			target.card.render(target.card.home);
+			card.render(card.home);
+
+			card.moveTo(card.home);
+		} else {
+			card.moveTo(card.home);
+		}
+		card.home = target.zone;
+		card.moveTo(card.home);
 	} else {
 		card.home = target.zone;
 		card.moveTo(card.home);
+	}
+	//check to see if they're casting a card from their hand
+	//check to see if they're attacking with a creature in a lane
+	
 
-		//Remove the card from the source and put it in the target;
-		let source = Game.player.currSource;
-		switch (source.zoneName){
-			case 'playerLeftLane' :
-				Game.player.leftLane.removeAtIndex(source.zoneIndex);
-				break;
-			case 'playerRightLane' :
-				Game.player.rightLane.removeAtIndex(source.zoneIndex);
-				break;
-			case 'playerHand' :
-				Game.player.hand.removeAtIndex(source.zoneIndex);
-				break;
-			default :
-				console.log("got to the bottom of onDragStop source switch");
+	//Remove the card from the source and put it in the target;
+	let source = Game.player.currSource;
+	if (source){
+		if (source.zoneName){
+			switch (source.zoneName){
+				case 'playerLeftLane' :
+					Game.player.leftLane.removeAtIndex(source.zoneIndex);
+					break;
+				case 'playerRightLane' :
+					Game.player.rightLane.removeAtIndex(source.zoneIndex);
+					break;
+				case 'playerHand' :
+					Game.player.hand.removeAtIndex(source.zoneIndex);
+					break;
+				default :
+					console.log("got to the bottom of onDragStop source switch");
+			}
 		}
-		
-		switch (target.zoneName){
-			case 'playerLeftLane' :
-				console.log("targeting LeftLane, index: " + target.zoneIndex);
-				Game.player.leftLane.setCardAtIndex(card, target.zoneIndex);
-				break;
-			case 'playerRightLane' :
-				Game.player.rightLane.setCardAtIndex(card, target.zoneIndex);
-				break;
-			case 'opponentLeftLane' :
-				Game.opponent.leftLane.setCardAtIndex(card, target.zoneIndex);
-				break;
-			case 'opponentRightLane' :
-				Game.opponent.rightLane.setCardAtIndex(card, target.zoneIndex);
-				break;
-			case 'playerBuildings' :
-				console.log("targeting buildings, index: " + target.zoneIndex);
-				Game.player.buildings.setCardAtIndex(card, target.zoneIndex);
-				break;
-			case 'opponentBuildings' :
-				Game.opponent.buildings.setCardAtIndex(card, target.zoneIndex);
-				break;
-			default :
-				console.log("got to the bottom of onDragStop target switch");
+	}
+	if (target){
+		if (target.zoneName){
+			switch (target.zoneName){
+				case 'playerLeftLane' :
+					console.log("targeting LeftLane, index: " + target.zoneIndex);
+					Game.player.leftLane.setCardAtIndex(card, target.zoneIndex);
+					break;
+				case 'playerRightLane' :
+					Game.player.rightLane.setCardAtIndex(card, target.zoneIndex);
+					break;
+				case 'opponentLeftLane' :
+					Game.opponent.leftLane.setCardAtIndex(card, target.zoneIndex);
+					break;
+				case 'opponentRightLane' :
+					Game.opponent.rightLane.setCardAtIndex(card, target.zoneIndex);
+					break;
+				case 'playerBuildings' :
+					console.log("targeting buildings, index: " + target.zoneIndex);
+					Game.player.buildings.setCardAtIndex(card, target.zoneIndex);
+					break;
+				case 'opponentBuildings' :
+					Game.opponent.buildings.setCardAtIndex(card, target.zoneIndex);
+					break;
+				default :
+					console.log("got to the bottom of onDragStop target switch");
+			}
 		}
 	}
 	Client.updatePileStates(Game.getPlayerPileState());
 }
 
+function fight(card1, card2){
+	card1.def = card1.def - card2.atk;
+	if (card1.def < 0){
+		card1.def = 0;
+	}
+
+	card2.def = card2.def - card1.atk;
+	if (card2.def < 0){
+		card2.def = 0;
+	}
+}
+
 function enableCard(){
-	this.sprite.inputEnabled = true;
-	this.sprite.input.enableDrag();
+	if (this.sprite != undefined){
+		this.sprite.inputEnabled = true;
+		this.sprite.input.enableDrag();
+	}
 	//this.sprite.events.onDragStop.add(onDragStop, this);
 	//this.sprite.alignIn(Game.zoneSprites.deck, Phaser.CENTER, 0, 0);
 };
@@ -631,13 +693,14 @@ function disableCard(){
 	}
 };
 
+
 function findTargetByPoint(point){
 	let x = point.x;
 	let y = point.y;
 
 	let target = null;
-
 	console.log("in findTargetByPoint");
+
 	Game.player.leftLane.targetZones.forEach(zone => {
 		if (Phaser.Rectangle.contains(zone.getBounds(), x, y)){
 			target = {};
@@ -692,6 +755,40 @@ function findTargetByPoint(point){
 			target.action = 'fight';
 		}
 	});
+
+	if (target) {
+		//see if we're targeting a card.
+		target.card = null;
+		Game.opponent.leftLane.cards.forEach(card => {
+			if (card) {
+				if (card.sprite){
+					if (Phaser.Rectangle.contains(card.sprite.getBounds(), x, y)){
+						target.card = card;
+					}
+				}
+			}
+		});
+
+		Game.opponent.rightLane.cards.forEach(card => {
+			if (card) {
+				if (card.sprite){
+					if (Phaser.Rectangle.contains(card.sprite.getBounds(), x, y)){
+						target.card = card;
+					}
+				}
+			}
+		});
+
+		Game.opponent.buildings.cards.forEach(card => {
+			if (card) {
+				if (card.sprite){
+					if (Phaser.Rectangle.contains(card.sprite.getBounds(), x, y)){
+						target.card = card;
+					}
+				}
+			}
+		});
+	}
 
 	return target;
 }

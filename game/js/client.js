@@ -27,6 +27,10 @@ Client.sendEndTurn = function(){
     Client.socket.emit('endedMyTurn');
 };
 
+Client.sendQuit = function(){
+    Client.socket.emit('iLost');
+};
+
 Client.sendUpdatePlayerCard = function(cardInd, card){
     Client.socket.emit('updatePlayerCard', {cardInd: cardInd, card: card});
 };
@@ -90,7 +94,7 @@ Client.socket.on('matchFound', function(data){
 
     //we won (they lost)
     Client.socket.on('youWon', function(){
-        //Game.displayWonScreen()?
+        Game.displayWinScreen();
     });
 
     //we lost (they won)
