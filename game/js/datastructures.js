@@ -36,6 +36,8 @@ function updateToMatchState(){
 	console.log("in updateToMatchState");
 	console.log("state.deck: " + state.deck);
 
+	// TODO replace forEach's with for loops, skipping index if
+	// the state[index] is null;
 	this.deck.cards = [];
 	state.deck.forEach(cardInd => {
 		this.deck.cards.push(this.deckList[cardInd]);
@@ -44,20 +46,44 @@ function updateToMatchState(){
 	state.hand.forEach(cardInd => {
 		this.hand.cards.push(this.deckList[cardInd]);
 	});
+
+	this.buildings.cards = [];
+	let i;
+	for (i = 0; i < state.buildings.length; i++){
+		if (state.buildings[i]){
+			this.buildings.setCardAtIndex(this.deckList[state.buildings[i]], (state.buildings.length - i) -1);
+		}
+	}
+	/*
 	this.buildings.cards = [];
 	state.buildings.forEach(cardInd => {
 		this.buildings.cards.push(this.deckList[cardInd]);
-	});
+	});*/
+	
 	this.leftLane.cards = [];
+	for (i = 0; i < state.leftLane.length; i++){
+		if (state.leftLane[i]){
+			this.leftLane.setCardAtIndex(this.deckList[state.leftLane[i]], (state.leftLane.length - i) -1);
+		}
+	}
+	/*
 	state.leftLane.forEach(cardInd => {
 		console.log("updateToMatchState leftLane card:" + this.deckList[cardInd].name)
 		console.log( this.deckList[cardInd].render);
 		this.leftLane.cards.push(this.deckList[cardInd]);
-	});
+	});*/
+
 	this.rightLane.cards = [];
+	for (i = 0; i < state.rightLane.length; i++){
+		if (state.rightLane[i]){
+			this.rightLane.setCardAtIndex(this.deckList[state.rightLane[i]], (state.rightLane.length - i) -1);
+		}
+	}
+	/*
 	state.rightLane.forEach(cardInd => {
 		this.rightLane.cards.push(this.deckList[cardInd]);
 	});
+	*/
 };
 
 function opponentRender(){
@@ -70,10 +96,63 @@ function opponentRender(){
 function Player(name, deckCards){
 	this.base = Participant;
 	this.base(name, deckCards);
+
+	this.resources = {
+		left: 0,
+		mid: 0,
+		right: 0,
+	}
+
 	this.setInteractable = playerSetInteractable;
 	this.render = playerRender;
+	this.canPay = canPay;
+	this.pay = pay;
+	this.updateResourceTracker = updateResourceTracker;
 }
 Player.prototype = new Participant;
+
+function updateResourceTracker(){
+	if (this.resources.left == 0){
+		Game.leftResourceBar.visible = false;
+	} else {
+		Game.leftResourceBar.visible = true;
+		Game.leftResourceBar.frame = this.resources.left - 1;
+	}
+
+	if (this.resources.mid == 0){
+		Game.midResourceBar.visible = false;
+	} else {
+		Game.midResourceBar.visible = true;
+		Game.midResourceBar.frame = this.resources.mid - 1;
+	}
+
+	if (this.resources.right == 0){
+		Game.rightResourceBar.visible = false;
+	} else {
+		Game.rightResourceBar.visible = true;
+		Game.rightResourceBar.frame = this.resources.right - 1;
+	}
+	
+
+}
+
+function pay(cost){
+	this.resources.left = this.resources.left - cost.lcost;
+	this.resources.mid = this.resources.mid - cost.mcost;
+	this.resources.right = this.resources.right - cost.rcost;
+
+}
+
+function canPay(cost){
+	if (this.resources.left - cost.lcost >= 0){
+		if (this.resources.mid - cost.mcost >= 0){
+			if (this.resources.right - cost.rcost >= 0){
+				return true;
+			}
+		}
+	}
+	return false;
+}
 
 function playerRender(){
 	this.hand.render();
@@ -292,7 +371,7 @@ function deckRender(){
 // as a required max number of cards
 function Pile(max, cards) {
 	this.cards = cards || [];
-	this.max = max || 999;
+	this.max = max || 40;
 	this.addCard = addCard;
 	this.addCardToBottom = addCardToBottom;
 	this.drawCard = drawPileCard;
@@ -301,7 +380,12 @@ function Pile(max, cards) {
 	this.print = printCards;
 	this.removeAtIndex = removeAtIndex;
 	this.insertCardAtIndex = insertCardAtIndex;
+	this.setCardAtIndex = setCardAtIndex;
 }
+function setCardAtIndex(card, index){
+	this.cards[index] = card;
+}
+
 function insertCardAtIndex(card, index){
 	this.cards.splice(index, 0, card);
 }
@@ -507,22 +591,24 @@ function onDragStop(sprite, pointer) {
 		
 		switch (target.zoneName){
 			case 'playerLeftLane' :
-				Game.player.leftLane.insertCardAtIndex(card, target.zoneIndex);
+				console.log("targeting LeftLane, index: " + target.zoneIndex);
+				Game.player.leftLane.setCardAtIndex(card, target.zoneIndex);
 				break;
 			case 'playerRightLane' :
-				Game.player.rightLane.insertCardAtIndex(card, target.zoneIndex);
+				Game.player.rightLane.setCardAtIndex(card, target.zoneIndex);
 				break;
 			case 'opponentLeftLane' :
-				Game.opponent.leftLane.insertCardAtIndex(card, target.zoneIndex);
+				Game.opponent.leftLane.setCardAtIndex(card, target.zoneIndex);
 				break;
 			case 'opponentRightLane' :
-				Game.opponent.rightLane.insertCardAtIndex(card, target.zoneIndex);
+				Game.opponent.rightLane.setCardAtIndex(card, target.zoneIndex);
 				break;
 			case 'playerBuildings' :
-				Game.player.buildings.insertCardAtIndex(card, target.zoneIndex);
+				console.log("targeting buildings, index: " + target.zoneIndex);
+				Game.player.buildings.setCardAtIndex(card, target.zoneIndex);
 				break;
 			case 'opponentBuildings' :
-				Game.opponent.buildings.insertCardAtIndex(card, target.zoneIndex);
+				Game.opponent.buildings.setCardAtIndex(card, target.zoneIndex);
 				break;
 			default :
 				console.log("got to the bottom of onDragStop target switch");

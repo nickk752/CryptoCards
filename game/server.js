@@ -72,7 +72,8 @@ io.on('connection',function(socket){
             socket.opponent.emit("matchFound", socket.player);
             
             //the person who joined first goes first
-            socket.opponent.player.isTheirTurn = true;        
+            socket.opponent.player.isTheirTurn = true;
+            socket.player.isTheirTurn = false;        
         }
 
     //end on join

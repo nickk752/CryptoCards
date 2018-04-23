@@ -29,6 +29,10 @@ Game.preload = function () {
 	game.load.image('yourturnbanner_sprite', 'assets/sprites/yourturn_sprite.png');
 	game.load.image('cardback_sprite', 'assets/sprites/cardback_sprite.png');
 	game.load.image('resourcetracker_sprite', 'assets/sprites/resourcetracker_sprite.png');
+	game.load.spritesheet('leftresourcebar', 'assets/sprites/leftresourcebar_spritesheet.png', 24, 195, 10);
+	game.load.spritesheet('midresourcebar', 'assets/sprites/midresourcebar_spritesheet.png', 24, 195, 10);
+	game.load.spritesheet('rightresourcebar', 'assets/sprites/rightresourcebar_spritesheet.png', 24, 195, 10);
+
 };
 
 //  called after preload, right before we enter the main loop
@@ -54,7 +58,19 @@ Game.create = function () {
 
 	// create the end turn button
 	// TODO use button ref sprite instead;
-	Game.endTurnButton = game.add.button(25 * 32, 13 * 32, 'endturnbutton_sprite', Game.onEndTurnPressed);
+	Game.endTurnButton = game.add.button(25 * 32, 12 * 32, 'endturnbutton_sprite', Game.onEndTurnPressed);
+	Game.endTurnButton.input.enabled = false;
+
+	//initialize the resource tracker
+	Game.resourceTracker = game.add.sprite(25 * 32, 5 * 32, 'resourcetracker_sprite');
+	Game.leftResourceBar = Game.resourceTracker.addChild(game.add.sprite(5,5,'leftresourcebar'));
+	Game.leftResourceBar.frame = 0;
+	Game.midResourceBar = Game.resourceTracker.addChild(game.add.sprite(36,5,'midresourcebar'));
+	Game.midResourceBar.frame = 0;
+	Game.rightResourceBar = Game.resourceTracker.addChild(game.add.sprite(68,5,'rightresourcebar'));
+	Game.rightResourceBar.frame = 0;
+
+	Game.currentTurn = 0;
 
 	//create resource tracker
 
@@ -86,8 +102,6 @@ Game.startGame = function(){
 	// send our initial state
 	let state = Game.getPlayerPileState();
 	Client.updatePileStates(state);
-	// start next turn
-	Game.startNextTurn();
 };
 
 // Called by Client when our opponent updates their pile state
@@ -114,19 +128,19 @@ Game.updateOpponentCard = function(cardInd, card){
 				Game.player.hand.render();
 			}
 	});
-	Game.player.leftlane.cards.forEach(oldCard => {
+	Game.player.leftLane.cards.forEach(oldCard => {
 		if (oldCard){
 			if (oldCard.id == arguments[0]){
 				oldCard = card;
-				Game.player.leftlane.render();
+				Game.player.leftLane.render();
 			}
 		}
 	});
-	Game.player.rightlane.cards.forEach(oldCard => {
+	Game.player.rightLane.cards.forEach(oldCard => {
 		if (oldCard){
 			if (oldCard.id == arguments[0]){
 				oldCard = card;
-				Game.player.rightlane.render();
+				Game.player.rightLane.render();
 			}
 		}
 	});
@@ -167,19 +181,19 @@ Game.updatePlayerCard = function(cardInd, card){
 				Game.player.hand.render();
 			}
 	});
-	Game.player.leftlane.cards.forEach(oldCard => {
+	Game.player.leftLane.cards.forEach(oldCard => {
 		if (oldCard){
 			if (oldCard.id == arguments[0]){
 				oldCard = card;
-				Game.player.leftlane.render();
+				Game.player.leftLane.render();
 			}
 		}
 	});
-	Game.player.rightlane.cards.forEach(oldCard => {
+	Game.player.rightLane.cards.forEach(oldCard => {
 		if (oldCard){
 			if (oldCard.id == arguments[0]){
 				oldCard = card;
-				Game.player.rightlane.render();
+				Game.player.rightLane.render();
 			}
 		}
 	});
@@ -224,8 +238,14 @@ Game.startNextTurn = function () {
 	// start by flashing up the "its your turn" banner
 	var yourTurnBanner = game.add.sprite(9 * 32, 6 * 32, 'yourturnbanner_sprite');
 	game.add.tween(yourTurnBanner).to({ alpha: 0 }, 2000, null, true, 500);
+	// updating resources
+	Game.currentTurn++;
+	Game.player.resources.mid = Game.currentTurn;
+	Game.player.updateResourceTracker();
 	// and re-enabling interactivity 
 	Game.player.setInteractable(true);
+	Game.endTurnButton.input.enabled = true;
+
 };
 
 Game.onEndTurnPressed = function () {
@@ -233,6 +253,8 @@ Game.onEndTurnPressed = function () {
 
 	// and then disable interaction until it's our turn again
 	Game.player.setInteractable(false);
+
+	Game.endTurnButton.input.enabled = false;
 	// tell the server we're done.
 	Client.sendEndTurn();
 };
@@ -262,6 +284,9 @@ Game.getPlayerPileState = function(){
 		rightLane: [],
 		buildings: [],
 	};
+	// TODO replace forEach's w/ for loops, put nulls in empty spots
+	// (if player.deck.cards[i] == null or undefined or whatever)
+	let i;
 
 	Game.player.deck.cards.forEach(card => {
 		state.deck.push(card.id);
@@ -272,15 +297,43 @@ Game.getPlayerPileState = function(){
 	Game.player.graveyard.cards.forEach(card => {
 		state.graveyard.push(card.id);
 	});
+
+	console.log("getPileState: lefLane.length: " + Game.player.leftLane.cards.length);
+	for (i = 0; i < 4; i++){
+		if (Game.player.leftLane.cards[i]){
+			state.leftLane.push(Game.player.leftLane.cards[i].id);
+		} else {
+			state.leftLane.push(null);
+		}
+	}
+	/*
 	Game.player.leftLane.cards.forEach(card => {
 		state.leftLane.push(card.id);
-	});
+	}); */
+
+	for (i = 0; i < 4; i++){
+		if (Game.player.rightLane.cards[i]){
+			state.rightLane.push(Game.player.rightLane.cards[i].id);
+		} else {
+			state.rightLane.push(null);
+		}
+	}
+	/*
 	Game.player.rightLane.cards.forEach(card => {
 		state.rightLane.push(card.id);
-	});
+	});*/
+	for (i = 0; i < 5; i++){
+		if (Game.player.buildings.cards[i]){
+			state.buildings.push(Game.player.buildings.cards[i].id);
+		} else {
+			state.buildings.push(null);
+		}
+	}
+	/*
 	Game.player.buildings.cards.forEach(card => {
 		state.buildings.push(card.id);
 	});
+	*/
 
 	console.log("getPlayerPileState:");
 	console.log("state.deck: " + state.deck);
@@ -357,12 +410,12 @@ RefZones = function () {
 		// assign the building zones
 		zone = game.add.sprite(0 + (32 * 5 * j), 14 * 32, 'buildingzone_sprite');
 		zone.zoneName = "playerBuildings"
-		zone.zoneIndex = i;
+		zone.zoneIndex = j;
 		this.playerZones.buildings.push(zone);
 
 		zone = game.add.sprite(0 + (32 * 5 * j), 0, 'buildingzone_sprite');
 		zone.zoneName = "opponentBuildings"
-		zone.zoneIndex = i;
+		zone.zoneIndex = j;
 		this.opponentZones.buildings.push(zone);
 
 		//this.playerZones.buildings.push(game.add.sprite(0 + (32 * 5 * j), 14 * 32, 'buildingzone_sprite'));
@@ -372,7 +425,7 @@ RefZones = function () {
 		// assign the hand zones
 		zone = game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite');
 		zone.zoneName = "playerHand"
-		zone.zoneIndex = i;
+		zone.zoneIndex = k;
 		this.playerZones.hand.push(zone);
 		//this.playerZones.hand.push(game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite'))
 	}
