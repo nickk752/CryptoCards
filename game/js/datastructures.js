@@ -386,7 +386,8 @@ function Card(ccnum, name, desc, stats, cost, effects) {
 		this.desc = desc;
 		this.stats = stats;
 		this.cost = cost;
-	}
+  }
+  
 	//expecting effects to be an array of strings.
 	this.effects = effects;
 	this.print = printCard;
@@ -622,7 +623,7 @@ function findSourceByPoint(point){
 			target = {};
 			target.zoneName = zone.zoneName;
 			target.zoneIndex = zone.zoneIndex;
-			target.action = 'cast';
+      target.action = 'cast'; 
 		}
 	});
 	Game.player.rightLane.targetZones.forEach(zone => {
@@ -632,7 +633,7 @@ function findSourceByPoint(point){
 			target.zoneName = zone.zoneName;
 			target.zoneIndex = zone.zoneIndex;
 			target.zone = zone;
-			target.action = 'cast';
+      target.action = 'cast';
 		}
 	});
 	Game.player.hand.targetZones.forEach(zone => {
@@ -642,7 +643,8 @@ function findSourceByPoint(point){
 			target.zoneName = zone.zoneName;
 			target.zoneIndex = zone.zoneIndex;
 			target.zone = zone;
-			target.action = 'cast';
+      target.action = 'cast'; //@find
+      target.triggerSettings = effectParse(Game.player.card);
 		}
 	});
 
