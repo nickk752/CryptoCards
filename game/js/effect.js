@@ -23,7 +23,7 @@ function effectParse(card){ //return triggerSettings to indicate when effects ac
         // chosen, random, all : refer to field locations
         // graveyard, deck, hand : always random
         // self : always targets self
-  var triggerSettings = [effect1, effect2];
+  var triggerSettings = [ "", effect1, effect2];
   var effect1 = {magnitude: null, targetNumber: null, targetLocation: null, restrictions: ['']};
   var effect2 = {magnitude: null, targetNumber: null, targetLocation: null, restrictions: ['']};
   var targetSelectionsList = ["All","Chosen","Deck","Hand","Graveyard","Self","Random"];
@@ -56,19 +56,20 @@ function effectParse(card){ //return triggerSettings to indicate when effects ac
   //@ParseActivator
     //check trait1 - trait3 for Battlecry, or check type for Augment
     if (card.effect[0].includes(effectActivator[0], 0) || card.effect[1].includes(effectActivator[0], 0) || card.effect[2].includes(effectActivator[0], 0)|| card.type == "Augment")
-      {triggerSettings[0] = 1;} //This effect should trigger on entry to the battlefield
+      {triggerSettings[0] = "Battlecry";} //This effect should trigger on entry to the battlefield
     //check trait1 - trait3 for Deathrattle
     else if (card.effect[0].includes(effectActivator[1], 0) || card.effect[1].includes(effectActivator[1], 0) || card.effect[2].includes(effectActivator[1], 0))  //check card traits
-      {triggerSettings[0] = 2;} //This effect should trigger on exit from the battlefield
+      {triggerSettings[0] = "Deathrattle";} //This effect should trigger on exit from the battlefield
     //check card desc for Turn keyword
     else if (card.effect[3].includes(effectActivator[2]), 0)  //search card desc
-      {triggerSettings[0] = 3;} //This effect triggers on start of turn
+      {triggerSettings[0] = "Turn Start";} //This effect triggers on start of turn
     //check trait1 - trait 3 for Lifesteal
     else if (card.effect[0].includes(effectActivator[3], 0) || card.effect[1].includes(effectActivator[3], 0) || card.effect[2].includes(effectActivator[3], 0))  //search card desc
-      {triggerSettings[0] = 4;}  //This effect triggers on attack
+      {triggerSettings[0] = "Attack";}  //This effect triggers on attack
+    //check for Taunt
+      else if (card.effect[0].includes(effectActivator[4], 0) || card.effect[1].includes(effectActivator[4], 0) || card.effect[2].includes(effectActivator[4], 0))  //search card desc
+      {triggerSettings[0] = "Taunt";}  //This is Taunt
     //card has no activator, and must therefore have no effect, return null triggerSettings
-    else if (card.effect[0].includes(effectActivator[4], 0) || card.effect[1].includes(effectActivator[4], 0) || card.effect[2].includes(effectActivator[4], 0))  //search card desc
-      {triggerSettings[0] = 5;}  //This is Taunt
     else{
       triggerSettings[0] = null; //This card has no effects, effect activator processing complete
       return triggerSettings;
@@ -79,10 +80,9 @@ function effectParse(card){ //return triggerSettings to indicate when effects ac
   var triggerIndex = 1;
   effectSplitArray = effect[3].split(", ");
   //check the split array for card effect
-  for(var i = 0; i< effectSplitArray.length; ++i){ //at most 2 iterations
+  while (triggerIndex < 3){
+    for(var i = 0; i< effectSplitArray.length; ++i){ //at most 2 iterations
         effectString = effectSplitArray[i].split(" ");
-  
-  
         switch(effectSplitArray[i]){
           case "Deal":
           case "Draw":
@@ -112,7 +112,7 @@ function effectParse(card){ //return triggerSettings to indicate when effects ac
               for( var m = 0; m <restrictionsList.length; ++m){
                 if(effectString[k].includes(restrictionsList[m])){
                   triggerSettings[triggerIndex].restrictions[restrictionIndex].concat(restrictionsList[m]);
-                  ++restrictionIndex;
+                  restrictionIndex++;
                 }
               }
             }
@@ -209,7 +209,7 @@ function effectParse(card){ //return triggerSettings to indicate when effects ac
               for( var m = 0; m <restrictionsList.length; ++m){
                 if(effectString[k].includes(restrictionsList[m])){
                   triggerSettings[triggerIndex].restrictions[restrictionIndex].concat(restrictionsList[m]);
-                  ++restrictionIndex;
+                  restrictionIndex++;
                 }
               }
             }
@@ -219,7 +219,10 @@ function effectParse(card){ //return triggerSettings to indicate when effects ac
           case "Immune":
             break;
         }
-  }  
+    }
+    triggerIndex++;  
+  }
+  return triggerSettings;
 }
 
 function EffectFactory(){ //effectory? //Generate board callback methods
