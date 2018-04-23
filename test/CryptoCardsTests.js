@@ -26,13 +26,10 @@ contract('CryptoCards', () => {
    * ---------------------------------------------------
    */
 
-  checksTotalSupply(0);
+  checkCardCreation(1234,"0xAA");
 
-  checkCardCreation(1234);
-  
+  checkCardBid(0, 5); 
 
-  checkCardBid(0, 5);
-  
+  checkAuctionCreation(0, 100, 10, 2);
 
-  //checkWithdrawal(1.0);
 });

@@ -31,7 +31,6 @@ function CardList(props){
                             <CardListItem
                                 card = {card}
                                 key = {card.cuid}
-                                transferCard = {props.transferCard}
                             />
                         ))
                     }

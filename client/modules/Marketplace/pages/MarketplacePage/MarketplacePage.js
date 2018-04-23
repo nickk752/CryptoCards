@@ -5,29 +5,44 @@ import { connect } from 'react-redux';
 // Import Components
 import AuctionList from '../../components/AuctionList';
 import CreateAuctionWidget from '../../components/CreateAuctionWidget/CreateAuctionWidget';
-const bid = require('../../../../util/blockchainApiCaller').bid;
 
 // Import Actions
 import { fetchAuctions, deleteAuctionRequest, addAuctionRequest, toggleCreateAuction } from '../../MarketplaceActions';
-import { addCardRequest, transferCardRequest } from '../../../Inventory/InventoryActions' ;
+import { addCardRequest, transferCardRequest, fetchUserCards } from '../../../Inventory/InventoryActions';
 // Import Selectors
 import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
+import { getUserCards } from '../../../Inventory/CardReducer';
 
 // Web3 
 const createGen0Auctions = require('../../../../util/blockchainApiCaller').createGen0Auction;
 const getAuction = require('../../../../util/blockchainApiCaller').getAuction;
 const getCard = require('../../../../util/blockchainApiCaller').getCard;
+const bid = require('../../../../util/blockchainApiCaller').bid;
+const getCurrentPrice = require('../../../../util/blockchainApiCaller').getCurrentPrice;
+const createSaleAuction = require('../../../../util/blockchainApiCaller').createSaleAuction;
+const ownerOf = require('../../../../util/blockchainApiCaller').ownerOf;
+
+const json = require('../../components/Cards.json');
+const Cards = json.cards;
 
 class MarketplacePage extends Component {
 
   constructor(props) {
     super(props);
     this.handleAddAuction = this.handleAddAuction.bind(this);
-   // this.handleClick = this.handleClick.bind(this);
+    // this.handleClick = this.handleClick.bind(this);
   }
 
   componentDidMount() {
     this.props.dispatch(fetchAuctions());
+    // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
+    this.props.dispatch(fetchUserCards('newGuy'));
+    console.log(Cards[0].name);
+    console.log(Cards[0].string);
+  }
+
+  handleFetchUserCards = () => {
+    this.props.dispatch(fetchUserCards('newGuy'));//hardcoding
   }
 
   handleDeleteAuction = auction => {
@@ -41,9 +56,17 @@ class MarketplacePage extends Component {
   }
 
   handleClick = (cuid, tokenId) => {
-    //bid();
+    getCurrentPrice(tokenId).then((result) => {
+      console.log('BIDDING IN WEB APP, CURRENT PRICE: ');
+      console.log(result);
+      bid(tokenId, result).then(() => {
+        console.log('FINDING NEW OWNER OF CARD');
+        ownerOf(tokenId);
+      });
+    });
     this.props.dispatch(deleteAuctionRequest(cuid));
     this.handleTransferCard(tokenId, 'newGuy');
+    this.props.dispatch(fetchUserCards('newGuy'));
     // event.preventDefault();
   }
 
@@ -75,20 +98,114 @@ class MarketplacePage extends Component {
   }
 
   handleAddGen0Auction = () => {
-   /*  creating Gen 0 auctions
-    this could be moved somewhere else */
-    for(var i = 0; i < 10; i++){
-      createGen0Auctions(1000 + i).then((result) => {
+    /*  creating Gen 0 auctions
+     this could be moved somewhere else */
+     
+    /* var hex = '000100011300000C';
+    var skills = this.hex2int(hex);
+    var name = 'This is a card';
+    var nameInHex = this.ascii2hex(name); */
+
+    var skills;
+    var name;
+    for (var i = 0; i < Cards.length; i++) {
+      skills = this.hex2int(Cards[i].string);
+      name = this.ascii2hex(Cards[i].name);
+      
+      createGen0Auctions(skills, name).then((result) => {
         var tokenId = result.events.Spawn.returnValues.tokenId;
         console.log('TOKEN ID CREATED: ' + tokenId);
-        getCard(tokenId).then((data) => {
-          this.handleAddCard(data, 'CryptoCardsCore', 'type1', 5, 5, [], tokenId);
-        });
-        getAuction(tokenId).then((data) => {
+        getAuction(tokenId).then((data1) => {
           // figure out name decoding(eric)
-          this.handleAddAuction(data.seller, tokenId, data.startingPrice, data.endingPrice, data.duration, tokenId);
+          getCard(tokenId).then((data2) => {
+            var hexSkills = this.string2hex(data2.skills);
+            console.log('SKILLS IN HEX: ' + hexSkills);
+            var skillsJson = this.decodeSkills(hexSkills);
+            var name = this.hex2ascii(data2.name);
+            console.log('NAME FROM CARD');
+            console.log(name);
+
+            //add card 2 db
+            this.handleAddCard(name, 'CryptoCardsCore', skillsJson.type, skillsJson.attack, skillsJson.defense, [], tokenId);
+            //add auction 2 db
+            this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);//should put card name instead of tokenId
+          });
         });
       });
+    }
+  }
+
+  handleCreateSaleAuction = (tokenId, startingPrice, endingPrice, duration) => {
+    createSaleAuction(tokenId, startingPrice, endingPrice, duration).then((result) => {
+      var tokenId = result.events.Transfer.returnValues.tokenId;
+      getAuction(tokenId).then((data1) => {
+        // figure out name decoding(eric)
+        getCard(tokenId).then((data2) => {
+          var name = this.hex2ascii(data2.name);
+          //add auction 2 db
+          this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);
+          this.handleTransferCard(tokenId, 'CryptoCardsCore');
+          this.props.dispatch(fetchUserCards('newGuy'));//hardcoding
+        });
+      });
+    });
+  }
+
+  //work on this
+  hex2int = (hex) => {
+    return parseInt(hex, 16);
+  }
+
+  string2hex = (num) => {
+    //getCard returns skills as a string
+    var realNum = parseInt(num);
+    realNum = ("000000000000000" + realNum.toString(16)).substr(-16);//this keeps leading zeros
+    return realNum;
+  }
+
+  hex2ascii = (hexx) => {
+    var hex = hexx.toString();
+    var str = '';
+    for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
+      str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+    return str;
+  }
+
+  ascii2hex = (text) => {
+    var arr = [];
+    for (var i = 0, l = text.length; i < l; i++) {
+      var hex = Number(text.charCodeAt(i)).toString(16);
+      arr.push(hex);
+    }
+    var hex = arr.join('');
+    var betterHex = '0x' + hex;
+    return betterHex;
+  }
+
+  decodeSkills = (skills) => {
+    var skillsJson = {}
+    var i = 0;
+    skillsJson['attack'] = this.hex2int(skills[i + 7]);
+    skillsJson['defense'] = this.hex2int(skills[i + 8]);
+    //TODO: map type int to actual type names
+    skillsJson['type'] = this.getType(this.hex2int(skills[i + 9]));
+    skillsJson['rarity'] = this.hex2int(skills[skills.length - 1]);
+    return skillsJson;
+  }
+
+  getType = (type) => {
+    switch (type) {
+      case 1:
+        return 'Machine';
+        break;
+      case 2:
+        return 'Augment';
+        break;
+      case 3:
+        return 'Building';
+        break;
+      default:
+        return 'INVALID TYPE';
     }
   }
 
@@ -96,15 +213,19 @@ class MarketplacePage extends Component {
     return (
       <div>
         <button onClick={this.handleAddGen0Auction}> create gen0 auctions</button>
-        <br/>
+        <br />
+        <br />
         <button onClick={this.handleToggleCreateAuction}> create auction </button>
         <CreateAuctionWidget
           showCreateAuction={this.props.showCreateAuction}
-          handleAddAuction={this.handleAddAuction} />
+          createSaleAuction={this.handleCreateSaleAuction}
+          cards={this.props.cards}
+          fetchCards={this.handleFetchUserCards}
+        />
         <br />
         <br />
-        <AuctionList 
-          handleClick={this.handleClick} 
+        <AuctionList
+          handleClick={this.handleClick}
           auctions={this.props.auctions} />
       </div>
     );
@@ -119,6 +240,7 @@ function mapStateToProps(state) {
   return {
     showCreateAuction: getShowCreateAuction(state),
     auctions: getAuctions(state),
+    cards: getUserCards(state, 'newGuy'),
   };
 }
 

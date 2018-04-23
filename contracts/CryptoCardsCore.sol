@@ -1258,7 +1258,7 @@ contract CryptoCardsCore is CardMinting {
     // @notice Creates the main CryptoKitties smart contract instance.
     function CryptoCardsCore() public payable {
         // Starts paused.
-        paused = false;
+        paused = true;
 
         // the creator of the contract is the initial CEO
         ceoAddress = msg.sender;
@@ -1266,7 +1266,6 @@ contract CryptoCardsCore is CardMinting {
         // the creator of the contract is also the intial COO
         cooAddress = msg.sender;
     }
-
 
     // @notice No tipping!
     // @dev Reject all Ether from being sent here, unless it's from one of the
@@ -1279,10 +1278,11 @@ contract CryptoCardsCore is CardMinting {
 
     // @notice Returns all the relevant info about a specific card.
     // @param _id The ID of the card of interest.
-    function getCard(uint256 _id) external view returns (uint128 skills) {
+    function getCard(uint256 _id) external view returns (uint128 skills, bytes32 name) {
         Card storage card = cards[_id];
 
         skills = card.skills;
+        name = card.name;
     }
 
     // @dev Override unpause so it requires all external contract addresses
