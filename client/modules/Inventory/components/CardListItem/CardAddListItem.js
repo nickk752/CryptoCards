@@ -16,7 +16,11 @@ function CardAddListItem(props){
         <GridTile
             key={props.card.slug}
             title={props.card.name}
-            subtitle={props.card.type}
+            subtitle={
+                <div>
+                  <p> Type: {props.card.type} Att: {props.card.attack} Def: {props.card.defense} </p>
+                </div>
+              }
             onClick={() => {
                 alert(props.card.cuid + ' added to ' + props.deck.cuid);
                 props.addDeckToCard(props.card.cuid, props.deck.cuid);

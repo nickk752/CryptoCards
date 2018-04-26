@@ -11,7 +11,11 @@ export class SelectCardListItem extends Component {
       <GridTile
         key={this.props.card.slug}
         title={this.props.card.name}
-        subtitle={this.props.card.type}
+        subtitle={
+          <div>
+            <p> Type: {this.props.card.type} Att: {this.props.card.attack} Def: {this.props.card.defense} </p>
+          </div>
+        }
         onClick={() => {
           console.log(this.props.card.tokenId);
           this.props.selectCard(this.props.card.tokenId);

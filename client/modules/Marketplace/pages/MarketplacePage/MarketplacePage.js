@@ -14,7 +14,7 @@ import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 import { getUserCards } from '../../../Inventory/CardReducer';
 
 // Web3 
-const createGen0Auctions = require('../../../../util/blockchainApiCaller').createGen0Auction;
+const createGen0Auction = require('../../../../util/blockchainApiCaller').createGen0Auction;
 const getAuction = require('../../../../util/blockchainApiCaller').getAuction;
 const getCard = require('../../../../util/blockchainApiCaller').getCard;
 const bid = require('../../../../util/blockchainApiCaller').bid;
@@ -62,12 +62,11 @@ class MarketplacePage extends Component {
       bid(tokenId, result).then(() => {
         console.log('FINDING NEW OWNER OF CARD');
         ownerOf(tokenId);
+        this.props.dispatch(deleteAuctionRequest(cuid));
+        this.handleTransferCard(tokenId, 'newGuy');
+        this.props.dispatch(fetchUserCards('newGuy'));
       });
     });
-    this.props.dispatch(deleteAuctionRequest(cuid));
-    this.handleTransferCard(tokenId, 'newGuy');
-    this.props.dispatch(fetchUserCards('newGuy'));
-    // event.preventDefault();
   }
 
   handleAddAuction = (seller, card, startPrice, endPrice, duration, tokenId) => {
@@ -100,7 +99,7 @@ class MarketplacePage extends Component {
   handleAddGen0Auction = () => {
     /*  creating Gen 0 auctions
      this could be moved somewhere else */
-     
+
     /* var hex = '000100011300000C';
     var skills = this.hex2int(hex);
     var name = 'This is a card';
@@ -111,8 +110,8 @@ class MarketplacePage extends Component {
     for (var i = 0; i < Cards.length; i++) {
       skills = this.hex2int(Cards[i].string);
       name = this.ascii2hex(Cards[i].name);
-      
-      createGen0Auctions(skills, name).then((result) => {
+
+      createGen0Auction(skills, name).then((result) => {
         var tokenId = result.events.Spawn.returnValues.tokenId;
         console.log('TOKEN ID CREATED: ' + tokenId);
         getAuction(tokenId).then((data1) => {
@@ -128,7 +127,7 @@ class MarketplacePage extends Component {
             //add card 2 db
             this.handleAddCard(name, 'CryptoCardsCore', skillsJson.type, skillsJson.attack, skillsJson.defense, [], tokenId);
             //add auction 2 db
-            this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);//should put card name instead of tokenId
+            this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);
           });
         });
       });
@@ -183,7 +182,7 @@ class MarketplacePage extends Component {
   }
 
   decodeSkills = (skills) => {
-    var skillsJson = {}
+    var skillsJson = {};
     var i = 0;
     skillsJson['attack'] = this.hex2int(skills[i + 7]);
     skillsJson['defense'] = this.hex2int(skills[i + 8]);
