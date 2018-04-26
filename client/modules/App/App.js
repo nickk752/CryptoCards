@@ -18,15 +18,29 @@ import { switchLanguage } from '../../modules/Intl/IntlActions';
 import { loginRequest } from '../../modules/Login/LoginActions';
 // import { loginRequest } from '../../modules/Login/LoginActions';
 import { getUser } from '../../modules/Login/UserReducer';
+import getWeb3 from '../../util/getWeb3';
+
+// const Web3 = require('web3');
 
 export class App extends Component {
   constructor(props) {
     super(props);
-    this.state = { isMounted: false };
+    this.state = {
+      isMounted: false,
+    };
   }
 
   componentDidMount() {
     this.setState({ isMounted: true }); // eslint-disable-line
+
+    getWeb3((result) => {
+      // console.log('getweb3');
+      // console.log(result);
+      this.myWeb3 = result;
+    });
+    // console.log(myWeb3.);
+
+    // console.log(network);
   }
 
   toggleAddPostSection = () => {
@@ -97,14 +111,14 @@ export class App extends Component {
   }
 }
 
+App.contextTypes = {
+  web3: PropTypes.object,
+};
+
 App.propTypes = {
   children: PropTypes.object.isRequired,
   dispatch: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
-  isLoggedIn: PropTypes.bool.isRequired,
-  user: PropTypes.object.isRequired,
-  // isAuthenticated: PropTypes.bool.isRequired,
-  // errorMessage: PropTypes.string,
 };
 
 // Retrieve data from store as props
@@ -112,10 +126,6 @@ function mapStateToProps(store) {
   // const { isAuthenticated, errorMessage } = auth;
   return {
     intl: store.intl,
-    isLoggedIn: true,
-    user: getUser(store),
-    // isAuthenticated,
-    // errorMessage,
   };
 }
 

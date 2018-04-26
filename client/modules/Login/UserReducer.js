@@ -8,6 +8,7 @@ const initialState = {
       password: '',
     },
   },
+  ethAddress: 'none',
   isLoggedIn: false,
   loginToken: 'none',
   registering: false,
@@ -43,15 +44,25 @@ const UserReducer = (state = initialState, action) => {
       });
 
     case RECIEVE_ACCOUNT:
+      console.log("REDUCER");
+      console.log(action.address);
       return {
         ...state,
         ethAddress: action.address,
+        user: {
+          username: action.address,
+        },
       };
 
     case CHANGE_ACCOUNT:
+      console.log("REDUCER");
+      console.log(action.address);
       return {
         ...state,
         ethAddress: action.address,
+        user: {
+          username: action.address,
+        },
       };
 
     default:

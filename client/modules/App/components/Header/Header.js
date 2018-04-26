@@ -4,7 +4,7 @@ import { Link } from 'react-router';
 import { FormattedMessage } from 'react-intl';
 import { Navbar, Nav, NavItem } from 'react-bootstrap/lib';
 // import { Nav } from 'react-bootstrap/lib/Nav';
-import { LoginSmall } from '../../../Login/components/Login/LoginSmall';
+import { Web3Login } from '../../../Login/components/Login/Web3Login';
 
 // Import Style
 import styles from './Header.css';
@@ -62,7 +62,7 @@ export function Header(props, context) {
             </NavItem>
           </Nav>
           <Nav pullRight>
-            {<LoginSmall
+            {<web3Login
               handleSubmit={props.handleLoginSubmit}
               handleChange={props.handleLoginChange}
               user={props.user}

@@ -21,14 +21,31 @@ const bid = require('../../../../util/blockchainApiCaller').bid;
 const getCurrentPrice = require('../../../../util/blockchainApiCaller').getCurrentPrice;
 const createSaleAuction = require('../../../../util/blockchainApiCaller').createSaleAuction;
 const ownerOf = require('../../../../util/blockchainApiCaller').ownerOf;
+import getWeb3 from '../../../../util/getWeb3';
 
 const json = require('../../components/Cards.json');
 const Cards = json.cards;
+
+// Web3 
+import {
+  createGen0Auction,
+  getAuction,
+  getCard,
+  bid,
+  getCurrentPrice,
+  createSaleAuction,
+  ownerOf,
+} from '../../../../util/blockchainApiCaller';
 
 class MarketplacePage extends Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      accounts: [],
+    }
+    this.myWeb3 = undefined;
     this.handleAddAuction = this.handleAddAuction.bind(this);
     // this.handleClick = this.handleClick.bind(this);
   }
@@ -37,8 +54,24 @@ class MarketplacePage extends Component {
     this.props.dispatch(fetchAuctions());
     // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
     this.props.dispatch(fetchUserCards('newGuy'));
-    console.log(Cards[0].name);
-    console.log(Cards[0].string);
+    let accounts;
+    getWeb3((result) => {
+      // console.log('getweb3');
+      // console.log(result);
+      this.myWeb3 = result;
+    });
+    if (this.myWeb3 !== undefined) {
+      accounts = this.myWeb3.eth.getAccounts((error, result) => {
+        if (!error) {
+          return result;
+        }
+        return error;
+      });
+      accounts.then((result) => {
+        this.setState({ accounts: result });
+        console.log(this.state.accounts);
+      });
+    }
   }
 
   handleFetchUserCards = () => {
@@ -59,7 +92,8 @@ class MarketplacePage extends Component {
     getCurrentPrice(tokenId).then((result) => {
       console.log('BIDDING IN WEB APP, CURRENT PRICE: ');
       console.log(result);
-      bid(tokenId, result).then(() => {
+      console.log(this.state.accounts[0])
+      bid(tokenId, result, this.state.accounts[0]).then(() => {
         console.log('FINDING NEW OWNER OF CARD');
         ownerOf(tokenId);
         this.props.dispatch(deleteAuctionRequest(cuid));
@@ -111,6 +145,7 @@ class MarketplacePage extends Component {
       skills = this.hex2int(Cards[i].string);
       name = this.ascii2hex(Cards[i].name);
 
+      
       createGen0Auction(skills, name).then((result) => {
         var tokenId = result.events.Spawn.returnValues.tokenId;
         console.log('TOKEN ID CREATED: ' + tokenId);
@@ -135,7 +170,7 @@ class MarketplacePage extends Component {
   }
 
   handleCreateSaleAuction = (tokenId, startingPrice, endingPrice, duration) => {
-    createSaleAuction(tokenId, startingPrice, endingPrice, duration).then((result) => {
+    createSaleAuction(tokenId, this.state.accounts[0], startingPrice, endingPrice, duration).then((result) => {
       var tokenId = result.events.Transfer.returnValues.tokenId;
       getAuction(tokenId).then((data1) => {
         // figure out name decoding(eric)
@@ -211,21 +246,26 @@ class MarketplacePage extends Component {
   render() {
     return (
       <div>
-        <button onClick={this.handleAddGen0Auction}> create gen0 auctions</button>
-        <br />
-        <br />
-        <button onClick={this.handleToggleCreateAuction}> create auction </button>
-        <CreateAuctionWidget
-          showCreateAuction={this.props.showCreateAuction}
-          createSaleAuction={this.handleCreateSaleAuction}
-          cards={this.props.cards}
-          fetchCards={this.handleFetchUserCards}
-        />
-        <br />
-        <br />
-        <AuctionList
-          handleClick={this.handleClick}
-          auctions={this.props.auctions} />
+        {this.state.accounts.length !== 0 ? (
+          <div>
+            <button onClick={this.handleAddGen0Auction}> create gen0 auctions</button>
+            <br />
+            <br />
+            <button onClick={this.handleToggleCreateAuction}> create auction </button>
+            <CreateAuctionWidget
+              showCreateAuction={this.props.showCreateAuction}
+              createSaleAuction={this.handleCreateSaleAuction}
+              cards={this.props.cards}
+              fetchCards={this.handleFetchUserCards}
+            />
+            <br />
+            <br />
+            <AuctionList
+              handleClick={this.handleClick}
+              auctions={this.props.auctions} />
+          </div>
+        ) : (<div />)
+        }
       </div>
     );
   }

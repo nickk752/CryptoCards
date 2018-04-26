@@ -1,6 +1,7 @@
 const Web3 = require('Web3');
 
-export const web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545"));
+
+export const web3 = new Web3(typeof window !== 'undefined' ? window.web3.currentProvider : new Web3.providers.HttpProvider('http://localhost:8545'));
 
 export const coreAbi = require('../../build/contracts/CryptoCardsCore.json');
 export const auctionAbi = require('../../build/contracts/SaleClockAuction.json');
@@ -43,8 +44,8 @@ function createGen0Auction(skills, name) {
   });
 }
 
-function createSaleAuction(tokenId, startingPrice, endingPrice, duration){
-  return CryptoCardsCore.methods.createSaleAuction(tokenId, startingPrice, endingPrice, duration).send({ from: accounts[0] }).then((result) => {
+function createSaleAuction(tokenId, account, startingPrice, endingPrice, duration) {
+  return CryptoCardsCore.methods.createSaleAuction(tokenId, startingPrice, endingPrice, duration).send({ from: account }).then((result) => {
     console.log('CREATE SALE AUCTION RESULTS');
     console.log(result);
     return result;
@@ -67,8 +68,8 @@ function getCard(tokenId) {
   });
 }
 
-function bid(tokenId, currentPrice) {
-  return SaleClockAuction.methods.bid(tokenId).send({ from: accounts[0], value: currentPrice }).then((result) => {
+function bid(tokenId, currentPrice, account) {
+  return SaleClockAuction.methods.bid(tokenId).send({ from: account, value: currentPrice }).then((result) => {
     console.log("bid result");
     console.log(result);
     return result;
@@ -80,7 +81,7 @@ function getCurrentPrice(tokenId) {
     console.log("GET CURRENT PRICE: ");
     console.log(results);
     return results;
-  }) 
+  })
 }
 
 module.exports = {
@@ -91,7 +92,4 @@ module.exports = {
   getCard,
   getCurrentPrice,
   ownerOf,
-}
-
-
-
+};

@@ -13,7 +13,7 @@ import { fetchCard } from '../../InventoryActions';
 import { getCard } from '../../CardReducer';
 
 // Import Wang
-import wang from '../../../../components/wang.jpg';
+import wang from '../../../../components/flowey.png';
 
 export function CardPage(props) {
   return (

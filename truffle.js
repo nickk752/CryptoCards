@@ -20,7 +20,9 @@ module.exports = {
     ganache: {
       host: 'localhost',
       port: 8545,
-      network_id: '*',
+      network_id: '*',      
+      gas: 6721975, // Gas limit used for deploys
+      gasPrice: 20000000000, // 20 gwei
     },
   },
 };

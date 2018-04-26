@@ -45,6 +45,13 @@ export function addCards(cards) {
   };
 }
 
+export function transferCard(card) {
+  return {
+    type: TRANSFER_CARD,
+    card,
+  };
+}
+
 export function transferCardRequest(tokenId, ownerCuid) {
   return (dispatch) => {
     return callApi(`cards/transfer/${tokenId}-${ownerCuid}`, 'post')
@@ -52,12 +59,6 @@ export function transferCardRequest(tokenId, ownerCuid) {
   };
 }
 
-export function transferCard() {
-  return {
-    type: TRANSFER_CARD,
-    card,
-  };
-}
 
 export function fetchCards() {
   return (dispatch) => {

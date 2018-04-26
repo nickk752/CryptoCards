@@ -3,7 +3,7 @@ import { PropTypes } from 'prop-types';
 import { GridTile } from 'material-ui/GridList';
 
 // Import Wang
-import wang from '../../components/wang.jpg';
+import wang from '../../components/flowey.png';
 
 export class SelectCardListItem extends Component {
   render() {

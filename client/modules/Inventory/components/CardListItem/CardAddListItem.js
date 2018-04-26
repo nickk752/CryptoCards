@@ -7,7 +7,7 @@ import FontIcon from 'material-ui/FontIcon';
 // Import styles
 
 // Import Wang
-import wang from '../../../../components/wang.jpg';
+import wang from '../../../../components/flowey.png';
 
 function CardAddListItem(props){
     

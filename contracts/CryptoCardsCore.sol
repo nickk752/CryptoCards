@@ -215,10 +215,12 @@ contract ClockAuctionBase {
         // equal to the price so this cannot underflow
         uint256 bidExcess = _bidAmount - price;
 
-        // Return the funds. Similar to the previous transfer, this is
-        // not susceptible to a re-entry attack because the auction is
-        // removed before any transfers occur.
-        msg.sender.transfer(bidExcess);
+        if (bidExcess > 0) {
+          // Return the funds. Similar to the previous transfer, this is
+          // not susceptible to a re-entry attack because the auction is
+          // removed before any transfers occur.
+          msg.sender.transfer(bidExcess);
+        }
 
         // Tell the world!
         AuctionSuccessful(_tokenId,price, msg.sender);
@@ -618,13 +620,64 @@ contract CryptoCardsBase is AccessControl {
     //  of this structure.
     // WORK IN PROGRESS
     struct Card {
-        // @dev Placeholder/potentially valid variable to store relvant card info
+        // Contains info on skills/traits/rarity fo card
         uint128 skills;
+
+        // The timestamp from the block when this card came into existence
+        uint64 spawnTime;
+
+        // The minimum timestamp after which this card can engage in
+        // combining activities again.
+        uint64 cooldownEndTime;
+
+        // Name of the card
         bytes32 name;
+
+        // The ID of the parents of this card, set to 0 for gen0 cards.
+        uint32 firstIngredientId;
+        uint32 secondIngredientId;
+
+        // Set to the ID of one of the ingredient cards, chosen pseudorandomly
+        // Will indicate this card is combining with other card to spawn new card
+        // and point to other card. Non zero ID indicates it is 'combining' and is
+        // unusable in play.
+        uint32 combiningWithId;
+
+        // Set to index in cooldown array (see below) that represents
+        // the current cooldown duration for this card
+        uint16 cooldownIndex;
+
+        // The 'generation number' of this card. Generation number is the
+        // the larger of the two 'ingredient's' generation + 1
+        // (i.e. max(firstIngredientId.generation, secondIndredientId.generation) + 1)
+        uint16 generation;
     }
 
     /*** CONSTANTS ***/
-    // -- Don't have any of these yet -- //
+
+    // @dev A lookup table indicating the cooldown duration after any successful
+    //  combination.
+    uint32[14] public cooldowns = [
+        uint32(1 minutes),
+        uint32(2 minutes),
+        uint32(5 minutes),
+        uint32(10 minutes),
+        uint32(30 minutes),
+        uint32(1 hours),
+        uint32(2 hours),
+        uint32(4 hours),
+        uint32(8 hours),
+        uint32(16 hours),
+        uint32(1 days),
+        uint32(2 days),
+        uint32(4 days),
+        uint32(7 days)
+    ];
+
+   
+    
+    // An approximation of currently how many seconds are in between blocks.
+    uint256 public secondsPerBlock = 15;
 
     /*** STORAGE ***/
 
@@ -659,6 +712,8 @@ contract CryptoCardsBase is AccessControl {
         // so check for that first
         if (_from != address(0)) {
             ownershipTokenCount[_from]--;
+            // clear any previously approved ownership exchange
+            delete cardIndexToApproved[_tokenId];
         }
         // Emit the transfer event.
         Transfer(_from, _to, _tokenId);
@@ -670,10 +725,39 @@ contract CryptoCardsBase is AccessControl {
     //   and a Transfer event.
     // @param _skills contains crucial info about card
     // @param _owner The initial owner of this card, must be nonzero
-    function _createCard(uint128 _skills, bytes32 _name, address _owner) internal returns(uint256) {
+    function _createCard(
+        uint256 _skills, 
+        bytes32 _name, 
+        uint256 _firstIngredientId,
+        uint256 _secondIngredientId,
+        uint256 _generation,
+        address _owner
+    ) 
+        internal 
+        returns(uint256) 
+    {
+        // These requires make sure _createCard is being passed correctly sized values
+        require(_firstIngredientId == uint256(uint32(_firstIngredientId)));
+        require(_secondIngredientId == uint256(uint32(_secondIngredientId)));
+        require(_generation == uint256(uint16(_generation)));
+        require(_skills == uint256(uint128(_skills)));
+
+        // Sets initial cooldown index to floor(generation/2)
+        uint16 _cooldownIndex = uint16(_generation / 2);
+        if (_cooldownIndex > 13) {
+            _cooldownIndex = 13;
+        }
+
         Card memory _card = Card({
-            skills: _skills,
-            name: _name
+            skills: uint128(_skills),
+            name: _name,
+            spawnTime: uint64(now),
+            cooldownEndTime: 0,
+            firstIngredientId: uint32(_firstIngredientId),
+            secondIngredientId: uint32(_secondIngredientId),
+            combiningWithId: 0,
+            cooldownIndex: _cooldownIndex,
+            generation: uint16(_generation)
         });
         uint256 newCardId = cards.push(_card) - 1;
 
@@ -905,7 +989,178 @@ contract CardOwnership is CryptoCardsBase, ERC721 {
     }
 }
 
-contract CardAuction is CardOwnership {
+contract SkillScienceInterface {
+    function isSkillScience() public pure returns (bool);
+
+    function mixSkills(uint256 genes1, uint256 genes2) returns (uint256);
+}
+
+contract SkillScience {
+    bool public isSkillScience = true;
+
+    function mixSkills(uint256 skills1, uint256 skills2) public pure returns (uint256) {
+        return ((skills1 + skills2) / 2) + 1;
+    }
+}
+
+contract CardCombining is CardOwnership {
+    event Combining(address owner, uint256 firstIngredientId, uint256 secondIngredientId);
+
+    event AutoCombine(uint256 cardId, uint256 cooldownEndTime);
+
+    uint256 public autoCombineFee = 1000000 * 1000000000; // (1M * 1 gwei)
+
+    SkillScienceInterface public skillScience;
+
+    function setSkillScienceAddress(address _address) public onlyCEO {
+        SkillScienceInterface candidateContract = SkillScienceInterface(_address);
+
+        require(candidateContract.isSkillScience());
+
+        skillScience = candidateContract;
+    }
+
+
+    function _isReadyToCombine(Card _card) internal view returns (bool) {
+        return (_card.combiningWithId == 0) && (_card.cooldownEndTime <= now);
+    }
+
+    function _isCombiningPermitted(uint256 _firstIngredientId, uint256 _secondIngredientId) internal view returns (bool) {
+        address cardOwner = cardIndexToOwner[_firstIngredientId];
+        address secondCardOwner = cardIndexToOwner[_secondIngredientId];
+
+        return (cardOwner == secondCardOwner);
+    }
+
+    function _triggerCooldown(Card storage _card) internal {
+        _card.cooldownEndTime = uint64(now + cooldowns[_card.cooldownIndex]);
+
+        if(_card.cooldownIndex < 13) {
+            _card.cooldownIndex += 1;
+        }
+    }
+
+    function setAutoCombineFee(uint256 val) public onlyCOO {
+        autoCombineFee = val;
+    }
+
+    // Check to see if the cards are combining and the time period has passed
+    function _isReadyToSpawn(Card _card) private view returns (bool) {
+        return (_card.combiningWithId != 0) && (_card.cooldownEndTime <= now);
+    }
+
+    // Checks that the given card is able to breed, ie not currently combining or in cooldown
+    function isReadyToCombine(uint256 _cardId)
+        public 
+        view 
+        returns (bool)
+    {
+        require(_cardId > 0);
+        Card storage card = cards[_cardId];
+        return _isReadyToCombine(card);
+    }
+
+    function _isValidCombination(
+        Card storage _firstIngredient,
+        uint256 _firstIngredientId,
+        Card storage _secondIngredient,
+        uint256 _secondIngredientId
+    )
+        private
+        view
+        returns(bool)
+    {
+        // Can't combine card with itself!
+        if (_firstIngredientId == _secondIngredientId) {
+            return false;
+        }
+
+        // Allow combination if either are gen 0
+        if(_firstIngredient.firstIngredientId == 0 || _secondIngredient.firstIngredientId == 0) {
+            return true;
+        }
+
+        return true;
+    }
+
+    function canCombineWith(uint256 _firstIngredientId, uint256 _secondIngredientId)
+        public
+        view
+        returns(bool)
+    {
+        require(_firstIngredientId >= 0);
+        require(_secondIngredientId >= 0);
+        Card storage firstIngredient = cards[_firstIngredientId];
+        Card storage secondIngredient = cards[_secondIngredientId];
+        return _isValidCombination(firstIngredient, _firstIngredientId, secondIngredient, _secondIngredientId);
+    }
+
+    function combineWith(uint256 _firstIngredientId, uint256 _secondIngredientId) public whenNotPaused {
+        require(_owns(msg.sender, _firstIngredientId));
+        require(_isCombiningPermitted(_firstIngredientId, _secondIngredientId));
+
+        Card storage firstIngredient = cards[_firstIngredientId];
+
+        require(_isReadyToCombine(firstIngredient));
+
+        Card storage secondIngredient = cards[_secondIngredientId];
+
+        require(_isReadyToCombine(secondIngredient));
+
+        require(_isValidCombination(
+            firstIngredient,
+            _firstIngredientId,
+            secondIngredient,
+            _secondIngredientId
+        ));
+
+        // All checks passed, card gets pregnant!
+        _combineWith(_firstIngredientId, _secondIngredientId);
+    }
+
+    function _combineWith(uint256 _firstIngredientId, uint256 _secondIngredientId) internal {
+        Card storage firstIngredient = cards[_firstIngredientId];
+        Card storage secondIngredient = cards[_secondIngredientId];
+
+        firstIngredient.combiningWithId = uint32(_secondIngredientId);
+
+        _triggerCooldown(firstIngredient);
+        _triggerCooldown(secondIngredient);
+
+        Combining(cardIndexToOwner[_firstIngredientId], _firstIngredientId, _secondIngredientId);
+    }
+
+    function spawnCard(uint256 _firstIngredientId)
+        public
+        whenNotPaused
+        returns(uint256)
+    {
+        Card storage firstIngredient = cards[_firstIngredientId];
+
+        require(firstIngredient.spawnTime != 0);
+
+        require(_isReadyToSpawn(firstIngredient));
+
+        uint256 secondIngredientId = firstIngredient.combiningWithId;
+        Card storage secondIngredient = cards[secondIngredientId];
+
+        uint newGen = firstIngredient.generation;
+        if (secondIngredient.generation > firstIngredient.generation) {
+            newGen = secondIngredient.generation;
+        }
+
+        uint256 newCardSkills = skillScience.mixSkills(firstIngredient.skills, secondIngredient.skills);
+
+        address owner = cardIndexToOwner[_firstIngredientId];
+        uint256 cardId = _createCard(newCardSkills, firstIngredient.name, _firstIngredientId, firstIngredient.combiningWithId, newGen + 1, owner);
+
+        delete firstIngredient.combiningWithId;
+
+        return cardId;
+    }
+}
+
+contract CardAuction is CardCombining {
     // @notice The auction contract variables are defined in CryptoCardsBase to allow
     //  us to refer to them in CardOwnership to prevent accidental transfers.
     
@@ -962,7 +1217,7 @@ contract CardMinting is CardAuction {
     // @dev Creates a new gen0 card with the given skills and
     //  creates an auction for it.
     function createGen0Auction(uint128 _skills, bytes32 _name) external onlyCLevel {
-        uint256 cardId = _createCard(_skills, _name, address(this));
+        uint256 cardId = _createCard(_skills, _name, 0, 0, 0, address(this));
         _approve(cardId, saleAuction);
 
         saleAuction.createAuction(

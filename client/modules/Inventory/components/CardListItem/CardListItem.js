@@ -6,7 +6,7 @@ import { GridTile } from 'material-ui/GridList';
 // Import styles
 
 // Import Wang
-import wang from '../../../../components/wang.jpg';
+import wang from '../../../../components/flowey.png';
 
 function CardListItem(props) {
   

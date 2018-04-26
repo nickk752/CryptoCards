@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
-const createGen0Auctions = require('../../../../util/blockchainApiCaller').createGen0Auction;
-const getAuction = require('../../../../util/blockchainApiCaller').getAuction;
-const apiFunctions = require('../../../../util/blockchainApiCaller');
 import { fetchAuctions, addAuctionRequest } from '../../MarketplaceActions';
-
+// import {
+//   createGen0Auction,
+//   getAuction,
+// } from '../../../../util/blockchainApiCaller';
 //components
 import CardList from '../../../Inventory/components/CardList';
 import SelectCardWidget from '../../components/SelectCardWidget/SelectCardWidget';
