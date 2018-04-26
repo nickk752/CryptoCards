@@ -14,6 +14,9 @@ import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 import { getUserCards } from '../../../Inventory/CardReducer';
 import getWeb3 from '../../../../util/getWeb3';
 
+const json = require('../../components/Cards.json');
+const Cards = json.cards;
+
 // Web3 
 import {
   createGen0Auction,
@@ -53,6 +56,7 @@ class MarketplacePage extends Component {
         if (!error) {
           return result;
         }
+        return error;
       });
       accounts.then((result) => {
         this.setState({ accounts: result });
@@ -133,7 +137,7 @@ class MarketplacePage extends Component {
       skills = this.hex2int(Cards[i].string);
       name = this.ascii2hex(Cards[i].name);
       
-      createGen0Auctions(skills, name).then((result) => {
+      createGen0Auction(skills, name).then((result) => {
         var tokenId = result.events.Spawn.returnValues.tokenId;
         console.log('TOKEN ID CREATED: ' + tokenId);
         getAuction(tokenId).then((data1) => {

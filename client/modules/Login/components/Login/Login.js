@@ -76,7 +76,7 @@ class Login extends Component {
           <div className="form-group">
             <button className="btn btn-primary">Login</button>
             {loggingIn &&
-              <img src="../../../../components/WANG.jpg" />
+              <img src="../../../../components/flowey.png" />
             }
             <Link to="/register" className="btn btn-link">Register</Link>
           </div>

@@ -10,7 +10,7 @@ import FontIcon from 'material-ui/FontIcon';
 // Import Style
 // import styles from './AuctionListItem.css';
 
-import img from '../../exodia.jpg';
+import img from '../../flowey.png';
 
 function AuctionListItem(props) {
   return (
@@ -20,7 +20,7 @@ function AuctionListItem(props) {
       subtitle={<span>by <b>{props.auction.seller}</b></span>}
       actionIcon={<button onClick={() => props.handleClick(props.auction.cuid, props.auction.tokenId)}>Bid!</button>}
     >
-      <img src={img} role="presentation" />;
+      <img src={img}  role="presentation" />;
     </GridTile>
 
   //   <div className={styles['single-auction']}>

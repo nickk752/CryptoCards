@@ -5,7 +5,7 @@ import { Card, CardMedia, CardTitle, CardText, CardAction } from 'material-ui/Ca
 
 // import styles from '../../components/AuctionListItem/AuctionListItem.css';
 
-import img from '../../exodia.jpg';
+import img from '../../flowey.png';
 
 // Import Actions
 import { fetchAuction } from '../../MarketplaceActions';

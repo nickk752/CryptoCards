@@ -1,7 +1,7 @@
 const Web3 = require('Web3');
 
 
-export const web3 = new Web3(window.web3.currentProvider);
+export const web3 = new Web3(typeof window !== 'undefined' ? window.web3.currentProvider : new Web3.providers.HttpProvider('http://localhost:8545'));
 
 export const coreAbi = require('../../build/contracts/CryptoCardsCore.json');
 export const auctionAbi = require('../../build/contracts/SaleClockAuction.json');
