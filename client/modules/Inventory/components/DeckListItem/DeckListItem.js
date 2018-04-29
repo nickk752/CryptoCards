@@ -6,25 +6,32 @@ import MultiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 // Import Components 
 import CardListItem from '../CardListItem/CardListItem';
+import DeckCardListItem from '../DeckCardListItem/DeckCardListItem';
 
 //Import Selector
 import { getCard } from '../../CardReducer';
 
-function DeckListItem(props){
-    return(
+function DeckListItem(props) {
+    return (
         <div>
             {props.deck.name}
+            <h2> {String(props.deck.active)} </h2>
+            <button onClick={() => { props.activate(props.deck.cuid) }}>
+                ACTIVATE DECK
+            </button>
             <MultiThemeProvider>
                 <GridList
                     cols={3}
                 >
                     {   // using cuid to get card object
                         props.cards.map(card => (
-                            <CardListItem
-                                card = {card} 
-                                key = {card.cuid}
-                            /> 
-                        )) 
+                            <DeckCardListItem
+                                card={card}
+                                key={card.cuid}
+                                deck={props.deck}
+                                removeCard={props.removeCard}
+                            />
+                        ))
                     }
                 </GridList>
             </MultiThemeProvider>

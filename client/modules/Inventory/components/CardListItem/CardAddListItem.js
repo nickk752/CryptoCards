@@ -22,9 +22,8 @@ function CardAddListItem(props){
                 </div>
               }
             onClick={() => {
-                alert(props.card.cuid + ' added to ' + props.deck.cuid);
+                console.log(props.card.cuid + ' added to ' + props.deck.cuid);
                 props.addDeckToCard(props.card.cuid, props.deck.cuid);
-                props.fetchCards();
                 }
             }
             //find way to display attack and 

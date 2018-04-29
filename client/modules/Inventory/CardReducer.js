@@ -4,6 +4,7 @@ import {
   ADD_CARDS,
   DELETE_CARD,
   ADD_DECK_TO_CARD,
+  REMOVE_CARD,
 } from './InventoryActions';
 
 // Initial State
@@ -31,6 +32,12 @@ const CardReducer = (state = initialState, action) => {
         data: state.data.filter(card => card.cuid !== action.card.cuid),
         data: [action.card, ...state.data],
       };
+
+    case REMOVE_CARD:
+      return {
+        // not sure about this
+        data: state.data.filter(card => card.cuid !== action.card.cuid),
+      }  
 
     default:
       return state;

@@ -14,19 +14,6 @@ import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 import { getUserCards } from '../../../Inventory/CardReducer';
 
 // Web3 
-const createGen0Auction = require('../../../../util/blockchainApiCaller').createGen0Auction;
-const getAuction = require('../../../../util/blockchainApiCaller').getAuction;
-const getCard = require('../../../../util/blockchainApiCaller').getCard;
-const bid = require('../../../../util/blockchainApiCaller').bid;
-const getCurrentPrice = require('../../../../util/blockchainApiCaller').getCurrentPrice;
-const createSaleAuction = require('../../../../util/blockchainApiCaller').createSaleAuction;
-const ownerOf = require('../../../../util/blockchainApiCaller').ownerOf;
-import getWeb3 from '../../../../util/getWeb3';
-
-const json = require('../../components/Cards.json');
-const Cards = json.cards;
-
-// Web3 
 import {
   createGen0Auction,
   getAuction,
@@ -36,6 +23,11 @@ import {
   createSaleAuction,
   ownerOf,
 } from '../../../../util/blockchainApiCaller';
+
+import getWeb3 from '../../../../util/getWeb3';
+const json = require('../../components/Cards.json');
+const Cards = json.cards;
+
 
 class MarketplacePage extends Component {
 
@@ -51,9 +43,6 @@ class MarketplacePage extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(fetchAuctions());
-    // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
-    this.props.dispatch(fetchUserCards('newGuy'));
     let accounts;
     getWeb3((result) => {
       // console.log('getweb3');
@@ -72,6 +61,9 @@ class MarketplacePage extends Component {
         console.log(this.state.accounts);
       });
     }
+    this.props.dispatch(fetchAuctions());
+    // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
+    this.props.dispatch(fetchUserCards(this.state.accounts[0]));
   }
 
   handleFetchUserCards = () => {
@@ -144,7 +136,6 @@ class MarketplacePage extends Component {
     for (var i = 0; i < Cards.length; i++) {
       skills = this.hex2int(Cards[i].string);
       name = this.ascii2hex(Cards[i].name);
-
       
       createGen0Auction(skills, name).then((result) => {
         var tokenId = result.events.Spawn.returnValues.tokenId;

@@ -16,31 +16,44 @@ import Footer from './components/Footer/Footer';
 import { toggleAddPost } from './AppActions';
 import { switchLanguage } from '../../modules/Intl/IntlActions';
 import { loginRequest } from '../../modules/Login/LoginActions';
+import { addDeckRequest, fetchUserDecks } from '../Inventory/InventoryActions';
 // import { loginRequest } from '../../modules/Login/LoginActions';
 import { getUser } from '../../modules/Login/UserReducer';
 import getWeb3 from '../../util/getWeb3';
 
 // const Web3 = require('web3');
+var inventoryLink = '/inventory/';
 
 export class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
       isMounted: false,
-    };
+      accounts: [],
+    }
+    this.myWeb3 = undefined;
   }
 
   componentDidMount() {
     this.setState({ isMounted: true }); // eslint-disable-line
-
+    let accounts;
     getWeb3((result) => {
       // console.log('getweb3');
       // console.log(result);
       this.myWeb3 = result;
     });
-    // console.log(myWeb3.);
-
-    // console.log(network);
+    if (this.myWeb3 !== undefined) {
+      accounts = this.myWeb3.eth.getAccounts((error, result) => {
+        if (!error) {
+          return result;
+        }
+        return error;
+      });
+      accounts.then((result) => {
+        this.setState({ accounts: result });
+        console.log(this.state.accounts);
+      });
+    }
   }
 
   toggleAddPostSection = () => {
@@ -97,6 +110,7 @@ export class App extends Component {
             user={this.props.user}
             handleLoginSubmit={this.handleLoginSubmit}
             handleLoginChange={this.handleLoginChange}
+            inventoryLink={inventoryLink + this.state.accounts[0]}
             // isLoggedIn={this.props.isLoggedIn}
           />
           <div className={styles.container}>

@@ -114,3 +114,12 @@ export function addDeckToCard(req, res) {
         res.json( {card} )
     });
 }
+
+export function removeCard(req, res) {
+    Card.findOneAndUpdate({ cuid: req.params.cardCuid}, { $pull: { decks: req.params.deckCuid } }).exec((err, card) => {
+        if(err){
+            res.status(500).send(err);
+        }
+        res.json( {card} )
+    });
+}
