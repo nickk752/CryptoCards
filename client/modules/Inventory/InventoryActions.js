@@ -35,6 +35,15 @@ export function addCardRequest(card) {
         defense: card.defense,
         decks: card.decks,
         tokenId: card.tokenId,
+        isCombining: card.isCombining,
+        isReady: card.isReady,
+        cooldownIndex: card.cooldownIndex,
+        nextActionAt: card.nextActionAt,
+        combiningWithId: card.combiningWithId,
+        spawnTime: card.spawnTime,
+        firstIngredientId: card.firstIngredientId,
+        secondIngredientId: card.secondIngredientId,
+        generation: card.generation,
       },
     }).then(res => dispatch(addCard(res.card)));
   };

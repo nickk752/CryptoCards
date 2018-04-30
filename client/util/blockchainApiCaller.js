@@ -1,4 +1,4 @@
-const Web3 = require('Web3');
+const Web3 = require('web3');
 
 
 export const web3 = new Web3(typeof window !== 'undefined' ? window.web3.currentProvider : new Web3.providers.HttpProvider('http://localhost:8545'));
@@ -109,11 +109,24 @@ function createSaleAuction(tokenId, account, startingPrice, endingPrice, duratio
 async function getCard(tokenId) {
   const card = await CryptoCardsCore.methods.getCard(tokenId).call();
   const owner = await CryptoCardsCore.methods.ownerOf(tokenId);
+  
+  
+  const isCombining = card.isCombining; // bool: Whether card is pregerz er nawt
+  const isReady = card.isReady;   // bool: Whether card is ready to get down or not
+  const cooldownIndex = card.cooldownIndex.toNumber(); // int: index into cooldown array
+  const nextActionAt = card.nextActionAt.toNumber(); // int: block number when card will be done pregerz and dtf agayne
+  const combiningWithId = card.combiningWithId.toNumber(); // int: the 'father' if card is pregnant, 0 otherwise
+  const spawnTime = card.spawnTime.toNumber(); // int: seconds since epoch
+  const firstIngredientId = card.firstIngredientId.toNumber(); // int: parent1 tokenId
+  const secondIngredientId = card.secondIngredientId.toNumber(); // int: parent2 tokenId
+  const generation = card.generation.toNumber(); // int: generation of the card
+  
   const hexSkills = string2hex(card.skills);
   console.log('SKILLS IN HEX: ' + hexSkills);
   const { type, attack, defense } = decodeSkills(hexSkills);
   const name = hex2ascii(card.name);
   console.log('NAME FROM CARD');
+  console.log(card.name)
   console.log(name);
   return {
     name,
@@ -123,15 +136,27 @@ async function getCard(tokenId) {
     defense,
     decks: [],
     tokenId,
+    isCombining,
+    isReady,
+    cooldownIndex,
+    nextActionAt,
+    combiningWithId,
+    spawnTime,
+    firstIngredientId,
+    secondIngredientId,
+    generation,
   };
 }
 
 async function getAuction(tokenId) {
   const auction = await SaleClockAuction.methods.getAuction(tokenId).call();
   const card = await getCard(tokenId);
+  console.log('getaucion card')
+  //console.log(card)
+  //console.log(auction)
   return {
     seller: auction.seller,
-    name: card.name,
+    card: card.name,
     startPrice: auction.startingPrice,
     endPrice: auction.endingPrice,
     duration: auction.duration,
@@ -140,18 +165,18 @@ async function getAuction(tokenId) {
 }
 
 async function getAuctions() {
-  const supply = await CryptoCardsCore.methods.totalSupply().call();
+  const supply = await CryptoCardsCore.totalSupply().call();
   let owner;
-  let auctions = {};
+  let auctions = [];
   let i;
   for (i = 0; i < supply; i++) {
-    owner = await CryptoCardsCore.methods.ownerOf(i).call();
+    owner = await CryptoCardsCore.ownerOf(i).call();
     if (owner.toUpperCase() === AuctionAddress.toUpperCase()) {
       const auction = await getAuction(i);
-      auctions[i] = auction;
+      auctions.push(auction);
     }
   }
-  console.log(auctions);
+  // console.log(auctions);
   return auctions;
 }
 

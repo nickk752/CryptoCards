@@ -19,6 +19,8 @@ export function addAuction(auction) {
 
 export function addAuctionRequest(auction) {
   return (dispatch) => {
+    console.log('adddddauction')
+    console.log(auction)
     return callApi('auctions', 'post', {
       auction: {
         seller: auction.seller,
@@ -28,7 +30,10 @@ export function addAuctionRequest(auction) {
         duration: auction.duration,
         tokenId: auction.tokenId,
       },
-    }).then(res => dispatch(addAuction(res.auction)));
+    }).then(res => {
+      console.log(res.auction)
+      dispatch(addAuction(res.auction))
+    });
   };
 }
 
@@ -46,6 +51,13 @@ export function deleteAuction(cuid) {
   };
 }
 
+
+export function deleteAuctionRequest(cuid) {
+  return (dispatch) => {
+    return callApi(`auctions/${cuid}`, 'delete').then(() => dispatch(deleteAuction(cuid)));
+  };
+}
+
 export function fetchAuctions() {
   return (dispatch) => {
     let dbAuctions;
@@ -60,25 +72,29 @@ export function fetchAuctions() {
         dbAuctions.forEach((auc) => {
           dbTokens[auc.tokenId] = auc.cuid;
         });
-        
+
         console.log('auctions')
         console.log(result);
-        for (const auc in result) {
-          if (auc.tokenId in dbTokens && auc.cuid !== dbTokens[auc.tokenId]) {
-            dispatch(deleteAuction(dbTokens[auc.tokenId]));
+        result.forEach((auc) => {
+          if (auc.tokenId in dbTokens) {
+            if (auc.cuid !== dbTokens[auc.tokenId]) {
+              dispatch(deleteAuctionRequest(dbTokens[auc.tokenId]));
+              dispatch(addAuctionRequest(auc));
+              replaced.push(auc.tokenId);
+            }
+          } else {
             dispatch(addAuctionRequest(auc));
-            replaced.push(auc.tokenId);
           }
-        };
+        });
         dbAuctions.forEach(auc => {
-          if (replaced.indexOf(auc.tokenId) <= -1 ) {
+          if (replaced.indexOf(auc.tokenId) <= -1) {
             dbAuctionsFinal.push(auc);
           }
         });
-        
+
         dispatch(addAuctions(dbAuctionsFinal));
       });
-      
+
     });
   };
 }
@@ -86,13 +102,6 @@ export function fetchAuctions() {
 export function fetchAuction(cuid) {
   return (dispatch) => {
     return callApi(`auctions/${cuid}`).then(res => dispatch(addAuction(res.auction)));
-  };
-}
-
-
-export function deleteAuctionRequest(cuid) {
-  return (dispatch) => {
-    return callApi(`auctions/${cuid}`, 'delete').then(() => dispatch(deleteAuction(cuid)));
   };
 }
 
