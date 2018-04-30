@@ -111,13 +111,16 @@ export class App extends Component {
 
     //http request
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "http://localhost:8000/", true);//game url
+    xhr.open("POST", "http://localhost:8081/", true);//game url
     xhr.setRequestHeader('Content-Type', 'application/json');
     console.log(JSON.stringify(deckCards));
-    xhr.send(JSON.stringify(deckCards));
-    setTimeout(() => {
-      window.location.replace("http://stackoverflow.com");
-    }, 3000);
+    xhr.send(JSON.stringify({ 
+      name: this.state.accounts[0],
+      deck: JSON.stringify(deckCards),
+      }));
+    xhr.onloadend = function (result) {
+      console.log(result);
+    };
   }
 
   render() {
