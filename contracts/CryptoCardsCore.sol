@@ -628,7 +628,7 @@ contract CryptoCardsBase is AccessControl {
 
         // The minimum timestamp after which this card can engage in
         // combining activities again.
-        uint64 cooldownEndTime;
+        uint64 cooldownEndBlock;
 
         // Name of the card
         bytes32 name;
@@ -752,7 +752,7 @@ contract CryptoCardsBase is AccessControl {
             skills: uint128(_skills),
             name: _name,
             spawnTime: uint64(now),
-            cooldownEndTime: 0,
+            cooldownEndBlock: 0,
             firstIngredientId: uint32(_firstIngredientId),
             secondIngredientId: uint32(_secondIngredientId),
             combiningWithId: 0,
@@ -989,26 +989,167 @@ contract CardOwnership is CryptoCardsBase, ERC721 {
     }
 }
 
-contract SkillScienceInterface {
-    function isSkillScience() public pure returns (bool);
 
-    function mixSkills(uint256 genes1, uint256 genes2) returns (uint256);
+
+contract skillScience {
+
+    // @dev Number of times to loop through various skills
+    uint256 public numLoops;
+
+     // Array containing trait strings for easy referencing
+    uint128[] public traitStrings;
+
+    // Define array to mask skills string to extract appropriate attributes
+    function maskArray() internal {
+
+        // Starting point
+        uint128 baseMask = 0xFFFF0000000000000000000000000000;
+
+        for(uint256 i = 0; i < numLoops; i++) {
+            uint128 thisMask = baseMask >> (4 * i);
+            traitStrings.push(thisMask);
+        }
+    }
+
+    // Constructor for SkillScience -- initializes array (so far)
+    function skillScience(uint256 _numLoops) public {
+
+        // make sure numLoops is not too large
+        //require(numLoops == uint256(uint32(_numLoops)));
+
+        numLoops = _numLoops;
+        maskArray();
+    }
+
+    
+
+    function _mixSkills(uint128 _skills1, uint128 _skills2) internal returns (uint128) {        
+
+        // Arrays which will hold values of each trait for both 'ingredients'
+        uint16[] memory firstTraitVals = new uint16[](numLoops);
+        uint16[] memory secondTraitVals = new uint16[](numLoops);
+
+        // New array of skills
+        uint16[] memory newTraitVals = new uint16[](numLoops);
+
+        
+        uint128 newSkills;
+
+        uint256 timeStamp = now;
+
+        firstTraitVals = defineTraitVals(_skills1);
+        secondTraitVals = defineTraitVals(_skills2);
+
+        // Loop through parent attributes to generate new spawned card traits
+        for(uint256 i = 0; i < numLoops; i++) {
+            uint256 nowHash = uint256(keccak256(timeStamp + i));
+            uint256 index = myRand(0, 7, nowHash);
+
+            if(index < 5) {
+                newTraitVals[index] = baseSkillMix(index, nowHash, firstTraitVals, secondTraitVals);
+            } else {
+                newTraitVals[index] = traitChoose(index, nowHash, firstTraitVals, secondTraitVals);
+            }
+        }
+
+        newSkills = combine(newTraitVals);   
+
+        return newSkills;    
+        
+    }
+
+    function defineTraitVals(uint128 _skills) internal view returns(uint16[]) {
+        uint16[] memory vals = new uint16[](8);
+        for(uint256 i = 0; i < 8; i++){
+            uint128 _mask = traitStrings[i];
+            uint16 thisTrait = uint16((_skills & _mask) >> 4*(7 - i));
+            vals[i] = thisTrait;
+        }
+
+        return vals;
+    }
+
+    // Create new skill string from newTraitVals array
+    function combine(uint16[] memory newTraitVals) internal view returns(uint128) {
+        uint128 _newSkills = 0;
+        for(uint256 i = 0; i < 8; i++) {
+            uint128 preShift = uint128(newTraitVals[i]);
+            _newSkills += preShift << 4 * (7 - i);
+        }
+
+        return _newSkills;
+    }
+
+    function baseSkillMix(uint256 ind, uint256 thisHash, uint16[] memory firstTraitVals, uint16[] memory secondTraitVals) internal returns (uint16){
+        uint256 outcome = myRand(0, 3, thisHash % 1009);
+
+        if(outcome == 0){
+            return ++firstTraitVals[ind];
+        } else if(outcome == 1) {
+            return --firstTraitVals[ind];
+        } else if(outcome == 2) {
+            return ++secondTraitVals[ind];
+        } else {
+            return --secondTraitVals[ind];
+        }
+    }
+
+    function traitChoose(uint256 ind, uint256 thisHash, uint16[] memory firstTraitVals, uint16[] memory secondTraitVals) internal returns (uint16) {
+        uint256 outcome = myRand(0, 2, thisHash % 1009);
+
+         if(outcome == 0){
+            return firstTraitVals[ind];
+        } else if(outcome == 1) {
+            return firstTraitVals[ind];
+        } else {
+            return 0;
+        } 
+    }
+    
+
+     /* ************************************
+        
+            Insert Description stuff here
+        
+           ************************************** */
+
+
+    // Returns an integer x such that low <= x <= high
+    function myRand(uint256 low, uint256 high, uint256 myHash) internal returns(uint256) {
+        // Ensure no negative values or mod(0) operations
+        require(high > low);
+
+        uint256 modVal = high - low + 1;
+        uint256 result = low + (myHash % modVal);
+
+        return result;
+    }
 }
 
-contract SkillScience {
-    bool public isSkillScience = true;
+contract SkillScienceInterface is skillScience{
 
-    function mixSkills(uint256 skills1, uint256 skills2) public pure returns (uint256) {
-        return ((skills1 + skills2) / 2) + 1;
+    function SkillScienceInterface(uint256 _numLoops) public
+        skillScience(_numLoops){}
+
+    function isSkillScience() public pure returns (bool) {
+        return true;
+    }
+
+    function mixSkills(uint128 skills1, uint128 skills2) public returns (uint128) {
+        
+        return 2;
     }
 }
 
 contract CardCombining is CardOwnership {
     event Combining(address owner, uint256 firstIngredientId, uint256 secondIngredientId);
 
-    event AutoCombine(uint256 cardId, uint256 cooldownEndTime);
+    event AutoCombine(uint256 cardId, uint256 cooldownEndBlock);
 
     uint256 public autoCombineFee = 1000000 * 1000000000; // (1M * 1 gwei)
+    
+    // Keeps track of number of combining cards
+    uint256 public combiningCards;
 
     SkillScienceInterface public skillScience;
 
@@ -1022,7 +1163,7 @@ contract CardCombining is CardOwnership {
 
 
     function _isReadyToCombine(Card _card) internal view returns (bool) {
-        return (_card.combiningWithId == 0) && (_card.cooldownEndTime <= now);
+        return (_card.combiningWithId == 0) && (_card.cooldownEndBlock <= uint64(block.number));
     }
 
     function _isCombiningPermitted(uint256 _firstIngredientId, uint256 _secondIngredientId) internal view returns (bool) {
@@ -1033,7 +1174,7 @@ contract CardCombining is CardOwnership {
     }
 
     function _triggerCooldown(Card storage _card) internal {
-        _card.cooldownEndTime = uint64(now + cooldowns[_card.cooldownIndex]);
+        _card.cooldownEndBlock = uint64((cooldowns[_card.cooldownIndex] / secondsPerBlock) + block.number);
 
         if(_card.cooldownIndex < 13) {
             _card.cooldownIndex += 1;
@@ -1046,7 +1187,7 @@ contract CardCombining is CardOwnership {
 
     // Check to see if the cards are combining and the time period has passed
     function _isReadyToSpawn(Card _card) private view returns (bool) {
-        return (_card.combiningWithId != 0) && (_card.cooldownEndTime <= now);
+        return (_card.combiningWithId != 0) && (_card.cooldownEndBlock <= now);
     }
 
     // Checks that the given card is able to breed, ie not currently combining or in cooldown
@@ -1127,6 +1268,9 @@ contract CardCombining is CardOwnership {
         _triggerCooldown(firstIngredient);
         _triggerCooldown(secondIngredient);
 
+        // Every time a card combines, counter is incremented
+        combiningCards++;
+
         Combining(cardIndexToOwner[_firstIngredientId], _firstIngredientId, _secondIngredientId);
     }
 
@@ -1155,6 +1299,9 @@ contract CardCombining is CardOwnership {
         uint256 cardId = _createCard(newCardSkills, firstIngredient.name, _firstIngredientId, firstIngredient.combiningWithId, newGen + 1, owner);
 
         delete firstIngredient.combiningWithId;
+
+        // Every time card spawns, counter is decremented.
+        combiningCards--;
 
         return cardId;
     }
@@ -1278,10 +1425,31 @@ contract CryptoCardsCore is CardMinting {
 
     // @notice Returns all the relevant info about a specific card.
     // @param _id The ID of the card of interest.
-    function getCard(uint256 _id) external view returns (uint128 skills, bytes32 name) {
+    function getCard(uint256 _id) external view returns (
+        bool isCombining,
+        bool isReady,
+        uint256 cooldownIndex,
+        uint256 nextActionAt,
+        uint256 combiningWithId,
+        uint256 spawnTime,
+        uint256 firstIngredientId,
+        uint256 secondIngredientId,
+        uint256 generation,
+        uint256 skills, 
+        bytes32 name        
+        ) {
         Card storage card = cards[_id];
 
-        skills = card.skills;
+        isCombining = (card.combiningWithId != 0);
+        isReady = (card.cooldownEndBlock <= block.number);
+        cooldownIndex = uint256(card.cooldownIndex);
+        nextActionAt = uint256(card.cooldownEndBlock);
+        combiningWithId = uint256(card.combiningWithId);
+        spawnTime = uint256(card.spawnTime);
+        firstIngredientId = uint256(card.firstIngredientId);
+        secondIngredientId = uint256(card.secondIngredientId);
+        generation = uint256(card.generation);
+        skills = uint256(card.skills);
         name = card.name;
     }
 
@@ -1293,6 +1461,7 @@ contract CryptoCardsCore is CardMinting {
     function unpause() public onlyCEO whenPaused {
         require(saleAuction != address(0));
         require(newContractAddress == address(0));
+        require(skillScience != address(0));
 
         // Actually unpause the contract.
         super.unpause();        
@@ -1301,7 +1470,11 @@ contract CryptoCardsCore is CardMinting {
     // @dev Allows the CEO to capture the balance available to the contract.
     function withdrawBalance() external onlyCEO {
         uint256 balance = this.balance;
+        // Subtract all the currently combining cards, plus 1 of margin.
+        uint256 subtractFees = (combiningCards + 1) * autoCombineFee;
 
-        ceoAddress.transfer(balance);
+        if (balance > subtractFees) {
+            ceoAddress.transfer(balance - subtractFees);
+        }
     }
 }
