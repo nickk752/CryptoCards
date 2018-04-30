@@ -1,0 +1,180 @@
+{
+    "cards": [
+        {
+            "Name": "Lil Punchy",
+            "Type": "Creature",
+            "NCost": 1,
+            "LCost": 0,
+            "RCost": 0,
+            "Att": 1,
+            "Def": 1,
+            "Effect": "",
+            "NumInDeck": 3
+        },
+        {
+            "Name": "Lil Blocky",
+            "Type": "Creature",
+            "NCost": 1,
+            "LCost": 0,
+            "RCost": 0,
+            "Att": 0,
+            "Def": 2,
+            "Effect": "",
+            "NumInDeck": 3
+        },
+        {
+            "Name": "Mid Blocky",
+            "Type": "Creature",
+            "NCost": 2,
+            "LCost": 0,
+            "RCost": 0,
+            "Att": 1,
+            "Def": 2,
+            "Effect": "",
+            "NumInDeck": 2
+        },
+        {
+            "Name": "Mid Punchy",
+            "Type": "Creature",
+            "NCost": 2,
+            "LCost": 0,
+            "RCost": 0,
+            "Att": 2,
+            "Def": 1,
+            "Effect": "",
+            "NumInDeck": 2
+        },
+        {
+            "Name": "Lil Vamp",
+            "Type": "Creature",
+            "NCost": 1,
+            "LCost": 1,
+            "RCost": 0,
+            "Att": 2,
+            "Def": 1,
+            "Effect": "Lifesteal",
+            "NumInDeck": 2
+        },
+        {
+            "Name": "Lil Troll",
+            "Type": "Creature",
+            "NCost": 1,
+            "LCost": 0,
+            "RCost": 1,
+            "Att": 1,
+            "Def": 2,
+            "Effect": "Taunt",
+            "NumInDeck": 2
+        },
+        {
+            "Name": "Big Vamp",
+            "Type": "Creature",
+            "NCost": 2,
+            "LCost": 0,
+            "RCost": 1,
+            "Att": 3,
+            "Def": 2,
+            "Effect": "Lifesteal",
+            "NumInDeck": 1
+        },
+        {
+            "Name": "Big Troll",
+            "Type": "Creature",
+            "NCost": 2,
+            "LCost": 1,
+            "RCost": 0,
+            "Att": 2,
+            "Def": 3,
+            "Effect": "Taunt",
+            "NumInDeck": 1
+        },
+        {
+            "Name": "Big Punchy",
+            "Type": "Creature",
+            "NCost": 3,
+            "LCost": 1,
+            "RCost": 0,
+            "Att": 4,
+            "Def": 2,
+            "Effect": "",
+            "NumInDeck": 1
+        },
+        {
+            "Name": "Big Blocky",
+            "Type": "Creature",
+            "NCost": 3,
+            "LCost": 0,
+            "RCost": 1,
+            "Att": 2,
+            "Def": 4,
+            "Effect": "Taunt",
+            "NumInDeck": 1
+        },
+        {
+            "Name": "Hospital",
+            "Type": "Building",
+            "NCost": 2,
+            "LCost": 1,
+            "RCost": 0,
+            "Att": 0,
+            "Def": 8,
+            "Effect": "1 Def / turn",
+            "NumInDeck": 1
+        },
+        {
+            "Name": "Barrack",
+            "Type": "Building",
+            "NCost": 2,
+            "LCost": 0,
+            "RCost": 1,
+            "Att": 0,
+            "Def": 8,
+            "Effect": "1 Att / turn",
+            "NumInDeck": 1
+        },
+        {
+            "Name": "Biggs Lamb",
+            "Type": "Augment",
+            "NCost": 2,
+            "LCost": 0,
+            "RCost": 0,
+            "Att": 0,
+            "Def": 0,
+            "Effect": "Destroy creature",
+            "NumInDeck": 2
+        },
+        {
+            "Name": "DU Lift",
+            "Type": "Augment",
+            "NCost": 3,
+            "LCost": 0,
+            "RCost": 0,
+            "Att": 0,
+            "Def": 0,
+            "Effect": "Give +1/+1 Creature",
+            "NumInDeck": 1
+        },
+        {
+            "Name": "Thicc Walls",
+            "Type": "Augment",
+            "NCost": 2,
+            "LCost": 0,
+            "RCost": 0,
+            "Att": 0,
+            "Def": 0,
+            "Effect": "Building 0/+2",
+            "NumInDeck": 1
+        },
+        {
+            "Name": "Art Hillary",
+            "Type": "Augment",
+            "NCost": 3,
+            "LCost": 0,
+            "RCost": 0,
+            "Att": 0,
+            "Def": 0,
+            "Effect": "Deal 2 damage",
+            "NumInDeck": 1
+        }
+    ]
+}
