@@ -12,12 +12,8 @@ import { addCardRequest, transferCardRequest, fetchUserCards } from '../../../In
 // Import Selectors
 import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 import { getUserCards } from '../../../Inventory/CardReducer';
-import getWeb3 from '../../../../util/getWeb3';
 
 import downloadMetaMask from '../../download-metamask.png';
-
-const json = require('../../components/Cards.json');
-const Cards = json.cards;
 
 // Web3 
 import {
@@ -29,6 +25,11 @@ import {
   createSaleAuction,
   ownerOf,
 } from '../../../../util/blockchainApiCaller';
+
+import getWeb3 from '../../../../util/getWeb3';
+const json = require('../../components/Cards.json');
+const Cards = json.cards;
+
 
 class MarketplacePage extends Component {
 
@@ -44,9 +45,6 @@ class MarketplacePage extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(fetchAuctions());
-    // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
-    this.props.dispatch(fetchUserCards('newGuy'));
     let accounts;
     getWeb3((result) => {
       // console.log('getweb3');
@@ -65,6 +63,9 @@ class MarketplacePage extends Component {
         console.log(this.state.accounts);
       });
     }
+    this.props.dispatch(fetchAuctions());
+    // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
+    this.props.dispatch(fetchUserCards(this.state.accounts[0]));
   }
 
   handleFetchUserCards = () => {
@@ -89,12 +90,11 @@ class MarketplacePage extends Component {
       bid(tokenId, result, this.state.accounts[0]).then(() => {
         console.log('FINDING NEW OWNER OF CARD');
         ownerOf(tokenId);
+        this.props.dispatch(deleteAuctionRequest(cuid));
+        this.handleTransferCard(tokenId, 'newGuy');
+        this.props.dispatch(fetchUserCards('newGuy'));
       });
     });
-    this.props.dispatch(deleteAuctionRequest(cuid));
-    this.handleTransferCard(tokenId, 'newGuy');
-    this.props.dispatch(fetchUserCards('newGuy'));
-    // event.preventDefault();
   }
 
   handleAddAuction = (seller, card, startPrice, endPrice, duration, tokenId) => {
@@ -155,7 +155,7 @@ class MarketplacePage extends Component {
             //add card 2 db
             this.handleAddCard(name, 'CryptoCardsCore', skillsJson.type, skillsJson.attack, skillsJson.defense, [], tokenId);
             //add auction 2 db
-            this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);//should put card name instead of tokenId
+            this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);
           });
         });
       });
@@ -210,7 +210,7 @@ class MarketplacePage extends Component {
   }
 
   decodeSkills = (skills) => {
-    var skillsJson = {}
+    var skillsJson = {};
     var i = 0;
     skillsJson['attack'] = this.hex2int(skills[i + 7]);
     skillsJson['defense'] = this.hex2int(skills[i + 8]);

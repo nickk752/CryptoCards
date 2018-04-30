@@ -5,7 +5,7 @@ import { FormattedMessage } from 'react-intl';
 import { Navbar, Nav, NavItem } from 'react-bootstrap/lib';
 // import { Nav } from 'react-bootstrap/lib/Nav';
 import { Web3Login } from '../../../Login/components/Login/Web3Login';
-
+import getWeb3 from '../../../../util/getWeb3';
 // Import Style
 import styles from './Header.css';
 
@@ -13,7 +13,6 @@ export function Header(props, context) {
   const languageNodes = props.intl.enabledLanguages.map(
     lang => <li key={lang} onClick={() => props.switchLanguage(lang)} className={lang === props.intl.locale ? styles.selected : ''}>{lang}</li>
   );
-
   const fixedTop = true;
 
   return (
@@ -37,7 +36,7 @@ export function Header(props, context) {
             <NavItem eventKey={1} href="/">
               Home
             </NavItem>
-            <NavItem eventKey={1} href="/inventory">
+            <NavItem eventKey={1} href={props.inventoryLink}>
               Inventory
             </NavItem>
             <NavItem eventKey={1} href="/marketplace">

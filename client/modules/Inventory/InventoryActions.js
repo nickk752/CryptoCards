@@ -7,11 +7,13 @@ export const ADD_CARDS = 'ADD_CARDS';
 export const DELETE_CARD = 'DELETE_CARD';
 export const ADD_DECK_TO_CARD = 'ADD_DECK_TO_CARD';
 export const TRANSFER_CARD = 'TRANSFER_CARD';
+export const REMOVE_CARD = 'REMOVE_CARD';
 // Decks
 export const ADD_DECK = 'ADD_DECK';
 export const ADD_DECKS = 'ADD_DECKS';
 export const DELETE_DECK = 'DELETE_DECK';
 export const TOGGLE_ADD_CARD_DECK = 'TOGGLE_ADD_CARD_DECK';
+export const TOGGLE_ACTIVE = 'TOGGLE_ACTIVE';
 
 /* Export Actions */
 // Cards
@@ -33,6 +35,15 @@ export function addCardRequest(card) {
         defense: card.defense,
         decks: card.decks,
         tokenId: card.tokenId,
+        isCombining: card.isCombining,
+        isReady: card.isReady,
+        cooldownIndex: card.cooldownIndex,
+        nextActionAt: card.nextActionAt,
+        combiningWithId: card.combiningWithId,
+        spawnTime: card.spawnTime,
+        firstIngredientId: card.firstIngredientId,
+        secondIngredientId: card.secondIngredientId,
+        generation: card.generation,
       },
     }).then(res => dispatch(addCard(res.card)));
   };
@@ -110,7 +121,7 @@ export function addDeckRequest(deck) {
         number: deck.number,
         name: deck.name,
         owner: deck.owner,
-        cards: deck.cards,
+        active: deck.active,
       },
     }).then(res => dispatch(addDeck(res.deck)));
   };
@@ -164,7 +175,7 @@ export function toggleAddCardDeck() {
   };
 }
 
-//TODO: figure this out
+
 export function addDeckToCardRequest(cardCuid, deckCuid) {
   return (dispatch) => {
     return callApi(`cards/${cardCuid}-${deckCuid}`, 'post', )
@@ -176,5 +187,34 @@ export function addDeckToCard(card) {
   return {
     type: ADD_DECK_TO_CARD,
     card,
+  }
+}
+
+export function removeCardRequest(cardCuid, deckCuid) {
+  return (dispatch) => {
+    return callApi(`cards/remove/${cardCuid}-${deckCuid}`, 'post', )
+      .then(res => dispatch(removeCard(cardCuid, deckCuid)));
+  };
+}
+
+export function removeCard(cardCuid, deckCuid){
+  return {
+    type: REMOVE_CARD,
+    cardCuid,
+  }
+}
+
+// activateing deck and un-activating all others
+export function activateRequest(userCuid, deckCuid) {
+  return (dispatch) => {
+    return callApi(`decks/activate/${userCuid}-${deckCuid}`, 'post', )
+      .then(res => dispatch(activate(deckCuid)));
+  }
+}
+
+export function activate(deckCuid) {
+  return {
+    type: TOGGLE_ACTIVE,
+    deckCuid,
   }
 }

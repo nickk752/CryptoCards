@@ -23,4 +23,7 @@ router.route('/cards/:cuid').delete(CardController.deleteCard);
 // add a deck to card
 router.route('/cards/:cardCuid-:deckCuid').post(CardController.addDeckToCard);
 
+// remove card from deck
+router.route('/cards/remove/:cardCuid-:deckCuid').post(CardController.removeCard);
+
 export default router;
