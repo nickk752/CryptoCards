@@ -1,4 +1,4 @@
-const Web3 = require('web3');
+const Web3 = require('Web3');
 
 
 export const web3 = new Web3(typeof window !== 'undefined' ? window.web3.currentProvider : new Web3.providers.HttpProvider('http://localhost:8545'));
@@ -101,8 +101,8 @@ function createSaleAuction(tokenId, account, startingPrice, endingPrice, duratio
 async function getCard(tokenId) {
   const card = await CryptoCardsCore.methods.getCard(tokenId).call();
   const owner = await CryptoCardsCore.methods.ownerOf(tokenId);
-  
-  
+
+
   const isCombining = card.isCombining; // bool: Whether card is pregerz er nawt
   const isReady = card.isReady;   // bool: Whether card is ready to get down or not
   const cooldownIndex = card.cooldownIndex.toNumber(); // int: index into cooldown array
@@ -112,7 +112,7 @@ async function getCard(tokenId) {
   const firstIngredientId = card.firstIngredientId.toNumber(); // int: parent1 tokenId
   const secondIngredientId = card.secondIngredientId.toNumber(); // int: parent2 tokenId
   const generation = card.generation.toNumber(); // int: generation of the card
-  
+
   const hexSkills = string2hex(card.skills);
   console.log('SKILLS IN HEX: ' + hexSkills);
   const { type, attack, defense } = decodeSkills(hexSkills);
