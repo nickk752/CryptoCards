@@ -27,29 +27,22 @@ const SaleClockAuction = artifacts.require('SaleClockAuction');
 
 let core, skill;
 
-module.exports = deployer => {
+module.exports = async deployer => {
 
-  deployer.deploy(CryptoCards).then(() => {
+  deployer.deploy(CryptoCards).then(await async function deployCryptoCards() {
 
     console.log("ADDRESS" + CryptoCards.address);
 
-    return deployer.deploy(SaleClockAuction, CryptoCards.address, 0);
-  }).then(() => {
-    CryptoCards.deployed().then((instance) => {
-      core = instance;
-      return core.setSaleAuctionAddress(SaleClockAuction.address);
-    })
-      .then(() => {
-        return core.unpause();
-      })
-      .then(() => {
-        return deployer.deploy(SkillScience);
-      })
-      .then(() => {
-        SkillScience.deployed().then((instance) => {
-          skill = instance;
-          return core.setSkillScienceAddress(skill.address);
-        });
-      });
+    const saleInstance = await deployer.deploy(SaleClockAuction, CryptoCards.address, 0);
+    const cryptoInstance = await CryptoCards.deployed();
+
+    await cryptoInstance.setSaleAuctionAddress(saleInstance.address);
+
+    const skillInstance = await deployer.deploy(SkillScience);
+    await cryptoInstance.setSkillScienceAddress(skillInstance.address);
+
+    await cryptoInstance.unpause();
+
+    
   });
 };
