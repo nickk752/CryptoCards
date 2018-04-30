@@ -22,7 +22,7 @@ import { getUser } from '../../modules/Login/UserReducer';
 import getWeb3 from '../../util/getWeb3';
 
 // const Web3 = require('web3');
-var inventoryLink = '/inventory/';
+
 
 export class App extends Component {
   constructor(props) {
@@ -110,7 +110,8 @@ export class App extends Component {
             user={this.props.user}
             handleLoginSubmit={this.handleLoginSubmit}
             handleLoginChange={this.handleLoginChange}
-            inventoryLink={inventoryLink + this.state.accounts[0]}
+            inventoryLink={'/inventory/' + this.state.accounts[0]}
+            marketplaceLink={'/marketplace/user/' + this.state.accounts[0]}
             // isLoggedIn={this.props.isLoggedIn}
           />
           <div className={styles.container}>

@@ -36,6 +36,7 @@ class MarketplacePage extends Component {
 
     this.state = {
       accounts: ['temp'],
+      loggedIn: false,
     }
     this.myWeb3 = undefined;
     this.handleAddAuction = this.handleAddAuction.bind(this);
@@ -43,6 +44,8 @@ class MarketplacePage extends Component {
   }
 
   componentDidMount() {
+    this.props.dispatch(fetchUserCards(this.props.params.cuid));
+    this.props.dispatch(fetchAuctions());
     let accounts;
     getWeb3((result) => {
       // console.log('getweb3');
@@ -59,11 +62,12 @@ class MarketplacePage extends Component {
       accounts.then((result) => {
         this.setState({ accounts: result });
         console.log(this.state.accounts);
+        //authentication
+        if (this.state.accounts[0] == this.props.params.cuid) {
+          this.setState({ loggedIn: true });
+        }
       });
     }
-    this.props.dispatch(fetchAuctions());
-    // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
-    this.props.dispatch(fetchUserCards(this.state.accounts[0]));
   }
 
   handleFetchUserCards = () => {
@@ -237,7 +241,7 @@ class MarketplacePage extends Component {
   render() {
     return (
       <div>
-        {this.state.accounts.length !== 0 ? (
+        {this.state.loggedIn ? (
           <div>
             <button onClick={this.handleAddGen0Auction}> create gen0 auctions</button>
             <br />
@@ -255,7 +259,7 @@ class MarketplacePage extends Component {
               handleClick={this.handleClick}
               auctions={this.props.auctions} />
           </div>
-        ) : (<div />)
+        ) : (<h2> Please log in to view Marketplace </h2>)
         }
       </div>
     );
@@ -266,11 +270,14 @@ class MarketplacePage extends Component {
 MarketplacePage.need = [() => { return fetchAuctions(); }];
 
 // Retrieve data from store as props
-function mapStateToProps(state) {
+function mapStateToProps(state, ownProps) {
+  console.log('PROPS');
+  console.log(ownProps);
+  console.log(ownProps.routeParams.cuid);
   return {
     showCreateAuction: getShowCreateAuction(state),
     auctions: getAuctions(state),
-    cards: getUserCards(state, state.accounts), //need to see if this uses the correct account
+    cards: getUserCards(state, ownProps.routeParams.cuid), //need to see if this uses the correct account
   };
 }
 

@@ -53,7 +53,7 @@ export function Header(props, context) {
             <NavItem eventKey={1} href={props.inventoryLink}>
               Inventory
             </NavItem>
-            <NavItem eventKey={1} href="/marketplace">
+            <NavItem eventKey={1} href={props.marketplaceLink}>
               Marketplace
             </NavItem>
             <NavItem eventKey={1} href="http://ec2-18-219-186-28.us-east-2.compute.amazonaws.com:8081/">

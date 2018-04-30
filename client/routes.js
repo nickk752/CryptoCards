@@ -47,7 +47,7 @@ export default (
       }}
     />
     <Route
-      path="/marketplace"
+      path="/marketplace/user/:cuid"
       getComponent={(nextState, cb) => {
         require.ensure([], require => {
           cb(null, require('./modules/Marketplace/pages/MarketplacePage/MarketplacePage').default);

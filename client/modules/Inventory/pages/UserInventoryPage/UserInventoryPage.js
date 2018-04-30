@@ -48,10 +48,6 @@ class UserInventoryPage extends Component {
     };
   }
 
-  componentWillMount() {
-    
-  }
-
   componentDidMount() {
     this.props.dispatch(fetchUserCards(this.props.params.cuid));
     this.props.dispatch(fetchUserDecks(this.props.params.cuid));
