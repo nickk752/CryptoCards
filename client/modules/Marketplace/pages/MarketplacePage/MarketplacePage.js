@@ -14,6 +14,8 @@ import { getAuctions, getShowCreateAuction } from '../../MarketplaceReducer';
 import { getUserCards } from '../../../Inventory/CardReducer';
 import getWeb3 from '../../../../util/getWeb3';
 
+import downloadMetaMask from '../../download-metamask.png';
+
 const json = require('../../components/Cards.json');
 const Cards = json.cards;
 
@@ -125,7 +127,7 @@ class MarketplacePage extends Component {
   handleAddGen0Auction = () => {
     /*  creating Gen 0 auctions
      this could be moved somewhere else */
-     
+
     /* var hex = '000100011300000C';
     var skills = this.hex2int(hex);
     var name = 'This is a card';
@@ -136,7 +138,7 @@ class MarketplacePage extends Component {
     for (var i = 0; i < Cards.length; i++) {
       skills = this.hex2int(Cards[i].string);
       name = this.ascii2hex(Cards[i].name);
-      
+
       createGen0Auction(skills, name).then((result) => {
         var tokenId = result.events.Spawn.returnValues.tokenId;
         console.log('TOKEN ID CREATED: ' + tokenId);
@@ -255,7 +257,21 @@ class MarketplacePage extends Component {
               handleClick={this.handleClick}
               auctions={this.props.auctions} />
           </div>
-        ) : (<div />)
+        )
+          : (<div>
+            <a href="http://metamask.io"><img
+              style={{
+                display: 'block',
+                marginLeft: 'auto',
+                marginRight: 'auto',
+                width: '50%',
+                height: '80%',
+              }}
+              src={downloadMetaMask}
+              alt="downloadMetaMask"
+            /></a>
+            <h3 style={{textAlign: 'center'}}>Please login to MetaMask to unlock the store</h3>
+          </div>)
         }
       </div>
     );

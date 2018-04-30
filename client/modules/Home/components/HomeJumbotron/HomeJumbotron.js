@@ -23,7 +23,7 @@ function HomeJumbotron(props) {
           <br /><h1 className={styles['heading']}>Collectible.<br />Tradable.<br />Playable.</h1>
           <br />
           <h2 className={styles['subheading']}>  Collect and Play with your tradable cards </h2>
-          <a className={styles['get-started-button']} href="#" >Get Started Now</a>
+          <a className={styles['get-started-button']} href="/inventory" >Get Started Now</a>
         </Col>
         <Col md={6}>
           <img
@@ -94,7 +94,7 @@ function HomeJumbotron(props) {
             In CryptoCards you can even combine your cards to create new unique cards to play with!
                 </p>
           <p style={{fontWeight: 'bold'}}>It'll be special, just like you ❤</p>
-          <a className={styles['get-started-button']} href="#" >Get Started Now</a>
+          <a className={styles['get-started-button']} href="/inventory" >Get Started Now</a>
           <br /><br />
         </Col>
       </Row>

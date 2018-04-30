@@ -37,7 +37,7 @@ export function Header(props, context) {
             <NavItem eventKey={1} href="/">
               Home
             </NavItem>
-            <NavItem eventKey={1} href="/inventory/bob">
+            <NavItem eventKey={1} href="/inventory">
               Inventory
             </NavItem>
             <NavItem eventKey={1} href="/marketplace">
