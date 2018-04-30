@@ -6,7 +6,7 @@ import { FormattedMessage } from 'react-intl';
 import { Grid, Row, Col } from 'react-bootstrap';
 
 import cardback from '../../pages/cardback.svg';
-import card from '../../pages/a-car-card.png';
+import card from '../../pages/a-car-card.svg';
 import cardCombination from '../../pages/card-combination.png'
 
 // Import Style
@@ -54,7 +54,7 @@ function HomeJumbotron(props) {
               display: 'block',
               marginLeft: 'auto',
               marginRight: 'auto',
-              width: '80%',
+              width: '60%',
               height: '50%',
             }}
             src={card}
