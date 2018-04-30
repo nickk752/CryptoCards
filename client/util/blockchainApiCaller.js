@@ -1,4 +1,4 @@
-const Web3 = require('Web3');
+const Web3 = require('web3');
 
 
 export const web3 = new Web3(typeof window !== 'undefined' ? window.web3.currentProvider : new Web3.providers.HttpProvider('http://localhost:8545'));
@@ -101,6 +101,18 @@ function createSaleAuction(tokenId, account, startingPrice, endingPrice, duratio
 async function getCard(tokenId) {
   const card = await CryptoCardsCore.methods.getCard(tokenId).call();
   const owner = await CryptoCardsCore.methods.ownerOf(tokenId);
+  
+  
+  const isCombining = card.isCombining; // bool: Whether card is pregerz er nawt
+  const isReady = card.isReady;   // bool: Whether card is ready to get down or not
+  const cooldownIndex = card.cooldownIndex.toNumber(); // int: index into cooldown array
+  const nextActionAt = card.nextActionAt.toNumber(); // int: block number when card will be done pregerz and dtf agayne
+  const combiningWithId = card.combiningWithId.toNumber(); // int: the 'father' if card is pregnant, 0 otherwise
+  const spawnTime = card.spawnTime.toNumber(); // int: seconds since epoch
+  const firstIngredientId = card.firstIngredientId.toNumber(); // int: parent1 tokenId
+  const secondIngredientId = card.secondIngredientId.toNumber(); // int: parent2 tokenId
+  const generation = card.generation.toNumber(); // int: generation of the card
+  
   const hexSkills = string2hex(card.skills);
   console.log('SKILLS IN HEX: ' + hexSkills);
   const { type, attack, defense } = decodeSkills(hexSkills);
@@ -115,6 +127,15 @@ async function getCard(tokenId) {
     defense,
     decks: [],
     tokenId,
+    isCombining,
+    isReady,
+    cooldownIndex,
+    nextActionAt,
+    combiningWithId,
+    spawnTime,
+    firstIngredientId,
+    secondIngredientId,
+    generation,
   };
 }
 
