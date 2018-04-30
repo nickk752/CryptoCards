@@ -27,6 +27,52 @@ const SaleClockAuction = new web3.eth.Contract(auctionAbi.abi, AuctionAddress, {
   gas: '3000000',
 });
 
+function hex2int(hex) {
+  return parseInt(hex, 16);
+}
+
+function getType(type) {
+  switch (type) {
+    case 1:
+      return 'Machine';
+      break;
+    case 2:
+      return 'Augment';
+      break;
+    case 3:
+      return 'Building';
+      break;
+    default:
+      return 'INVALID TYPE';
+  }
+}
+
+function decodeSkills(skills) {
+  var skillsJson = {}
+  var i = 0;
+  skillsJson['attack'] = hex2int(skills[i + 7]);
+  skillsJson['defense'] = hex2int(skills[i + 8]);
+  //TODO: map type int to actual type names
+  skillsJson['type'] = getType(hex2int(skills[i + 9]));
+  skillsJson['rarity'] = hex2int(skills[skills.length - 1]);
+  return skillsJson;
+}
+
+function hex2ascii(hexx) {
+  var hex = hexx.toString();
+  var str = '';
+  for (var i = 0; (i < hex.length && hex.substr(i, 2) !== '00'); i += 2)
+    str += String.fromCharCode(parseInt(hex.substr(i, 2), 16));
+  return str;
+}
+
+function string2hex(num) {
+  // getCard returns skills as a string
+  let realNum = parseInt(num);
+  realNum = ("000000000000000" + realNum.toString(16)).substr(-16);//this keeps leading zeros
+  return realNum;
+}
+
 function ownerOf(tokenId) {
   return CryptoCardsCore.methods.ownerOf(tokenId).call().then((result) => {
     console.log('OWNER OF TOKEN ID', tokenId);
@@ -52,20 +98,53 @@ function createSaleAuction(tokenId, account, startingPrice, endingPrice, duratio
   });
 }
 
-function getAuction(tokenId) {
-  return SaleClockAuction.methods.getAuction(tokenId).call().then((result2) => {
-    console.log('GET AUCTION RESULTS');
-    console.log(result2);
-    return result2;
-  });
+async function getCard(tokenId) {
+  const card = await CryptoCardsCore.methods.getCard(tokenId).call();
+  const owner = await CryptoCardsCore.methods.ownerOf(tokenId);
+  const hexSkills = string2hex(card.skills);
+  console.log('SKILLS IN HEX: ' + hexSkills);
+  const { type, attack, defense } = decodeSkills(hexSkills);
+  const name = hex2ascii(card.name);
+  console.log('NAME FROM CARD');
+  console.log(name);
+  return {
+    name,
+    owner,
+    type,
+    attack,
+    defense,
+    decks: [],
+    tokenId,
+  };
 }
 
-function getCard(tokenId) {
-  return CryptoCardsCore.methods.getCard(tokenId).call().then((result) => {
-    console.log('GET CARD RESULTS');
-    console.log(result);
-    return result;
-  });
+async function getAuction(tokenId) {
+  const auction = await SaleClockAuction.methods.getAuction(tokenId).call();
+  const card = await getCard(tokenId);
+  return {
+    seller: auction.seller,
+    name: card.name,
+    startPrice: auction.startingPrice,
+    endPrice: auction.endingPrice,
+    duration: auction.duration,
+    tokenId,
+  };
+}
+
+async function getAuctions() {
+  const supply = await CryptoCardsCore.methods.totalSupply().call();
+  let owner;
+  let auctions = {};
+  let i;
+  for (i = 0; i < supply; i++) {
+    owner = await CryptoCardsCore.methods.ownerOf(i).call();
+    if (owner.toUpperCase() === AuctionAddress.toUpperCase()) {
+      const auction = await getAuction(i);
+      auctions[i] = auction;
+    }
+  }
+  console.log(auctions);
+  return auctions;
 }
 
 function bid(tokenId, currentPrice, account) {
@@ -88,6 +167,7 @@ module.exports = {
   createGen0Auction,
   createSaleAuction,
   getAuction,
+  getAuctions,
   bid,
   getCard,
   getCurrentPrice,

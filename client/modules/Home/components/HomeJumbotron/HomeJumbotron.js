@@ -5,7 +5,7 @@ import Helmet from 'react-helmet';
 import { FormattedMessage } from 'react-intl';
 import { Jumbotron } from 'react-bootstrap/lib';
 import RaisedButton from 'material-ui/RaisedButton';
-import exodia from '../../pages/CardBack.png';
+import cardback from '../../pages/cardback.svg';
 
 // Import Style
 import styles from './HomeJumbotron.css';
@@ -25,8 +25,8 @@ function HomeJumbotron(props) {
               width: '50%',
               height: 600,
             }}
-            src={exodia}
-            alt="exodia"
+            src={cardback}
+            alt="cardback"
           />
           Collect and Play with your tradable cards
         </p>
