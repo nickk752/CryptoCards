@@ -92,7 +92,7 @@ export function deleteDeck(req, res) {
 }
 
 export async function activate(req, res) {
-  let deactive = await Deck.update({ owner: req.params.userCuid, cuid: { $ne: req.params.deckCuid } }, { active: false }, ).exec((err, deck) => {
+  let deactive = await Deck.update({ owner: req.params.userCuid, cuid: { $ne: req.params.deckCuid } }, { active: false }, { multi: true} ).exec((err, deck) => {
     if (err) {
       res.status(500).send(err);
     }

@@ -35,18 +35,18 @@ export default function () {
     }
 
     // bob cards
-    const card1 = new Card({ name: 'lil Punchy', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: ' ', decks: ['aaa', 'bbb', 'eee'], slug: 'lil Punchy', cuid: 'aaaa', tokenId: 10000 });
-    const card2 = new Card({ name: 'lil blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 0, defense: 2, effect: ' ', decks: ['bbb', 'ccc', 'ddd', 'eee'], slug: 'lil blocky', cuid: 'bbbb', tokenId: 10001  });
-    const card3 = new Card({ name: 'ayy blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 2, effect: ' ', decks: ['bbb', 'ccc', 'eee'], slug: 'ayy blocky', cuid: 'cccc', tokenId: 10002 });
-    const card4 = new Card({ name: 'wut blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 3, defense: 5, effect: ' ', decks: ['ccc', 'ddd', 'eee'], slug: 'wut blocky', cuid: 'dddd', tokenId: 10003 });
-    const card5 = new Card({ name: 'how blocky', owner: 'bob', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 5, defense: 2, effect: ' ', decks: ['bbb', 'eee'], slug: 'how blocky', cuid: 'eeee' , tokenId: 10004});
+    const card1 = new Card({ name: 'lil Punchy', owner: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: ' ', decks: [], slug: 'lil Punchy', cuid: 'aaaa', tokenId: 10000 });
+    const card2 = new Card({ name: 'lil blocky', owner: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 0, defense: 2, effect: ' ', decks: [], slug: 'lil blocky', cuid: 'bbbb', tokenId: 10001  });
+    const card3 = new Card({ name: 'ayy blocky', owner: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 2, effect: ' ', decks: [], slug: 'ayy blocky', cuid: 'cccc', tokenId: 10002 });
+    const card4 = new Card({ name: 'wut blocky', owner: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 3, defense: 5, effect: ' ', decks: [], slug: 'wut blocky', cuid: 'dddd', tokenId: 10003 });
+    const card5 = new Card({ name: 'how blocky', owner: '0x627306090abaB3A6e1400e9345bC60c78a8BEf57', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 5, defense: 2, effect: ' ', decks: [], slug: 'how blocky', cuid: 'eeee' , tokenId: 10004});
 
     // charles cards
-    const card6 = new Card({ name: 'Mid Blocky', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: ' ', decks: ['fff', 'hhh', 'jjj'], slug: 'Mid Blocky', cuid: 'ffff' , tokenId: 10005});
-    const card7 = new Card({ name: 'Mid Punchy', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 7, effect: ' ', decks: ['ggg', 'fff', 'hhh', 'iii'], slug: 'Mid Punchy', cuid: 'gggg' , tokenId: 10006});
-    const card8 = new Card({ name: 'Mid Bonchon', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 3, attack: 4, defense: 1, effect: ' ', decks: ['fff', 'hhh', 'iii'], slug: 'Mid Bonchon', cuid: 'hhhh' , tokenId: 10007});
-    const card9 = new Card({ name: 'Mid Wonchon', owner: 'charles', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 2, defense: 1, effect: ' ', decks: ['ggg', 'fff', 'iii'], slug: 'Mid Wonchon', cuid: 'iiii' , tokenId: 10008});
-    const card10 = new Card({ name: 'Mid Lanchon', owner: 'charles', type: 'Creature', nCost: 1, lCost: 2, rCost: 0, attack: 1, defense: 4, effect: ' ', decks: ['hhh', 'iii'], slug: 'Mid Lanchon', cuid: 'jjjj' , tokenId: 10009});
+    const card6 = new Card({ name: 'Mid Blocky', owner: '0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 1, effect: ' ', decks: [], slug: 'Mid Blocky', cuid: 'ffff' , tokenId: 10005});
+    const card7 = new Card({ name: 'Mid Punchy', owner: '0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 1, defense: 7, effect: ' ', decks: [], slug: 'Mid Punchy', cuid: 'gggg' , tokenId: 10006});
+    const card8 = new Card({ name: 'Mid Bonchon', owner: '0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2', type: 'Creature', nCost: 1, lCost: 0, rCost: 3, attack: 4, defense: 1, effect: ' ', decks: [], slug: 'Mid Bonchon', cuid: 'hhhh' , tokenId: 10007});
+    const card9 = new Card({ name: 'Mid Wonchon', owner: '0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2', type: 'Creature', nCost: 1, lCost: 0, rCost: 0, attack: 2, defense: 1, effect: ' ', decks: [], slug: 'Mid Wonchon', cuid: 'iiii' , tokenId: 10008});
+    const card10 = new Card({ name: 'Mid Lanchon', owner: '0x0d1d4e623D10F9FBA5Db95830F7d3839406C6AF2', type: 'Creature', nCost: 1, lCost: 2, rCost: 0, attack: 1, defense: 4, effect: ' ', decks: [], slug: 'Mid Lanchon', cuid: 'jjjj' , tokenId: 10009});
 
     Card.create([card1, card2, card3, card4, card5, card6, card7, card8, card9, card10], (error) => {
       if (!error) {

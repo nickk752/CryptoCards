@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Redirect } from 'react-router-dom';
 import { PropTypes } from 'prop-types';
 import { connect } from 'react-redux';
 import ReactDOM from 'react-dom';
@@ -34,7 +35,6 @@ import { getCards } from '../../CardReducer';
 import { getDecks, getShowAddCardDeck } from '../../DeckReducer';
 
 import getWeb3 from '../../../../util/getWeb3';
-const rows = [1, 2, 3, 4, 5];
 
 class UserInventoryPage extends Component {
 
@@ -43,7 +43,13 @@ class UserInventoryPage extends Component {
     this.state = {
       value: 0,
       accounts: [],
+      rows: [1, 2, 3, 4, 5],
+      loggedIn: false,
     };
+  }
+
+  componentWillMount() {
+    
   }
 
   componentDidMount() {
@@ -67,17 +73,21 @@ class UserInventoryPage extends Component {
       accounts.then((result) => {
         this.setState({ accounts: result });
         console.log(this.state.accounts);
+        //authentication
+        if (this.state.accounts[0] == this.props.params.cuid) {
+          this.setState({ loggedIn: true });
+        }
         //creating decks if no decks exist
         if (this.props.decks[0] == null) {
-          for(var i = 0; i < 5; i++){
+          for (var i = 0; i < 5; i++) {
             this.props.dispatch(addDeckRequest(
               {
                 number: i + 1,
-                name: 'Deck ' + (i+1),
+                name: 'Deck ' + (i + 1),
                 owner: this.state.accounts[0],
                 active: false,
               }));
-          }    
+          }
         }
       });
     }
@@ -118,52 +128,58 @@ class UserInventoryPage extends Component {
   }
 
   handleActivate = (deckCuid) => {
-    this.props.dispatch(activateRequest(this.props.params.cuid, deckCuid));
-    this.props.dispatch(fetchUserDecks(this.props.params.cuid));
+    this.props.dispatch(activateRequest(this.props.params.cuid, deckCuid)).then( () => {
+      this.props.dispatch(fetchUserDecks(this.props.params.cuid));
+    });
   }
 
   render() {
+
     return (
-      <h1> Inventory
-        <MuiThemeProvider muiTheme={getMuiTheme(lightBaseTheme)}>
+      <div>
+        {this.state.loggedIn ?
+          <h1> Inventory
           <Tabs
-            value={this.state.value}
-            onChange={this.handleChange}
-          >
-            <Tab label="All Cards" value={0}>
-              {/* Card List */}
-              <CardList cards={this.props.cards} height={300} cols={4} />
-            </Tab>
-
-            {rows.map(i => {
-              var name = 'Deck ' + i;
-              return <Tab label={name} value={i}>
-                {this.props.decks[i - 1] != null ? //check if deck exists
-                  <div>
-                    <button onClick={this.handleToggleAddCardDeck}> add cards </button>
-                    <AddCardDeckWidget
-                      cards={this.getAddDeckCards(this.props.cards, this.props.decks[i - 1].cuid)}
-                      deck={this.props.decks[i - 1]}
-                      showAddCardDeck={this.props.showAddCardDeck}
-                      addDeckToCard={this.handleAddDeckToCard} />
-                    <DeckListItem
-                      //filter for all users cards that belong to deck                                                    
-                      cards={this.getDeckCards(this.props.cards, this.props.decks[i - 1].cuid)}
-                      deck={this.props.decks[i - 1]}
-                      removeCard={this.handleRemoveCard}
-                      activate={this.handleActivate}
-                    />
-                  </div>
-                  :
-                  <p> Deck Does Not Exist </p>
-                }
+              value={this.state.value}
+              onChange={this.handleChange}
+            >
+              <Tab label="All Cards" value={0}>
+                {/* Card List */}
+                <CardList cards={this.props.cards} height={300} cols={4} />
               </Tab>
-            })
-            }
 
-          </Tabs>
-        </MuiThemeProvider>
-      </h1>
+              {this.state.rows.map(i => {
+                var name = 'Deck ' + i;
+                return <Tab label={name} value={i}>
+                  {this.props.decks[i - 1] != null ? //check if deck exists
+                    <div>
+                      <button onClick={this.handleToggleAddCardDeck}> add cards </button>
+                      <AddCardDeckWidget
+                        cards={this.getAddDeckCards(this.props.cards, this.props.decks[i - 1].cuid)}
+                        deck={this.props.decks[i - 1]}
+                        showAddCardDeck={this.props.showAddCardDeck}
+                        addDeckToCard={this.handleAddDeckToCard} />
+                      <DeckListItem
+                        //filter for all users cards that belong to deck                                                    
+                        cards={this.getDeckCards(this.props.cards, this.props.decks[i - 1].cuid)}
+                        deck={this.props.decks[i - 1]}
+                        removeCard={this.handleRemoveCard}
+                        activate={this.handleActivate}
+                      />
+                    </div>
+                    :
+                    <p> Deck Does Not Exist </p>
+                  }
+                </Tab>
+              })
+              }
+
+            </Tabs>
+          </h1>
+          :
+          <h1> Please log in to view inventory </h1>
+        }
+      </div>
     );
   }
 }

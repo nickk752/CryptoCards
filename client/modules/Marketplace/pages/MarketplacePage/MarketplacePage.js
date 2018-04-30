@@ -35,7 +35,7 @@ class MarketplacePage extends Component {
     super(props);
 
     this.state = {
-      accounts: [],
+      accounts: ['temp'],
     }
     this.myWeb3 = undefined;
     this.handleAddAuction = this.handleAddAuction.bind(this);
@@ -270,7 +270,7 @@ function mapStateToProps(state) {
   return {
     showCreateAuction: getShowCreateAuction(state),
     auctions: getAuctions(state),
-    cards: getUserCards(state, 'newGuy'),
+    cards: getUserCards(state, state.accounts), //need to see if this uses the correct account
   };
 }
 

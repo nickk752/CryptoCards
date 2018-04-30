@@ -15,9 +15,9 @@ function DeckListItem(props) {
     return (
         <div>
             {props.deck.name}
-            <h2> {String(props.deck.active)} </h2>
+            <h2> {props.deck.active ? 'Active' : 'Inactive'} </h2>
             <button onClick={() => { props.activate(props.deck.cuid) }}>
-                ACTIVATE DECK
+                Select Deck
             </button>
             <MultiThemeProvider>
                 <GridList
