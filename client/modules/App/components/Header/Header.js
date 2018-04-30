@@ -36,11 +36,6 @@ export function Header(props, context) {
           <Link to="/inventory/bob" > Inventory </Link>
         </h1> */}
 
-        {
-          context.router.isActive('/', true)
-            ? <a className={styles['add-post-button']} href="#" onClick={props.toggleAddPost}><FormattedMessage id="addPost" /></a>
-            : null
-        }
         <Navbar fixedTop={fixedTop}>
           <Navbar.Header>
             <Navbar.Brand>

@@ -9,8 +9,7 @@ function Home(props) {
     <div>
       {
         props.Home.map(post => (
-          <HomeJumbotron />,
-          <NextPart />
+          <HomeJumbotron />
         ))
       }
     </div>
