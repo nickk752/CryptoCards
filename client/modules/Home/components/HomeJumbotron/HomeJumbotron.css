@@ -17,8 +17,16 @@
   margin: 25px;
 }
 
-.box-ina-box {
+.blue-to-white-gradient {
   background: linear-gradient(0deg, rgba(255,255,255,0) 0%, rgba(0,94,255,1) 100%);
+  text-align: center;
+  text-anchor: middle;
+  padding: 100px;
+  margin: 25px;
+}
+
+.white-to-blue-gradient {
+  background: linear-gradient(180deg, rgba(255,255,255,0) 0%, rgba(0,94,255,1) 100%);
   text-align: center;
   text-anchor: middle;
   padding: 100px;
@@ -32,4 +40,12 @@
 
 .subheading {
   font-size: 3rem;
+}
+
+.subtext {
+  font-size: 2rem;
+}
+
+.centered {
+  text-align: center;
 }
