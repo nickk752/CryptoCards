@@ -6,6 +6,18 @@ const Cards = json.cards;
 
 let core, skill;
 
+function ascii2hex(text) {
+  var arr = [];
+  for (var i = 0, l = text.length; i < l; i++) {
+    var hex = Number(text.charCodeAt(i)).toString(16);
+    arr.push(hex);
+  }
+  var hex = arr.join('');
+  var betterHex = '0x' + hex;
+  return betterHex;
+}
+
+
 module.exports = deployer => {
 
   deployer.deploy(CryptoCards).then(() => {
@@ -27,7 +39,8 @@ module.exports = deployer => {
             skill = instance;
             return core.setSkillScienceAddress(skill.address);
           });
-      }).catch((err) => {
+      })
+      .catch((err) => {
         console.log('err')
       })
       .then(() => {
@@ -37,16 +50,14 @@ module.exports = deployer => {
         let promises = [];
         for (var j = 0; j < Cards.length; j++) {
           let skills = Cards[j].string;
-          let name = Cards[j].name.toString();
-          let str = '';
-          for (var i = 0; (i < name.length && name.substr(i, 2) !== '00'); i += 2)
-            str += String.fromCharCode(parseInt(name.substr(i, 2), 16));
-          promises.push(core.createGen0Auction(parseInt(skills, 16), str));
+          let name = ascii2hex(Cards[j].name);
+          promises.push(core.createGen0Auction(parseInt(skills, 16), name));
+          console.log(name)
         }
         Promise.all(promises)
-        .then((result) => {
-          console.log(result);
-        })
+          .then((result) => {
+            console.log(result);
+          })
       });
   });
 };

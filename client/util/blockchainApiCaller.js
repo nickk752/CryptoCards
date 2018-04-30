@@ -106,6 +106,7 @@ async function getCard(tokenId) {
   const { type, attack, defense } = decodeSkills(hexSkills);
   const name = hex2ascii(card.name);
   console.log('NAME FROM CARD');
+  console.log(card.name)
   console.log(name);
   return {
     name,
@@ -121,9 +122,12 @@ async function getCard(tokenId) {
 async function getAuction(tokenId) {
   const auction = await SaleClockAuction.methods.getAuction(tokenId).call();
   const card = await getCard(tokenId);
+  console.log('getaucion card')
+  //console.log(card)
+  //console.log(auction)
   return {
     seller: auction.seller,
-    name: card.name,
+    card: card.name,
     startPrice: auction.startingPrice,
     endPrice: auction.endingPrice,
     duration: auction.duration,
@@ -132,18 +136,18 @@ async function getAuction(tokenId) {
 }
 
 async function getAuctions() {
-  const supply = await CryptoCardsCore.methods.totalSupply().call();
+  const supply = await CryptoCardsCore.totalSupply().call();
   let owner;
-  let auctions = {};
+  let auctions = [];
   let i;
   for (i = 0; i < supply; i++) {
-    owner = await CryptoCardsCore.methods.ownerOf(i).call();
+    owner = await CryptoCardsCore.ownerOf(i).call();
     if (owner.toUpperCase() === AuctionAddress.toUpperCase()) {
       const auction = await getAuction(i);
-      auctions[i] = auction;
+      auctions.push(auction);
     }
   }
-  console.log(auctions);
+  // console.log(auctions);
   return auctions;
 }
 
