@@ -243,7 +243,6 @@ class MarketplacePage extends Component {
       <div>
         {this.state.loggedIn ? (
           <div>
-            <button onClick={this.handleAddGen0Auction}> create gen0 auctions</button>
             <br />
             <br />
             <button onClick={this.handleToggleCreateAuction}> create auction </button>

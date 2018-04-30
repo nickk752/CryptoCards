@@ -110,7 +110,6 @@ async function getCard(tokenId) {
   const card = await CryptoCardsCore.methods.getCard(tokenId).call();
   const owner = await CryptoCardsCore.methods.ownerOf(tokenId);
   
-  
   const isCombining = card.isCombining; // bool: Whether card is pregerz er nawt
   const isReady = card.isReady;   // bool: Whether card is ready to get down or not
   const cooldownIndex = card.cooldownIndex.toNumber(); // int: index into cooldown array
@@ -165,12 +164,12 @@ async function getAuction(tokenId) {
 }
 
 async function getAuctions() {
-  const supply = await CryptoCardsCore.totalSupply().call();
+  const supply = await CryptoCardsCore.methods.totalSupply().call();
   let owner;
   let auctions = [];
   let i;
   for (i = 0; i < supply; i++) {
-    owner = await CryptoCardsCore.ownerOf(i).call();
+    owner = await CryptoCardsCore.methods.ownerOf(i).call();
     if (owner.toUpperCase() === AuctionAddress.toUpperCase()) {
       const auction = await getAuction(i);
       auctions.push(auction);

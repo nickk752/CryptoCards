@@ -16,8 +16,12 @@ import Footer from './components/Footer/Footer';
 import { toggleAddPost } from './AppActions';
 import { switchLanguage } from '../../modules/Intl/IntlActions';
 import { loginRequest } from '../../modules/Login/LoginActions';
-import { addDeckRequest, fetchUserDecks } from '../Inventory/InventoryActions';
+import { addDeckRequest, fetchUserDecks, fetchUserCards } from '../Inventory/InventoryActions';
 // import { loginRequest } from '../../modules/Login/LoginActions';
+
+// Import Selectors
+import { getCards } from '../Inventory/CardReducer';
+import { getDecks } from '../Inventory/DeckReducer';
 import { getUser } from '../../modules/Login/UserReducer';
 import getWeb3 from '../../util/getWeb3';
 
@@ -33,6 +37,7 @@ export class App extends Component {
     }
     this.myWeb3 = undefined;
   }
+
 
   componentDidMount() {
     this.setState({ isMounted: true }); // eslint-disable-line
@@ -51,7 +56,9 @@ export class App extends Component {
       });
       accounts.then((result) => {
         this.setState({ accounts: result });
-        console.log(this.state.accounts);
+        console.log(this.state.accounts[0]);
+        this.props.dispatch(fetchUserCards(this.state.accounts[0]));
+        this.props.dispatch(fetchUserDecks(this.state.accounts[0]));
       });
     }
   }
@@ -79,6 +86,38 @@ export class App extends Component {
         [name]: value,
       },
     });
+  }
+
+  getDeckCards = (cards, deckCuid) => {
+    var deckCards = cards.filter(card => card.decks.filter(cuid => cuid === deckCuid)[0] === deckCuid);
+    /* console.log('Deck Cards');
+    console.log(deckCards); */
+    return deckCards;
+  }
+
+  findActiveDeck = (decks) => {
+    var deck = decks.filter(deck => ( deck.active == true))[0];
+    console.log('FINDING ACTIVE DECK CUID');
+    console.log(deck.cuid);
+    return deck.cuid;
+  }
+
+  handlePlay = () => {
+    console.log('DO SOMETHING');
+    var activeCuid = this.findActiveDeck(this.props.decks);
+    var deckCards = this.getDeckCards(this.props.cards, activeCuid);
+    console.log('GET DECK CARDS');
+    console.log(deckCards);
+
+    //http request
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:8000/", true);//game url
+    xhr.setRequestHeader('Content-Type', 'application/json');
+    console.log(JSON.stringify(deckCards));
+    xhr.send(JSON.stringify(deckCards));
+    setTimeout(() => {
+      window.location.replace("http://stackoverflow.com");
+    }, 3000);
   }
 
   render() {
@@ -112,6 +151,7 @@ export class App extends Component {
             handleLoginChange={this.handleLoginChange}
             inventoryLink={'/inventory/' + this.state.accounts[0]}
             marketplaceLink={'/marketplace/user/' + this.state.accounts[0]}
+            play={this.handlePlay}
             // isLoggedIn={this.props.isLoggedIn}
           />
           <div className={styles.container}>
@@ -141,6 +181,8 @@ function mapStateToProps(store) {
   // const { isAuthenticated, errorMessage } = auth;
   return {
     intl: store.intl,
+    cards: getCards(store),
+    decks: getDecks(store),
   };
 }
 

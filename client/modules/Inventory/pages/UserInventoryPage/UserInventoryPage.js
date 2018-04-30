@@ -169,7 +169,7 @@ class UserInventoryPage extends Component {
               <Tab label="All Cards" value={0}>
                 {/* Card List */}
                 <CardList cards={this.props.cards} height={300} cols={4} />
-                <button onClick={() => {this.findActiveDeck(this.props.decks)}}> find active </button> 
+                {/* <button onClick={() => {this.findActiveDeck(this.props.decks)}}> find active </button>  */}
               </Tab>
 
               {this.state.rows.map(i => {
