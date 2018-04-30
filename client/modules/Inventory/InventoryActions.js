@@ -1,4 +1,5 @@
 import callApi from '../../util/apiCaller';
+import { getCardsForUser } from '../../util/blockchainApiCaller';
 
 /* Export Constants */
 // Cards
@@ -79,10 +80,42 @@ export function fetchCards() {
   };
 }
 
-export function fetchUserCards(cuid) {
+export function fetchUserCards(owner) {
   return (dispatch) => {
-    return callApi(`cards/users/${cuid}`).then(res => {
-      dispatch(addCards(res.cards));
+    let dbCards;
+    let bcCards;
+    return callApi(`cards/users/${owner}`).then(res => {
+      dbCards = res.cards;
+      return getCardsForUser(owner).then((result) => {
+        bcCards = result;
+        console.log('db');
+        console.log(dbCards);
+        console.log('bc');
+        console.log(bcCards);
+        bcCards.forEach(card => {
+          console.log('bouta add')
+          console.log(card);
+          dispatch(addCardRequest({
+            name: card.name,
+            owner,
+            type: card.type,
+            attack: card.attack,
+            defense: card.defense,
+            decks: card.decks,
+            tokenId: card.tokenId,
+            isCombining: card.isCombining,
+            isReady: card.isReady,
+            cooldownIndex: card.cooldownIndex,
+            nextActionAt: card.nextActionAt,
+            combiningWithId: card.combiningWithId,
+            spawnTime: card.spawnTime,
+            firstIngredientId: card.firstIngredientId,
+            secondIngredientId: card.secondIngredientId,
+            generation: card.generation,
+          }));
+        })
+        //dispatch(addCards(result));
+      });
     });
   };
 }
@@ -197,7 +230,7 @@ export function removeCardRequest(cardCuid, deckCuid) {
   };
 }
 
-export function removeCard(cardCuid, deckCuid){
+export function removeCard(cardCuid, deckCuid) {
   return {
     type: REMOVE_CARD,
     cardCuid,

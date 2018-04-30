@@ -47,9 +47,6 @@ class UserInventoryPage extends Component {
   }
 
   componentDidMount() {
-    this.props.dispatch(fetchUserCards(this.props.params.cuid));
-    this.props.dispatch(fetchUserDecks(this.props.params.cuid));
-
     // account stuff
     let accounts;
     getWeb3((result) => {
@@ -69,18 +66,23 @@ class UserInventoryPage extends Component {
         console.log(this.state.accounts);
         //creating decks if no decks exist
         if (this.props.decks[0] == null) {
-          for(var i = 0; i < 5; i++){
+          for (var i = 0; i < 5; i++) {
             this.props.dispatch(addDeckRequest(
               {
                 number: i + 1,
-                name: 'Deck ' + (i+1),
+                name: 'Deck ' + (i + 1),
                 owner: this.state.accounts[0],
                 active: false,
               }));
-          }    
+          }
         }
+
+        console.log('ACCOUNT')
+        console.log(this.state.accounts[0])
+        this.props.dispatch(fetchUserCards(this.state.accounts[0]));
       });
     }
+    //this.props.dispatch(fetchUserDecks(this.props.params.cuid));
   }
 
   handleChange = (value) => {
@@ -169,9 +171,9 @@ class UserInventoryPage extends Component {
 }
 
 // Actions required to provide data for this component to render in sever side.
-UserInventoryPage.need = [(params) => {
-  return fetchUserCards(params.cuid), fetchUserDecks(params.cuid);
-}];
+// UserInventoryPage.need = [(params) => {
+//   return fetchUserCards(params.cuid), fetchUserDecks(params.cuid);
+// }];
 
 // Retrieve data from store as props
 const mapStateToProps = (state) => {

@@ -47,7 +47,6 @@ export function addDeck(req, res) {
   newDeck.number = sanitizeHtml(newDeck.number);
   newDeck.name = sanitizeHtml(newDeck.name);
   newDeck.owner = sanitizeHtml(newDeck.owner);
-  newDeck.cards = sanitizeHtml(newDeck.cards);
   newDeck.slug = slug(newDeck.name.toLowerCase(), { lowercase: true });
   newDeck.cuid = cuid();
   newDeck.save((err, saved) => {

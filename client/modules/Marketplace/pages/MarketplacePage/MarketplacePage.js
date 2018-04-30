@@ -65,7 +65,7 @@ class MarketplacePage extends Component {
     }
     this.props.dispatch(fetchAuctions());
     // hardcoded for newGuy for now. Need to make it so it takes the cuid of the logged in user
-    this.props.dispatch(fetchUserCards(this.state.accounts[0]));
+    //this.props.dispatch(fetchUserCards(this.state.accounts[0]));
   }
 
   handleFetchUserCards = () => {
@@ -90,9 +90,9 @@ class MarketplacePage extends Component {
       bid(tokenId, result, this.state.accounts[0]).then(() => {
         console.log('FINDING NEW OWNER OF CARD');
         ownerOf(tokenId);
-        this.props.dispatch(deleteAuctionRequest(cuid));
-        this.handleTransferCard(tokenId, 'newGuy');
-        this.props.dispatch(fetchUserCards('newGuy'));
+        // this.props.dispatch(deleteAuctionRequest(cuid));
+        // this.handleTransferCard(tokenId, 'newGuy');
+        // this.props.dispatch(fetchUserCards('newGuy'));
       });
     });
   }

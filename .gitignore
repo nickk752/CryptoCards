@@ -9,4 +9,3 @@ dist
 coverage/
 .nyc_output/
 build/*
-build/

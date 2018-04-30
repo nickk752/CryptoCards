@@ -140,6 +140,21 @@ async function getCard(tokenId) {
   };
 }
 
+async function getCardsForUser(owner) {
+  const cardOwnership = await CryptoCardsCore.methods.tokensOfOwner(owner).call();
+  console.log('TOKENSOFOWNER')
+  console.log(cardOwnership);
+  const cardPromises = [];
+  // const cards = [];
+  cardOwnership.forEach((tokenId) => {
+    cardPromises.push(getCard(tokenId));
+  });
+  const cards = await Promise.all(cardPromises);
+  console.log('actual card objects');
+  console.log(cards);
+  return cards;
+}
+
 async function getAuction(tokenId) {
   const auction = await SaleClockAuction.methods.getAuction(tokenId).call();
   const card = await getCard(tokenId);
@@ -201,6 +216,7 @@ module.exports = {
   getAuctions,
   bid,
   getCard,
+  getCardsForUser,
   getCurrentPrice,
   ownerOf,
 };
