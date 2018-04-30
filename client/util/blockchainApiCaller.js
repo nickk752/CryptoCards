@@ -48,14 +48,22 @@ function getType(type) {
 }
 
 function decodeSkills(skills) {
-  var skillsJson = {}
-  var i = 0;
-  skillsJson['attack'] = hex2int(skills[i + 7]);
-  skillsJson['defense'] = hex2int(skills[i + 8]);
-  //TODO: map type int to actual type names
-  skillsJson['type'] = getType(hex2int(skills[i + 9]));
-  skillsJson['rarity'] = hex2int(skills[skills.length - 1]);
-  return skillsJson;
+  var skillsJson = {};
+    var i = 0;
+    skillsJson['lcost'] = this.hex2int(skills[i + 4]);
+    skillsJson['mcost'] = this.hex2int(skills[i + 5]);
+    skillsJson['rcost'] = this.hex2int(skills[i + 6]);
+    skillsJson['attack'] = this.hex2int(skills[i + 7]);
+    skillsJson['defense'] = this.hex2int(skills[i + 8]);
+    skillsJson['type'] = this.getType(this.hex2int(skills[i + 9]));
+    //traits stay a as a hex string
+    skillsJson['trait1'] = skills[i + 10];
+    skillsJson['trait2'] = skills[i + 11];
+    skillsJson['trait3'] = skills[i + 12];
+    //description stays hex string too
+    skillsJson['description'] = skills[i + 13] + skills[i + 14];
+    skillsJson['rarity'] = this.hex2int(skills[skills.length - 1]);
+    return skillsJson;
 }
 
 function hex2ascii(hexx) {

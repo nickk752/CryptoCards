@@ -127,13 +127,6 @@ class MarketplacePage extends Component {
   }
 
   handleAddGen0Auction = () => {
-    /*  creating Gen 0 auctions
-     this could be moved somewhere else */
-
-    /* var hex = '000100011300000C';
-    var skills = this.hex2int(hex);
-    var name = 'This is a card';
-    var nameInHex = this.ascii2hex(name); */
 
     var skills;
     var name;
@@ -145,7 +138,6 @@ class MarketplacePage extends Component {
         var tokenId = result.events.Spawn.returnValues.tokenId;
         console.log('TOKEN ID CREATED: ' + tokenId);
         getAuction(tokenId).then((data1) => {
-          // figure out name decoding(eric)
           getCard(tokenId).then((data2) => {
             var hexSkills = this.string2hex(data2.skills);
             console.log('SKILLS IN HEX: ' + hexSkills);
@@ -214,10 +206,18 @@ class MarketplacePage extends Component {
   decodeSkills = (skills) => {
     var skillsJson = {};
     var i = 0;
+    skillsJson['lcost'] = this.hex2int(skills[i + 4]);
+    skillsJson['mcost'] = this.hex2int(skills[i + 5]);
+    skillsJson['rcost'] = this.hex2int(skills[i + 6]);
     skillsJson['attack'] = this.hex2int(skills[i + 7]);
     skillsJson['defense'] = this.hex2int(skills[i + 8]);
-    //TODO: map type int to actual type names
     skillsJson['type'] = this.getType(this.hex2int(skills[i + 9]));
+    //traits stay a as a hex string
+    skillsJson['trait1'] = skills[i + 10];
+    skillsJson['trait2'] = skills[i + 11];
+    skillsJson['trait3'] = skills[i + 12];
+    //description stays hex string too
+    skillsJson['description'] = skills[i + 13] + skills[i + 14];
     skillsJson['rarity'] = this.hex2int(skills[skills.length - 1]);
     return skillsJson;
   }
