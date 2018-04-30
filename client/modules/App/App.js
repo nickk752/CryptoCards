@@ -116,7 +116,7 @@ export class App extends Component {
         NCost: card.mCost,
         LCost: card.lCost,
         RCost: card.rCost,
-        Atk: card.attack,
+        Att: card.attack,
         Def: card.defense,
         Effect: card.effect,
       });
@@ -130,7 +130,7 @@ export class App extends Component {
     xhr.send(JSON.stringify({ 
       name: this.state.accounts[0],
       gameId: 500,
-      deck: JSON.stringify(renameDeckCards.cards),
+      deck: JSON.stringify(renameDeckCards),
       }));
     xhr.onloadend = function (result) {
       console.log(result);

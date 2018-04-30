@@ -30,9 +30,9 @@ app.get('/*',function(req,res){
 app.post('/',function(req, res){
     let name = req.body.name;
     let gameId = req.body.gameId;
-    let deck = JSON.parse(req.body.deck);
+    let deck = req.body.deck;
     console.log('DECKSS');
-    console.log(deck[0]);
+    // console.log(deck);
     prePlayers[numPlayers] = {name: name, gameId: gameId, deck: deck};
     numPlayers++;
 
@@ -59,7 +59,7 @@ io.on('connection',function(socket){
                 deck = player.deck;
             }
         });
-        socket.emit('preJoinResp', {deck: deck});
+        socket.emit('preJoinResp', {deck: deck});//HERE
     });
 
     // when they send us a 'join' with data (name, gameID, deck)
@@ -78,6 +78,7 @@ io.on('connection',function(socket){
         };
         console.log("set player name to: " + socket.player.name);
         console.log("set player gameId to: " + socket.player.gameId);
+        console.log("player's deck's 1st card name: " + socket.player.deckList[0].name);
         console.log("player's deck's 5th card name: " + socket.player.deckList[4].name);
         console.log("and it's cost: " + socket.player.deckList[4].cost);
 

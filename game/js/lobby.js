@@ -34,10 +34,10 @@ Lobby.create = function(){
     Lobby.waitText = game.add.text(20, 20, "Waiting for match...", style);
 };
 
-Lobby.onJoinGamePressed = function(){
+Lobby.onJoinGamePressed = function(nameIn, gameIdIn, deckString){
 
     //get our decklist
-    var deckList = [].concat(DeckLoader.loadDeck());
+    var deckList = [].concat(DeckLoader.loadDeck(deckString));
 
     //get our name
     var nameEntry = document.getElementById('playerNameEntry');

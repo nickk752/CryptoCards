@@ -17,7 +17,8 @@ Client.socket = io.connect();
 Client.joinLobby = function(name, gameId, deckList){
     
     //tell the game to set up our player info.
-    console.log("about to create player with deck: " + deckList);
+    console.log("about to create player with deck: ");
+    console.log(deckList);
     Game.createPlayer(name, deckList);
     //and send a join with what that expects
     Client.socket.emit('join', {name: name, gameId: gameId, deckList: deckList});
@@ -52,7 +53,12 @@ Client.sendPreJoin = function(name, gameId){
 }
 
 Client.socket.on('preJoinResp', function(data){
-    Lobby.setDeck(data.deck);
+    var newDeck = DeckLoader.loadDeck(data.deck);
+    console.log('PRE JOIN REQ DECK');
+    console.log(data.deck);
+    console.log(newDeck);
+    Lobby.setDeck(newDeck);
+    // Lobby.setDeck(data.deck);
 });
 
 //when both people with a certain gameId have joined the server
