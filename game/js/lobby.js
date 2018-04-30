@@ -18,24 +18,34 @@ Lobby.preload = function(){
 
 Lobby.create = function(){
 
-    Lobby.joinGameButton = game.add.button(game.world.centerX , game.world.centerY, 'joingamebutton_sprite', Lobby.onJoinGamePressed);
-    Lobby.joinGameButton.centerX = game.world.centerX;
-    Lobby.joinGameButton.centerY = game.world.centerY;
+    //Lobby.joinGameButton = game.add.button(game.world.centerX , game.world.centerY, 'joingamebutton_sprite', Lobby.onJoinGamePressed);
+    //Lobby.joinGameButton.centerX = game.world.centerX;
+    //Lobby.joinGameButton.centerY = game.world.centerY;
+
+    let name = getParameterByName('name');
+    let gameId = getParameterByName('gameId');
+
+    Client.sendPreJoin(name, gameId);
+    
+    //put up a message if they're still around
+    var style = { font: "bold 32px Arial", fill: "#2f2" };
+    Lobby.waitText = game.add.text(20, 20, "Waiting for match...", style);
 };
 
 Lobby.onJoinGamePressed = function(){
+
     //get our decklist
     var deckList = [].concat(DeckLoader.loadDeck());
 
     //get our name
     var nameEntry = document.getElementById('playerNameEntry');
     var name = nameEntry.value;
-    //name = randomInt(1,1000);
+    name = randomInt(1,1000);
 
     //get our gameId
     var gameIdEntry = document.getElementById('gameIDEntry');
     var gameId = gameIdEntry.value;
-    //gameId = "12"
+    gameId = "12";
 
     //they have to enter a name to continue
     if (name == "" || gameId == ""){
@@ -56,7 +66,7 @@ Lobby.onJoinGamePressed = function(){
     }
 };
 
-Lobby.startGame = function(){
+Lobby.startGameState = function(){
     //hide the entry form
     var form = document.getElementById('form');
     form.hidden = true;
@@ -66,6 +76,20 @@ Lobby.startGame = function(){
 
 }
 
+Lobby.setDeck = function(deck){
+    Client.joinLobby();
+}
+
 function randomInt (low, high) {
     return Math.floor(Math.random() * (high - low) + low);
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
