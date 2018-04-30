@@ -18,7 +18,7 @@ export const accounts = ['0x627306090abaB3A6e1400e9345bC60c78a8BEf57',
 
 const CoreAddress = '0x345ca3e014aaf5dca488057592ee47305d9b3e10';
 const AuctionAddress = '0xf25186b5081ff5ce73482ad761db0eb0d25abfbf';
-const CryptoCardsCore = new web3.eth.Contract(coreAbi.abi, CoreAddress, {
+let CryptoCardsCore = new web3.eth.Contract(coreAbi.abi, CoreAddress, {
   from: accounts[0],
   gas: '3000000',
 }); // contract(abi);
@@ -105,13 +105,13 @@ async function getCard(tokenId) {
 
   const isCombining = card.isCombining; // bool: Whether card is pregerz er nawt
   const isReady = card.isReady;   // bool: Whether card is ready to get down or not
-  const cooldownIndex = card.cooldownIndex.toNumber(); // int: index into cooldown array
-  const nextActionAt = card.nextActionAt.toNumber(); // int: block number when card will be done pregerz and dtf agayne
-  const combiningWithId = card.combiningWithId.toNumber(); // int: the 'father' if card is pregnant, 0 otherwise
-  const spawnTime = card.spawnTime.toNumber(); // int: seconds since epoch
-  const firstIngredientId = card.firstIngredientId.toNumber(); // int: parent1 tokenId
-  const secondIngredientId = card.secondIngredientId.toNumber(); // int: parent2 tokenId
-  const generation = card.generation.toNumber(); // int: generation of the card
+  const cooldownIndex = card.cooldownIndex; // int: index into cooldown array
+  const nextActionAt = card.nextActionAt; // int: block number when card will be done pregerz and dtf agayne
+  const combiningWithId = card.combiningWithId; // int: the 'father' if card is pregnant, 0 otherwise
+  const spawnTime = card.spawnTime; // int: seconds since epoch
+  const firstIngredientId = card.firstIngredientId; // int: parent1 tokenId
+  const secondIngredientId = card.secondIngredientId; // int: parent2 tokenId
+  const generation = card.generation; // int: generation of the card
 
   const hexSkills = string2hex(card.skills);
   console.log('SKILLS IN HEX: ' + hexSkills);
@@ -157,12 +157,18 @@ async function getAuction(tokenId) {
 }
 
 async function getAuctions() {
-  const supply = await CryptoCardsCore.totalSupply().call();
+  CryptoCardsCore = await new web3.eth.Contract(coreAbi.abi, CoreAddress, {
+    from: accounts[0],
+    gas: '3000000',
+  });
+  const supply = await CryptoCardsCore.methods.totalSupply().call();
+  console.log("TOTAL SUPPLY")
+  console.log(supply)
   let owner;
   let auctions = [];
   let i;
   for (i = 0; i < supply; i++) {
-    owner = await CryptoCardsCore.ownerOf(i).call();
+    owner = await CryptoCardsCore.methods.ownerOf(i).call();
     if (owner.toUpperCase() === AuctionAddress.toUpperCase()) {
       const auction = await getAuction(i);
       auctions.push(auction);

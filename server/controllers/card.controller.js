@@ -53,6 +53,15 @@ newCard.slug = slug(newCard.name.toLowerCase(), { lowercase: true });
 newCard.cuid = cuid();
 newCard.decks = sanitizeHtml(newCard.decks);
 newCard.tokenId = sanitizeHtml(newCard.tokenId);
+newCard.isCombining = sanitizeHtml(newCard.isCombining);
+newCard.isReady = sanitizeHtml(newCard.isReady);
+newCard.cooldownIndex = sanitizeHtml(newCard.cooldownIndex);
+newCard.nextActionAt = sanitizeHtml(newCard.nextActionAt);
+newCard.combiningWithId = sanitizeHtml(newCard.combiningWithId);
+newCard.spawnTime = sanitizeHtml(newCard.spawnTime);
+newCard.firstIngredientId = sanitizeHtml(newCard.firstIngredientId);
+newCard.secondIngredientId = sanitizeHtml(newCard.secondIngredientId);
+newCard.generation = sanitizeHtml(newCard.generation);
 newCard.save((err, saved) => {
     if(err) {
         res.status(500).send(err);
