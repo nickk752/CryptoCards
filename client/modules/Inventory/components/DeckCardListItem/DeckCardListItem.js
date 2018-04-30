@@ -14,7 +14,7 @@ function DeckCardListItem(props){
     return(
         <GridTile
             key={props.card.slug}
-            title={props.card.name}
+            title={<Link to={`/inventory/card/${props.card.cuid}`}>{props.card.name}</Link>}
             subtitle={
                 <div>
                   <p> Type: {props.card.type} Att: {props.card.attack} Def: {props.card.defense} </p>

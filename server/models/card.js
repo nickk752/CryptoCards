@@ -7,10 +7,14 @@ const cardSchema = new Schema({
     type: { type: 'String', required: true},
     attack: { type: 'Number', required: true},
     defense: { type: 'Number', required: true},
-   /*  nCost: { type: 'Number', required: true},
     lCost: { type: 'Number', required: true},
-    rCost: { type: 'Number', required: true}, */
-    //effect: { type: 'String', required: true},
+    mCost: { type: 'Number', required: true},
+    rCost: { type: 'Number', required: true},
+    trait1: { type: 'String', required: false},
+    trait2: { type: 'String', required: false},
+    trait3: { type: 'String', required: false},
+    description: { type: 'String', required: false },
+    rarity: { type: 'String', required: true},
     // still very uncertain if we should store deck reference in card documents or the other way around
     decks: [{type: 'String', required: false}],
     slug: { type: 'String', required: true },

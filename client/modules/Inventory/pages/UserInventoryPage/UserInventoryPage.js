@@ -101,7 +101,27 @@ class UserInventoryPage extends Component {
 
   // getting cards in target deck
   getDeckCards = (cards, deckCuid) => {
-    return cards.filter(card => card.decks.filter(cuid => cuid === deckCuid)[0] === deckCuid);
+    var deckCards = cards.filter(card => card.decks.filter(cuid => cuid === deckCuid)[0] === deckCuid);
+    /* console.log('Deck Cards');
+    console.log(deckCards); */
+    return deckCards;
+  }
+
+  getDeckCardsJson = (cards, deckCuid) => {
+    var deckCards = cards.filter(card => card.decks.filter(cuid => cuid === deckCuid)[0] === deckCuid);
+    var json = {cards: []};
+    deckCards.forEach((card) => {
+      json.cards.push({
+        name: card.name,
+        owner: card.owner,
+        type: card.type,
+        attack: card.attack,
+        defense: card.defense,
+      })
+    });
+    console.log('CARDS JSON');
+    console.log(json);
+    return json;
   }
 
   // getting cards that are not currently in the target deck
@@ -129,6 +149,13 @@ class UserInventoryPage extends Component {
     });
   }
 
+  findActiveDeck = (decks) => {
+    var deck = decks.filter(deck => ( deck.active == true))[0];
+    console.log('FINDING ACTIVE DECK CUID');
+    console.log(deck.cuid);
+    return deck.cuid;
+  }
+
   render() {
 
     return (
@@ -142,6 +169,7 @@ class UserInventoryPage extends Component {
               <Tab label="All Cards" value={0}>
                 {/* Card List */}
                 <CardList cards={this.props.cards} height={300} cols={4} />
+                <button onClick={() => {this.findActiveDeck(this.props.decks)}}> find active </button> 
               </Tab>
 
               {this.state.rows.map(i => {

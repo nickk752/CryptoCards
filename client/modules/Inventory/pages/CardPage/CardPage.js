@@ -16,6 +16,7 @@ import { getCard } from '../../CardReducer';
 import wang from '../../../../components/flowey.png';
 
 export function CardPage(props) {
+  console.log(props.card);
   return (
     <div>
       <Helmet title={props.card.name} />
@@ -27,6 +28,14 @@ export function CardPage(props) {
         <p> Type: {props.card.type} </p>
         <p> Attack: {props.card.attack} </p>
         <p> Defense: {props.card.defense} </p>
+        <p> Left Cost: {props.card.lCost} </p>
+        <p> Middle Cost: {props.card.mCost} </p>
+        <p> Right Cost: {props.card.rCost} </p>
+        <p> Rarity: {props.card.rarity} </p>
+        <p> Trait 1: {props.card.trait1} </p>
+        <p> Trait 2: {props.card.trait2} </p>
+        <p> Trait 3: {props.card.trait3} </p>
+
       </div>
     </div>
   );
