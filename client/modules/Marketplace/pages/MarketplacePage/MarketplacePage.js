@@ -71,7 +71,7 @@ class MarketplacePage extends Component {
   }
 
   handleFetchUserCards = () => {
-    this.props.dispatch(fetchUserCards('newGuy'));//hardcoding
+    this.props.dispatch(fetchUserCards(this.state.accounts[0]));//hardcoding
   }
 
   handleDeleteAuction = auction => {
@@ -93,8 +93,6 @@ class MarketplacePage extends Component {
         console.log('FINDING NEW OWNER OF CARD');
         ownerOf(tokenId);
         this.props.dispatch(deleteAuctionRequest(cuid));
-        this.handleTransferCard(tokenId, 'newGuy');
-        this.props.dispatch(fetchUserCards('newGuy'));
       });
     });
   }
@@ -166,7 +164,7 @@ class MarketplacePage extends Component {
           //add auction 2 db
           this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);
           this.handleTransferCard(tokenId, 'CryptoCardsCore');
-          this.props.dispatch(fetchUserCards('newGuy'));//hardcoding
+          this.props.dispatch(fetchUserCards(this.state.accounts[0]));//hardcoding
         });
       });
     });

@@ -108,6 +108,19 @@ export class App extends Component {
     var deckCards = this.getDeckCards(this.props.cards, activeCuid);
     console.log('GET DECK CARDS');
     console.log(deckCards);
+    var renameDeckCards = {cards: []};
+    deckCards.forEach((card) => {
+      renameDeckCards.cards.push({
+        Name: card.name,
+        Type: card.type,
+        NCost: card.mCost,
+        LCost: card.lCost,
+        RCost: card.rCost,
+        Atk: card.attack,
+        Def: card.defense,
+        Effect: card.effect,
+      });
+    });
 
     //http request
     var xhr = new XMLHttpRequest();
@@ -117,7 +130,7 @@ export class App extends Component {
     xhr.send(JSON.stringify({ 
       name: this.state.accounts[0],
       gameId: 500,
-      deck: JSON.stringify(deckCards),
+      deck: JSON.stringify(renameDeckCards.cards),
       }));
     xhr.onloadend = function (result) {
       console.log(result);

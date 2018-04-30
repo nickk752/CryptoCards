@@ -30,7 +30,9 @@ app.get('/*',function(req,res){
 app.post('/',function(req, res){
     let name = req.body.name;
     let gameId = req.body.gameId;
-    let deck = req.body.deck;
+    let deck = JSON.parse(req.body.deck);
+    console.log('DECKSS');
+    console.log(deck[0]);
     prePlayers[numPlayers] = {name: name, gameId: gameId, deck: deck};
     numPlayers++;
 

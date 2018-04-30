@@ -147,6 +147,7 @@ async function getCard(tokenId) {
   };
 }
 
+
 async function getAuction(tokenId) {
   const auction = await SaleClockAuction.methods.getAuction(tokenId).call();
   const card = await getCard(tokenId);

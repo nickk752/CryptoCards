@@ -25,7 +25,6 @@ Lobby.create = function(){
     Lobby.name = getParameterByName('name');
     Lobby.gameId = getParameterByName('gameId');
 
-
     console.log(Lobby.gameId);
 
     Client.sendPreJoin(Lobby.name, Lobby.gameId);
