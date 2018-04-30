@@ -50,40 +50,28 @@ function updateToMatchState(){
 	this.buildings.cards = [];
 	let i;
 	for (i = 0; i < state.buildings.length; i++){
-		if (state.buildings[i]){
-			this.buildings.setCardAtIndex(this.deckList[state.buildings[i]], (state.buildings.length - i) -1);
+		if (state.buildings[i] != null){
+			let index = (state.buildings.length - i) -1;
+			console.log("upDateToMatchState: index: " + index);
+			this.buildings.setCardAtIndex(this.deckList[state.buildings[i]], index);
 		}
 	}
-	/*
-	this.buildings.cards = [];
-	state.buildings.forEach(cardInd => {
-		this.buildings.cards.push(this.deckList[cardInd]);
-	});*/
 	
 	this.leftLane.cards = [];
 	for (i = 0; i < state.leftLane.length; i++){
 		if (state.leftLane[i]){
+			console.log("leftlane index: " + state.leftLane[i]);
 			this.leftLane.setCardAtIndex(this.deckList[state.leftLane[i]], (state.leftLane.length - i) -1);
 		}
 	}
-	/*
-	state.leftLane.forEach(cardInd => {
-		console.log("updateToMatchState leftLane card:" + this.deckList[cardInd].name)
-		console.log( this.deckList[cardInd].render);
-		this.leftLane.cards.push(this.deckList[cardInd]);
-	});*/
 
 	this.rightLane.cards = [];
 	for (i = 0; i < state.rightLane.length; i++){
 		if (state.rightLane[i]){
+			console.log("rightlane index: " + state.rightLane[i]);
 			this.rightLane.setCardAtIndex(this.deckList[state.rightLane[i]], (state.rightLane.length - i) -1);
 		}
 	}
-	/*
-	state.rightLane.forEach(cardInd => {
-		this.rightLane.cards.push(this.deckList[cardInd]);
-	});
-	*/
 };
 
 function opponentRender(){
@@ -94,10 +82,10 @@ function opponentRender(){
 
 // the Player (the person playing on "our" side of the table)
 function Player(name, deckCards){
-	this.deckList = deckCards;
-	deckCards.shift();
-	deckCards.shift();
-	deckCards.shift();
+	//this.deckList = deckCards;
+	//deckCards.shift();
+	//deckCards.shift();
+	//deckCards.shift();
 	this.base = Participant;
 	this.base(name, deckCards);
 
@@ -174,6 +162,7 @@ function playerRender(){
 	this.graveyard.render();
 	this.leftLane.render();
 	this.rightLane.render();
+	this.buildings.render();
 }
 
 function playerSetInteractable(bool){
@@ -203,9 +192,12 @@ function Participant(name, deckCards){
 	this.deck = new Deck(deckCards);
 	this.hand = new Hand();
 	this.graveyard = new Pile(40);
-	this.leftLane = new Lane();
-	this.rightLane = new Lane();
-	this.buildings = new BuildingRow();
+	// clearly this isn't a mistake
+	let nullLane = [null, null, null, null];
+	let nullBuildingRow = [null, null, null, null, null];
+	this.leftLane = new Lane(nullLane);
+	this.rightLane = new Lane(nullLane);
+	this.buildings = new BuildingRow(nullBuildingRow);
 	this.graveyard = new Graveyard();
 
 	this.drawCard = drawParticipantCard;
@@ -250,7 +242,7 @@ function BuildingRow(cards){
 	this.base(5, cards);
 	// same as hand because they work the same
 	this.associateRefZones = handAssociateRefZones;
-	this.render = handRender;
+	this.render = rowRender;
 	this.setInteractable = rowPileSetInteractable;
 
 }
@@ -262,7 +254,7 @@ function Lane(cards){
 	this.base(4, cards);
 	// same as hand because they work the same
 	this.associateRefZones = handAssociateRefZones;
-	this.render = handRender;
+	this.render = rowRender;
 	this.setInteractable = rowPileSetInteractable;
 
 }
@@ -302,7 +294,7 @@ function Hand(cards){
 	this.base(8, cards)
 	this.targetZones = null;
 	this.associateRefZones = handAssociateRefZones;
-	this.render = handRender;
+	this.render = rowRender;
 	this.setInteractable = rowPileSetInteractable;
 };
 Hand.prototype = new Pile;
@@ -310,20 +302,21 @@ Hand.prototype = new Pile;
 
 // TODO rename b/c its used by more than hand.
 // the render function for the Hand
-function handRender(){	
-	//check to see if we're a player or Opponent 
+function rowRender(){	
+	// check to see if we're a player or Opponent 
 	if (this.targetZones){
-		let i = 0;
+		let i;
 		console.log("rowRender, length is: " + this.targetZones.length);
 		console.log("rowRender, [0].x = " + this.targetZones[1].x);
 		for (let i = 0; i < this.cards.length; i++){
-			//because certain zones (buildings, lanes) can have empty spots
+			// because certain zones (buildings, lanes) can have empty spots (as null s)
 			if(this.cards[i]){
+				console.log("about to render " + this.cards[i].name);
 				if (this.cards[i].render == undefined){
 					let oldCard = this.cards[i];
 					this.cards[i] = new Card(null, oldCard.name, oldCard.desc, oldCard.stats, oldCard.cost, oldCard.effects);
 				}
-				console.log("rowRender: " + this.cards[i].renderCard);
+				// console.log("rowRender: " + this.cards[i].render);
 				this.cards[i].render({x: this.targetZones[i].x, y: this.targetZones[i].y});
 				this.cards[i].home = {x: this.targetZones[i].x, y: this.targetZones[i].y};
 			}
@@ -531,17 +524,17 @@ function moveTo(point){
 	tween.start();
 }
 
-//takes a point (anything with x and y properties), and draws itself to the
-//screen with its upper left corner at that point.
+// takes a point (anything with x and y properties), and draws itself to the
+// screen with its upper left corner at that point.
 function renderCard(point){
-	//the x and y point properties
-	var spot = point || {x:0, y:0};
+	// the x and y point properties
+	var spot = point || this.home;
 	var x = spot.x;
 	var y = spot.y;
 	var font = {font: "12px Arial", fill: "#000000"};
 	var font14 = {font: "14px Arial", fill: "#000000"};
 
-	//create the card sprite
+	// create the card sprite
 	this.sprite = game.add.sprite(x,y,'blank_card_sprite');
 
 	// TODO better common/rarity indicator/text?
@@ -554,11 +547,42 @@ function renderCard(point){
 	this.sprite.addChild(game.add.text(37, 1, this.cost.mcost, font));
 	this.sprite.addChild(game.add.text(74, 1, this.cost.rcost, font));
 
-	//id is set in deckloader atm
+	// id is set in deckloader atm
 	this.sprite.parentCard = this;
 
 	this.sprite.events.onDragStop.add(onDragStop, this);
 	this.sprite.events.onDragStart.add(onDragStart, this);
+}
+
+function cardOnDragStart(sprite, pointer, startX, startY) {
+	let card = sprite.parentCard;
+	Game.player.currCard = card;
+	console.log("onDragStart card name: " + card.name);
+
+	let source = Game.zoneGroup.getClosestTo({x:startX, y:startY});
+	console.log("onDragStart source: " + source.zoneName + "[" + source.zoneIndex + "]");
+	Game.player.currSource = source;
+}
+
+function cardOnDragStop(sprite, pointer) {
+	let card = sprite.parentCard;
+	let location = { x: sprite.centerX, y: sprite.centerY };
+	let target = Game.zoneGroup.getClosestTo(location);
+
+	// check if they dragged TO a zone.
+	// might want to move this inside doCurrAction as we'll have
+	// to also check if they're trying to cast a card that doesn't target
+	// a single other card.
+	if (!(Phaser.Rectangle.contains(target, location.x, location.y))){
+		card.moveTo(card.home);
+	} else {
+		Game.player.doCurrActionTo(target);
+	}
+}
+
+function doCurrActionTo(target){
+	let card = Game.player.currCard;
+	let source = Game.player.currSource;
 
 
 }
@@ -569,7 +593,9 @@ function onDragStart(sprite, pointer, startX, startY) {
 	console.log("parent card name: " + card.name);
 
 	//TODO find source by point (startX, startY)?
-	let source = findSourceByPoint({x:startX, y:startY});
+	//let source = findSourceByPoint({x:startX, y:startY});
+	let source = Game.zoneGroup.getClosestTo({x:startX, y:startY});
+	console.log("onDragStart source: " + source.zoneName);
 
 	Game.player.currSource = source;
 }
@@ -581,6 +607,7 @@ function onDragStop(sprite, pointer) {
 	//if target is null, it's invalid, just put it back where it was
 	if (target == null){
 		card.moveTo(card.home);
+		return;
 	} else if (target.action == 'cast') {
 		console.log("casting a spell");
 		if (Game.player.canPay(card.cost)){
@@ -588,6 +615,7 @@ function onDragStop(sprite, pointer) {
 			Game.player.pay(card.cost);
 			Game.player.updateResourceTracker();
 			card.home = target.zone;
+			target.zone.currCard = card;
 			card.moveTo(card.home);
 		} else {
 			card.moveTo(card.home);
@@ -598,7 +626,7 @@ function onDragStop(sprite, pointer) {
 		if (target.card){
 			console.log("targeted cards name: " + target.card.name);
 			fight(target.card, card);
-			target.card.render(target.card.home);
+			target.card.render();
 			card.render(card.home);
 
 			card.moveTo(card.home);
@@ -642,6 +670,7 @@ function onDragStop(sprite, pointer) {
 					Game.player.leftLane.setCardAtIndex(card, target.zoneIndex);
 					break;
 				case 'playerRightLane' :
+					console.log("targeting rightLane, index: " + target.zoneIndex);
 					Game.player.rightLane.setCardAtIndex(card, target.zoneIndex);
 					break;
 				case 'opponentLeftLane' :
@@ -687,9 +716,11 @@ function enableCard(){
 };
 
 function disableCard(){
-	this.sprite.inputEnabled = false;
-	if (this.sprite.input){
-		this.sprite.input.disableDrag();
+	if (this.sprite != undefined){
+		this.sprite.inputEnabled = false;
+		if (this.sprite.input){
+			this.sprite.input.disableDrag();
+		}
 	}
 };
 

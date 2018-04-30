@@ -116,10 +116,12 @@ export class App extends Component {
     console.log(JSON.stringify(deckCards));
     xhr.send(JSON.stringify({ 
       name: this.state.accounts[0],
+      gameId: 500,
       deck: JSON.stringify(deckCards),
       }));
     xhr.onloadend = function (result) {
       console.log(result);
+      window.location.replace(result.target.responseURL);
     };
   }
 

@@ -15,8 +15,8 @@ DeckLoader.loadDeck = function(){
 
     //first we should create the base, and the two energy buildings, and push those into the array
     deck.push(makeBaseCard());
-    deck.push(makeBaseCard());
-    deck.push(makeBaseCard());
+    deck.push(makeLEnergyBuilding());
+    deck.push(makeREnergyBuilding());
 
     //then we create card objs and push the rest
     rawDeck.cards.forEach(rawCard => {
@@ -36,7 +36,23 @@ DeckLoader.loadDeck = function(){
     return deck;
 };
 
+makeLEnergyBuilding = function() {
+    var stats = new Stats(0, 25);
+    var cost = new Cost(0, 0, 0);
+    var effects = [];
+    var desc = "Building \n Your Base and \n scrap  \n generator";
+    var base = new Card(null, "LeftBuilding", desc, stats, cost, effects);
+    return base;
+}
 
+makeREnergyBuilding = function() {
+    var stats = new Stats(0, 25);
+    var cost = new Cost(0, 0, 0);
+    var effects = [];
+    var desc = "Building \n Your Base and \n scrap  \n generator";
+    var base = new Card(null, "RightBuilding", desc, stats, cost, effects);
+    return base;
+}
 
 makeBaseCard = function() {
     var stats = new Stats(0, 25);

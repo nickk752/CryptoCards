@@ -74,16 +74,11 @@ Game.create = function () {
 	Game.currentTurn = 0;
 	Game.player.updateResourceTracker();
 
-
-	//create resource tracker
-
-	// Load our deck from JSON
-	Game.cardList = [].concat(DeckLoader.loadDeck());
-
 	// create the reference zones
 	var refZones = new RefZones();
 
 	// associate the zones for rendering purposes
+	// the player and opp obj are created by pre-create calls
 	Game.player.associateRefZones(refZones.playerZones);
 	Game.opponent.associateRefZones(refZones.opponentZones);
 
@@ -93,12 +88,7 @@ Game.create = function () {
 
 	// render 
 	Game.player.render();
-
 	Client.sendReady();
-
-
-
-	//console.log("local First Cards name: " + Game.cardList[0].name);
 };
 
 Game.displayWinScreen = function(){
@@ -112,12 +102,20 @@ Game.onQuitPressed = function(){
 }
 
 Game.startGame = function(){
-	//place our bases
-	//Game.player.buildings.setCardAtIndex(Game.player.deckList[0], 2);
-	//Game.player.buildings.setCardAtIndex(Game.player.deckList[1], 0);
-	//Game.player.buildings.setCardAtIndex(Game.player.deckList[2], 4);
+	//place our bases and energy buildings
+	Game.player.leftBuilding = Game.player.deckList[1];
+	Game.player.base = Game.player.deckList[0];
+	Game.player.rightBuilding = Game.player.deckList[2];
 
-	//Game.player.render();
+	Game.player.buildings.insertCardAtIndex(Game.player.leftBuilding, 0);
+	Game.player.buildings.insertCardAtIndex(Game.player.base, 2);
+	Game.player.buildings.insertCardAtIndex(Game.player.rightBuilding, 4);
+
+	// shuffle the deck, and draw 8 cards
+	Game.player.deck.shuffle();
+	Game.initialDraw();
+	console.log("about to call player.render in StartGame ");
+	Game.player.render();
 
 	// send our initial state
 	let state = Game.getPlayerPileState();
@@ -245,11 +243,35 @@ Game.initialDraw = function(){
 	Game.player.drawCard();
 };
 
+// BOTH THE CREATEPLAYER AND CREATEOPPONENT METHODS ARE CALLED BEFORE!!!! GAME.CREATE
 // gets called by Client when Lobby tries to join a game (when we know our name and deck and gameId)
-Game.createPlayer = function (name, deck) {
+Game.createPlayer = function (name, deckList) {
+	console.log(name);
+	console.log(deckList[0].name);
 	console.log("createplayer");
+	// make the deck from the deckList 
+	let deck = deckList.slice(3);
+	// make the player object
 	Game.player = new Player(name, deck);
+	// set the player's decklist
+	Game.player.deckList = deckList
 	console.log(Game.player);
+};
+
+// BOTH THE CREATEPLAYER AND CREATEOPPONENT METHODS ARE CALLED BEFORE!!!! GAME.CREATE
+//  called by Client when the server tells us we've found a match
+//  passes us a name to call our opponent, and a deck to use as 
+//  their card list
+Game.createOpponent = function (name, deckList) {
+	// make the deck from the deckList 
+	let deck = deckList.slice(3);
+	// make the opponent object
+	Game.opponent = new Opponent(name, deck);
+	// set the opponents deckList
+	Game.opponent.deckList = deckList;
+	console.log("Opponents name: " + Game.opponent.name);
+	console.log("Opponents 4th card name: " + deck[3].name);
+	console.log("Opponents 4th card render: " + deck[3].render);
 };
 
 Game.startNextTurn = function () {
@@ -273,6 +295,7 @@ Game.startNextTurn = function () {
 	// and re-enabling interactivity 
 	Game.player.setInteractable(true);
 	Game.endTurnButton.input.enabled = true;
+	//Game.player.render();
 
 };
 
@@ -287,20 +310,7 @@ Game.onEndTurnPressed = function () {
 	Client.sendEndTurn();
 };
 
-//  called by Client when the server tells us we've found a match
-//  passes us a name to call our opponent, and a deck to use as 
-//  their card list
-Game.addOpponent = function (name, deck) {
-	// in here we need to set up our opponents state, generate their card list
-	// and also perform other start game actions, or cause them to be performed
-	// stuff like making bases and the two resource buildings, etc.
-	Game.opponent = new Opponent(name, deck);
-	console.log("Opponents name: " + Game.opponent.name);
-	console.log("Opponents 4th card name: " + deck[3].name);
-	console.log("Opponents 4th card render: " + deck[3].render);
-	// setUpDeck();
-	// drawCards(8);
-};
+
 
 // Get a list of which cards go where, to send to our opponent
 Game.getPlayerPileState = function(){
@@ -312,8 +322,7 @@ Game.getPlayerPileState = function(){
 		rightLane: [],
 		buildings: [],
 	};
-	// TODO replace forEach's w/ for loops, put nulls in empty spots
-	// (if player.deck.cards[i] == null or undefined or whatever)
+
 	let i;
 
 	Game.player.deck.cards.forEach(card => {
@@ -326,42 +335,33 @@ Game.getPlayerPileState = function(){
 		state.graveyard.push(card.id);
 	});
 
-	console.log("getPileState: lefLane.length: " + Game.player.leftLane.cards.length);
+	console.log("getPileState: leftLane.length: " + Game.player.leftLane.cards.length);
 	for (i = 0; i < 4; i++){
 		if (Game.player.leftLane.cards[i]){
+			console.log("getPileState: leftlane pushing ID: " + Game.player.leftLane.cards[i].id);
 			state.leftLane.push(Game.player.leftLane.cards[i].id);
 		} else {
 			state.leftLane.push(null);
 		}
 	}
-	/*
-	Game.player.leftLane.cards.forEach(card => {
-		state.leftLane.push(card.id);
-	}); */
 
 	for (i = 0; i < 4; i++){
 		if (Game.player.rightLane.cards[i]){
+			console.log("getPileState: rightlane pushing ID: " + Game.player.rightLane.cards[i].id);
 			state.rightLane.push(Game.player.rightLane.cards[i].id);
 		} else {
 			state.rightLane.push(null);
 		}
 	}
-	/*
-	Game.player.rightLane.cards.forEach(card => {
-		state.rightLane.push(card.id);
-	});*/
+
 	for (i = 0; i < 5; i++){
 		if (Game.player.buildings.cards[i]){
+			console.log("getPPileState: buildings: abt to push: " + Game.player.buildings.cards[i].name)
 			state.buildings.push(Game.player.buildings.cards[i].id);
 		} else {
 			state.buildings.push(null);
 		}
 	}
-	/*
-	Game.player.buildings.cards.forEach(card => {
-		state.buildings.push(card.id);
-	});
-	*/
 
 	console.log("getPlayerPileState:");
 	console.log("state.deck: " + state.deck);
@@ -400,35 +400,56 @@ RefZones = function () {
 		buildings: [],
 	}
 
-	// assign the singletons (deck, graveyard)
-	this.playerZones.deck.push(game.add.sprite(25 * 32, 18 * 32, 'creaturezone_sprite'));
-	this.playerZones.graveyard.push(game.add.sprite(25 * 32, 14 * 32, 'creaturezone_sprite'));
+	Game.zoneGroup = game.add.group();
 
+	// assign the singletons (deck, graveyard)
 	let zone;
+
+	zone = game.add.sprite(25 * 32, 18 * 32, 'creaturezone_sprite');
+	this.playerZones.deck.push(zone);
+	zone.currCard = null;
+	Game.zoneGroup.add(zone);
+
+	zone = game.add.sprite(25 * 32, 14 * 32, 'creaturezone_sprite');
+	this.playerZones.graveyard.push(zone);
+	zone.currCard = null;
+	Game.zoneGroup.add(zone);
+
 
 	for (var i = 0; i < 4; i++) {
 		// assign the players lanes
 		zone = game.add.sprite(0 + (32 * 3 * i), 320, 'creaturezone_sprite');
 		zone.zoneName = "playerLeftLane"
 		zone.zoneIndex = i;
+		zone.currCard = null;
 		this.playerZones.leftLane.push(zone);
+		Game.zoneGroup.add(zone);
 
 		zone = game.add.sprite(416 + (32 * 3 * i), 320, 'creaturezone_sprite');
 		zone.zoneName = "playerRightLane"
 		zone.zoneIndex = i;
+		zone.currCard = null;
 		this.playerZones.rightLane.push(zone);
+		Game.zoneGroup.add(zone);
+
 
 		//this.playerZones.rightLane.push(game.add.sprite(416 + (32 * 3 * i), 320, 'creaturezone_sprite'));
 		// assign the opponents lanes
 		zone = game.add.sprite(416 + (32 * 3 * i), 128, 'creaturezone_sprite');
 		zone.zoneName = "opponentLeftLane"
 		zone.zoneIndex = i;
+		zone.currCard = null;
 		this.opponentZones.leftLane.push(zone);
+		Game.zoneGroup.add(zone);
+
 
 		zone = game.add.sprite(0 + (32 * 3 * i), 128, 'creaturezone_sprite');
 		zone.zoneName = "opponentRightLane"
 		zone.zoneIndex = i;
+		zone.currCard = null;
 		this.opponentZones.rightLane.push(zone);
+		Game.zoneGroup.add(zone);
+
 
 		//this.opponentZones.leftLane.push(game.add.sprite(416 + (32 * 3 * i), 128, 'creaturezone_sprite'));
 		//this.opponentZones.rightLane.push(game.add.sprite(0 + (32 * 3 * i), 128, 'creaturezone_sprite'));
@@ -439,12 +460,16 @@ RefZones = function () {
 		zone = game.add.sprite(0 + (32 * 5 * j), 14 * 32, 'buildingzone_sprite');
 		zone.zoneName = "playerBuildings"
 		zone.zoneIndex = j;
+		zone.currCard = null;
 		this.playerZones.buildings.push(zone);
+		Game.zoneGroup.add(zone);
 
 		zone = game.add.sprite(0 + (32 * 5 * j), 0, 'buildingzone_sprite');
 		zone.zoneName = "opponentBuildings"
 		zone.zoneIndex = j;
+		zone.currCard = null;
 		this.opponentZones.buildings.push(zone);
+		Game.zoneGroup.add(zone);
 
 		//this.playerZones.buildings.push(game.add.sprite(0 + (32 * 5 * j), 14 * 32, 'buildingzone_sprite'));
 		//this.opponentZones.buildings.push(game.add.sprite(0 + (32 * 5 * j), 0, 'buildingzone_sprite'));
@@ -454,7 +479,10 @@ RefZones = function () {
 		zone = game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite');
 		zone.zoneName = "playerHand"
 		zone.zoneIndex = k;
+		zone.currCard = null;
 		this.playerZones.hand.push(zone);
+		Game.zoneGroup.add(zone);
+
 		//this.playerZones.hand.push(game.add.sprite(0+(32*3*k), 18*32, 'creaturezone_sprite'))
 	}
 };
