@@ -65,34 +65,20 @@ export function fetchAuctions() {
     let replaced = [];
     return callApi('auctions').then(res => {
       dbAuctions = res.auctions;
+      dbAuctions.forEach((auc) => {
+        dispatch(deleteAuctionRequest(auc.tokenId));
+      });
       return getAuctions().then(result => {
         console.log('dbauctions');
         console.log(dbAuctions);
-        const dbTokens = {};
-        dbAuctions.forEach((auc) => {
-          dbTokens[auc.tokenId] = auc.cuid;
-        });
 
-        console.log('auctions')
+        console.log('auctions');
         console.log(result);
         result.forEach((auc) => {
-          if (auc.tokenId in dbTokens) {
-            if (auc.cuid !== dbTokens[auc.tokenId]) {
-              dispatch(deleteAuctionRequest(dbTokens[auc.tokenId]));
-              dispatch(addAuctionRequest(auc));
-              replaced.push(auc.tokenId);
-            }
-          } else {
-            dispatch(addAuctionRequest(auc));
-          }
-        });
-        dbAuctions.forEach(auc => {
-          if (replaced.indexOf(auc.tokenId) <= -1) {
-            dbAuctionsFinal.push(auc);
-          }
+          dispatch(addAuctionRequest(auc));
         });
 
-        dispatch(addAuctions(dbAuctionsFinal));
+        // dispatch(addAuctions(dbAuctionsFinal));
       });
 
     });

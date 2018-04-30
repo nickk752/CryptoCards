@@ -1,4 +1,4 @@
-const Web3 = require('Web3');
+const Web3 = require('web3');
 
 
 export const web3 = new Web3(typeof window !== 'undefined' ? window.web3.currentProvider : new Web3.providers.HttpProvider('http://localhost:8545'));

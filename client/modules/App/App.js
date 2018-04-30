@@ -107,9 +107,6 @@ export class App extends Component {
             intl={this.props.intl}
             toggleAddPost={this.toggleAddPostSection}
             // handleLogin={this.handleLogin}
-            user={this.props.user}
-            handleLoginSubmit={this.handleLoginSubmit}
-            handleLoginChange={this.handleLoginChange}
             inventoryLink={inventoryLink + this.state.accounts[0]}
             // isLoggedIn={this.props.isLoggedIn}
           />

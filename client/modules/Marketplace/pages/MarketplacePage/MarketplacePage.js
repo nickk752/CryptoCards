@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 
+import styles from './MarketplacePage.css';
+
 // Import Components
 import AuctionList from '../../components/AuctionList';
 import CreateAuctionWidget from '../../components/CreateAuctionWidget/CreateAuctionWidget';
@@ -80,6 +82,7 @@ class MarketplacePage extends Component {
 
   handleToggleCreateAuction = () => {
     this.props.dispatch(toggleCreateAuction());
+    this.props.dispatch(fetchUserCards(this.state.accounts[0]));
   }
 
   handleClick = (cuid, tokenId) => {
@@ -89,7 +92,8 @@ class MarketplacePage extends Component {
       console.log(this.state.accounts[0])
       bid(tokenId, result, this.state.accounts[0]).then(() => {
         console.log('FINDING NEW OWNER OF CARD');
-        ownerOf(tokenId);
+        //ownerOf(tokenId);
+        this.props.dispatch(fetchAuctions());
         // this.props.dispatch(deleteAuctionRequest(cuid));
         // this.handleTransferCard(tokenId, 'newGuy');
         // this.props.dispatch(fetchUserCards('newGuy'));
@@ -170,9 +174,11 @@ class MarketplacePage extends Component {
         getCard(tokenId).then((data2) => {
           var name = this.hex2ascii(data2.name);
           //add auction 2 db
-          this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);
-          this.handleTransferCard(tokenId, 'CryptoCardsCore');
-          this.props.dispatch(fetchUserCards('newGuy'));//hardcoding
+          // this.handleAddAuction(data1.seller, name, data1.startingPrice, data1.endingPrice, data1.duration, tokenId);
+          // this.handleTransferCard(tokenId, 'CryptoCardsCore');
+          // this.props.dispatch(fetchUserCards('newGuy'));//hardcoding
+          this.props.dispatch(fetchAuctions());
+          this.props.dispatch(fetchUserCards(this.state.accounts[0]))
         });
       });
     });
@@ -241,6 +247,8 @@ class MarketplacePage extends Component {
       <div>
         {this.state.accounts.length !== 0 ? (
           <div>
+            <h1 className={styles['heading']}>Marketplace<br /></h1>
+            <h2 className={styles['subheading']}>Here is where you'll find all the CryptoCards up for auction for Ether!</h2>
             <button onClick={this.handleAddGen0Auction}> create gen0 auctions</button>
             <br />
             <br />
@@ -282,11 +290,11 @@ class MarketplacePage extends Component {
 MarketplacePage.need = [() => { return fetchAuctions(); }];
 
 // Retrieve data from store as props
-function mapStateToProps(state) {
+function mapStateToProps(state, props) {
   return {
     showCreateAuction: getShowCreateAuction(state),
     auctions: getAuctions(state),
-    cards: getUserCards(state, 'newGuy'),
+    cards: getUserCards(state, ),//fix),
   };
 }
 

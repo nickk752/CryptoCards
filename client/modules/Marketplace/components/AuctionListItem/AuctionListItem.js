@@ -10,9 +10,27 @@ import FontIcon from 'material-ui/FontIcon';
 // Import Style
 // import styles from './AuctionListItem.css';
 
-import img from '../../flowey.png';
+import img from '../../flowey.svg';
+
+import imageGetter from '../../../../util/imageGetter';
+
+const styles = {
+  imgWrap: {
+    width: '100%',
+    height: '100%',
+    position: 'relative',
+    overflow: 'hidden',
+
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    margin: '0',
+  },
+};
+
 
 function AuctionListItem(props) {
+  const image = imageGetter(Math.floor(Math.random() * 100));
   return (
     <GridTile
       key={props.auction.slug}
@@ -20,19 +38,21 @@ function AuctionListItem(props) {
       subtitle={<span>by <b>{props.auction.seller}</b></span>}
       actionIcon={<button onClick={() => props.handleClick(props.auction.cuid, props.auction.tokenId)}>Bid!</button>}
     >
-      <img src={img}  role="presentation" />;
+      <div style={styles.imgWrap}>
+        <img style={{position: 'absolute'}} src={image} role="presentation" />
+      </div>
     </GridTile>
 
-  //   <div className={styles['single-auction']}>
-  //     <h3 className={styles['auction-title']}>
-  //       <Link to={`/auctions/${props.auction.slug}-${props.auction.cuid}`} >
-  //         {props.auction.card};
-  //       </Link>
-  //     </h3>
-  //     <p className={styles['seller-name']}><FormattedMessage id="by" /> {props.auction.seller}</p>
-  //     <p className={styles['card-name']}><FormattedMessage id="by" /> {props.auction.card}</p>
-  //     <hr className={styles.divider} />
-  //   </div>
+    //   <div className={styles['single-auction']}>
+    //     <h3 className={styles['auction-title']}>
+    //       <Link to={`/auctions/${props.auction.slug}-${props.auction.cuid}`} >
+    //         {props.auction.card};
+    //       </Link>
+    //     </h3>
+    //     <p className={styles['seller-name']}><FormattedMessage id="by" /> {props.auction.seller}</p>
+    //     <p className={styles['card-name']}><FormattedMessage id="by" /> {props.auction.card}</p>
+    //     <hr className={styles.divider} />
+    //   </div>
   );
 }
 

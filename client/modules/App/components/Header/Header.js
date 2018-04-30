@@ -47,11 +47,7 @@ export function Header(props, context) {
             </NavItem>
           </Nav>
           <Nav pullRight>
-            {<web3Login
-              handleSubmit={props.handleLoginSubmit}
-              handleChange={props.handleLoginChange}
-              user={props.user}
-            />}
+            {<web3Login />}
           </Nav>
         </Navbar>
       </div>
@@ -67,9 +63,6 @@ Header.propTypes = {
   toggleAddPost: PropTypes.func.isRequired,
   switchLanguage: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
-  handleLoginSubmit: PropTypes.func.isRequired,
-  handleLoginChange: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
   // handleLogin: PropTypes.func.isRequired,
   // isLoggedIn: PropTypes.bool.isRequired,
 };

@@ -80,12 +80,28 @@ export function fetchCards() {
   };
 }
 
+export function deleteCard(cuid) {
+  return {
+    type: DELETE_CARD,
+    cuid,
+  };
+}
+
+export function deleteCardRequest(cuid) {
+  return (dispatch) => {
+    return callApi(`cards/${cuid}`, 'delete').then(() => dispatch(deleteCard(cuid)));
+  };
+}
+
 export function fetchUserCards(owner) {
   return (dispatch) => {
     let dbCards;
     let bcCards;
     return callApi(`cards/users/${owner}`).then(res => {
       dbCards = res.cards;
+      dbCards.forEach(card => {
+        dispatch(deleteCardRequest(card.cuid));
+      });
       return getCardsForUser(owner).then((result) => {
         bcCards = result;
         console.log('db');
@@ -113,7 +129,7 @@ export function fetchUserCards(owner) {
             secondIngredientId: card.secondIngredientId,
             generation: card.generation,
           }));
-        })
+        });
         //dispatch(addCards(result));
       });
     });
@@ -123,19 +139,6 @@ export function fetchUserCards(owner) {
 export function fetchCard(cuid) {
   return (dispatch) => {
     return callApi(`cards/${cuid}`).then(res => dispatch(addCard(res.card)));
-  };
-}
-
-export function deleteCard(cuid) {
-  return {
-    type: DELETE_CARD,
-    cuid,
-  };
-}
-
-export function deleteCardRequest(cuid) {
-  return (dispatch) => {
-    return callApi(`cards/${cuid}`, 'delete').then(() => dispatch(deleteCard(cuid)));
   };
 }
 
