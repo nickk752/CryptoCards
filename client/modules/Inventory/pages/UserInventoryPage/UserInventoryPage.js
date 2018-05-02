@@ -13,23 +13,77 @@ import DeckList from '../../components/DeckList';
 import DeckListItem from '../../components/DeckListItem/DeckListItem';
 import AddCardDeckWidget from '../../components/AddCardDeckWidget/AddCardDeckWidget';
 
+
 //Import Actions
-import { addCardRequest, fetchCards, fetchUserCards, fetchUserDecks, deleteCardRequest, fetchDecks, addDeckRequest, deleteDeckRequest, toggleAddCardDeck, addDeckToCardRequest } from '../../InventoryActions';
+import {
+  addCardRequest,
+  fetchCards,
+  fetchUserCards,
+  fetchUserDecks,
+  deleteCardRequest,
+  fetchDecks,
+  addDeckRequest,
+  deleteDeckRequest,
+  toggleAddCardDeck,
+  addDeckToCardRequest,
+  removeCardRequest,
+  activateRequest,
+} from '../../InventoryActions';
 
 //Import Selectors
 import { getCards } from '../../CardReducer';
 import { getDecks, getShowAddCardDeck } from '../../DeckReducer';
 
+import getWeb3 from '../../../../util/getWeb3';
+const rows = [1, 2, 3, 4, 5];
+
 class UserInventoryPage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { value: 0 };
+    this.state = {
+      value: 0,
+      accounts: [],
+    };
   }
 
   componentDidMount() {
-    this.props.dispatch(fetchUserCards(this.props.params.cuid));
-    this.props.dispatch(fetchUserDecks(this.props.params.cuid));
+    // account stuff
+    let accounts;
+    getWeb3((result) => {
+      // console.log('getweb3');
+      // console.log(result);
+      this.myWeb3 = result;
+    });
+    if (this.myWeb3 !== undefined) {
+      accounts = this.myWeb3.eth.getAccounts((error, result) => {
+        if (!error) {
+          return result;
+        }
+        return error;
+      });
+      accounts.then((result) => {
+        this.setState({ accounts: result });
+        console.log(this.state.accounts);
+        //creating decks if no decks exist
+        if (this.props.decks[0] == null) {
+          for (var i = 0; i < 5; i++) {
+            this.props.dispatch(addDeckRequest(
+              {
+                number: i + 1,
+                name: 'Deck ' + (i + 1),
+                owner: this.state.accounts[0],
+                active: false,
+              }));
+          }
+        }
+
+        console.log('ACCOUNT')
+        console.log(this.state.accounts[0])
+        this.props.dispatch(fetchUserCards(this.state.accounts[0]));
+      });
+    }
+    //this.props.dispatch(fetchUserDecks(this.props.params.cuid));
   }
 
   handleChange = (value) => {
@@ -42,24 +96,33 @@ class UserInventoryPage extends Component {
     this.props.dispatch(toggleAddCardDeck());
   }
 
+  // getting cards in target deck
   getDeckCards = (cards, deckCuid) => {
     return cards.filter(card => card.decks.filter(cuid => cuid === deckCuid)[0] === deckCuid);
   }
 
+  // getting cards that are not currently in the target deck
   getAddDeckCards = (cards, deckCuid) => {
     return cards.filter(card => card.decks.filter(cuid => cuid === deckCuid).length === 0)
   }
 
   handleAddDeckToCard = (cardCuid, deckCuid) => {
     this.props.dispatch(addDeckToCardRequest(cardCuid, deckCuid));
-  }
-
-  handleFetchCards = () => {
     this.props.dispatch(fetchUserCards(this.props.params.cuid));
   }
 
   handleToggleAddCardDeck = () => {
     this.props.dispatch(toggleAddCardDeck());
+  }
+
+  handleRemoveCard = (cardCuid, deckCuid) => {
+    this.props.dispatch(removeCardRequest(cardCuid, deckCuid));
+    this.props.dispatch(fetchUserCards(this.props.params.cuid));
+  }
+
+  handleActivate = (deckCuid) => {
+    this.props.dispatch(activateRequest(this.props.params.cuid, deckCuid));
+    this.props.dispatch(fetchUserDecks(this.props.params.cuid));
   }
 
   render() {
@@ -74,106 +137,33 @@ class UserInventoryPage extends Component {
               {/* Card List */}
               <CardList cards={this.props.cards} height={300} cols={4} />
             </Tab>
-            <Tab label="Deck 1" value={1}>
 
-              {this.props.decks[0] != null ? //check if deck exists
-                <div>
-                  <button onClick={this.handleToggleAddCardDeck}> add cards </button>
-                  <AddCardDeckWidget
-                    cards={this.getAddDeckCards(this.props.cards, this.props.decks[0].cuid)}
-                    deck={this.props.decks[0]}
-                    showAddCardDeck={this.props.showAddCardDeck}
-                    addDeckToCard={this.handleAddDeckToCard}
-                    fetchCards={this.handleFetchCards} />
-                  <DeckListItem
-                    //filter for all users cards that belong to deck                                                    
-                    //cards={this.props.cards.filter(card => card.decks.filter(cuid => cuid === this.props.decks[0].cuid)[0] === this.props.decks[0].cuid)} 
-                    cards={this.getDeckCards(this.props.cards, this.props.decks[0].cuid)}
-                    deck={this.props.decks[0]}
-                  />
-                </div>
-                :
-                <p> Deck Does Not Exist </p>
-              }
-            </Tab>
+            {rows.map(i => {
+              var name = 'Deck ' + i;
+              return <Tab label={name} value={i}>
+                {this.props.decks[i - 1] != null ? //check if deck exists
+                  <div>
+                    <button onClick={this.handleToggleAddCardDeck}> add cards </button>
+                    <AddCardDeckWidget
+                      cards={this.getAddDeckCards(this.props.cards, this.props.decks[i - 1].cuid)}
+                      deck={this.props.decks[i - 1]}
+                      showAddCardDeck={this.props.showAddCardDeck}
+                      addDeckToCard={this.handleAddDeckToCard} />
+                    <DeckListItem
+                      //filter for all users cards that belong to deck                                                    
+                      cards={this.getDeckCards(this.props.cards, this.props.decks[i - 1].cuid)}
+                      deck={this.props.decks[i - 1]}
+                      removeCard={this.handleRemoveCard}
+                      activate={this.handleActivate}
+                    />
+                  </div>
+                  :
+                  <p> Deck Does Not Exist </p>
+                }
+              </Tab>
+            })
+            }
 
-            <Tab label="Deck 2" value={2}>
-              {this.props.decks[1] != null ?
-                <div>
-                  <button onClick={this.handleToggleAddCardDeck}> add cards </button>
-                  <AddCardDeckWidget
-                    cards={this.getAddDeckCards(this.props.cards, this.props.decks[1].cuid)}
-                    deck={this.props.decks[1]}
-                    showAddCardDeck={this.props.showAddCardDeck}
-                    addDeckToCard={this.handleAddDeckToCard}
-                    fetchCards={this.handleFetchCards} />
-                  <DeckListItem
-                    cards={this.getDeckCards(this.props.cards, this.props.decks[1].cuid)}
-                    deck={this.props.decks[1]}
-                  />
-                </div>
-                :
-                <p> Deck Does Not Exist </p>
-              }
-            </Tab>
-
-            <Tab label="Deck 3" value={3}>
-              {this.props.decks[2] != null ?
-                <div>
-                  <button onClick={this.handleToggleAddCardDeck}> add cards </button>
-                  <AddCardDeckWidget
-                    cards={this.getAddDeckCards(this.props.cards, this.props.decks[2].cuid)}
-                    deck={this.props.decks[2]}
-                    showAddCardDeck={this.props.showAddCardDeck}
-                    addDeckToCard={this.handleAddDeckToCard}
-                    fetchCards={this.handleFetchCards} />
-                  <DeckListItem
-                    cards={this.getDeckCards(this.props.cards, this.props.decks[2].cuid)}
-                    deck={this.props.decks[2]}
-                  />
-                </div>
-                :
-                <p> Deck Does Not Exist </p>
-              }
-            </Tab>
-            <Tab label="Deck 4" value={4}>
-              {this.props.decks[3] != null ?
-                <div>
-                  <button onClick={this.handleToggleAddCardDeck}> add cards </button>
-                  <AddCardDeckWidget
-                    cards={this.getAddDeckCards(this.props.cards, this.props.decks[3].cuid)}
-                    deck={this.props.decks[3]}
-                    showAddCardDeck={this.props.showAddCardDeck}
-                    addDeckToCard={this.handleAddDeckToCard}
-                    fetchCards={this.handleFetchCards} />
-                  <DeckListItem
-                    cards={this.getDeckCards(this.props.cards, this.props.decks[3].cuid)}
-                    deck={this.props.decks[3]}
-                  />
-                </div>
-                :
-                <p> Deck Does Not Exist </p>
-              }
-            </Tab>
-            <Tab label="Deck 5" value={5}>
-              {this.props.decks[4] != null ?
-                <div>
-                  <button onClick={this.handleToggleAddCardDeck}> add cards </button>
-                  <AddCardDeckWidget
-                    cards={this.getAddDeckCards(this.props.cards, this.props.decks[4].cuid)}
-                    deck={this.props.decks[4]}
-                    showAddCardDeck={this.props.showAddCardDeck}
-                    addDeckToCard={this.handleAddDeckToCard}
-                    fetchCards={this.handleFetchCards} />
-                  <DeckListItem
-                    cards={this.getDeckCards(this.props.cards, this.props.decks[4].cuid)}
-                    deck={this.props.decks[4]}
-                  />
-                </div>
-                :
-                <p> Deck Does Not Exist </p>
-              }
-            </Tab>
           </Tabs>
         </MuiThemeProvider>
       </h1>
@@ -182,9 +172,9 @@ class UserInventoryPage extends Component {
 }
 
 // Actions required to provide data for this component to render in sever side.
-UserInventoryPage.need = [(params) => {
-  return fetchUserCards(params.cuid), fetchUserDecks(params.cuid);
-}];
+// UserInventoryPage.need = [(params) => {
+//   return fetchUserCards(params.cuid), fetchUserDecks(params.cuid);
+// }];
 
 // Retrieve data from store as props
 const mapStateToProps = (state) => {

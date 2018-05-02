@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 
 // Import Components
 import HomeJumbotron from '../../components/HomeJumbotron/HomeJumbotron';
-import NextPart from '../../components/NextPart/NextPart';
 
 
 class HomePage extends Component {
@@ -12,7 +11,6 @@ class HomePage extends Component {
     return (
       <div>
         <HomeJumbotron />
-        <NextPart />
       </div>);
   }
 }

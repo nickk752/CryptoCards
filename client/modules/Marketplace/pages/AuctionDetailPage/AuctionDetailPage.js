@@ -21,7 +21,9 @@ export function AuctionDetailPage(props) {
         <img src={img} alt="" />
       </CardMedia>
       <CardText>
-        Description of card would go here.
+        <p>Starting Price: {props.auction.startPrice} </p>
+        <p>Ending Price: {props.auction.endPrice} </p>
+        <p>Duration: {props.auction.duration} </p>
       </CardText>
     </Card>
   );

@@ -7,6 +7,7 @@ const deckSchema = new Schema({
     owner: { type: 'String', required: true },
     // Uncertain if card references should be kept in decks
     //cards: { type: 'Array', required: true},
+    active: { type: 'Boolean', required: true},
     slug: { type: 'String', required: true },
     cuid: { type: 'String', required: true },
     dateAdded: { type: 'Date', default: Date.now, required: true },

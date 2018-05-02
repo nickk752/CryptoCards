@@ -17,4 +17,7 @@ router.route('/decks').post(DeckController.addDeck);//TODO: change to userid
 // delete a deck by cuid
 router.route('/decks/:cuid').delete(DeckController.deleteDeck);
 
+// Set Deck to active and set all other decks from user to inactive
+router.route('/decks/activate/:userCuid-:deckCuid').post(DeckController.activate);
+
 export default router;

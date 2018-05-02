@@ -14,7 +14,11 @@ function CardListItem(props) {
     <GridTile
       key={props.card.slug}
       title={<Link to={`/inventory/card/${props.card.cuid}`}>{props.card.name}</Link>}
-      subtitle={props.card.type}
+      subtitle={
+        <div>
+          <p> Type: {props.card.type} Att: {props.card.attack} Def: {props.card.defense} </p>
+        </div>
+      }
     //find way to display attack and 
     >
       <img src={wang} />

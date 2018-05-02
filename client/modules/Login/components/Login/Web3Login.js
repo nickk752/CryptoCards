@@ -51,7 +51,7 @@ export class Web3Login extends Component {
     return (
       <div>
         <p>
-          {(this.state.accounts.length !== 0) ? this.state.accounts[0] : 'please login through metamask'}
+          {(this.state.accounts.length !== 0) ? 'Using metamask address: ' + this.state.accounts[0] : 'please login through metamask'}
         </p>
       </div>
     );
@@ -61,17 +61,6 @@ export class Web3Login extends Component {
 Web3Login.propTypes = {
   dispatch: PropTypes.func.isRequired,
   intl: PropTypes.object.isRequired,
-  loggingIn: PropTypes.bool.isRequired,
-  submitted: PropTypes.bool.isRequired,
-  handleSubmit: PropTypes.func.isRequired,
-  handleChange: PropTypes.func.isRequired,
-  user: PropTypes.shape({
-    firstName: PropTypes.string.isRequired,
-    lastName: PropTypes.string.isRequired,
-    username: PropTypes.string.isRequired,
-    password: PropTypes.string.isRequired,
-  }).isRequired,
-  myWeb3: PropTypes.object,
 };
 
 export default Web3Login;

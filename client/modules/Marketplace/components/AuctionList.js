@@ -12,8 +12,8 @@ const styles = {
     justifyContent: 'space-around',
   },
   gridList: {
-    width: 800,
-    height: 600,
+    width: '80%',
+    height: '100%',
     overflowY: 'auto',
   },
 };
@@ -24,6 +24,7 @@ function AuctionList(props) {
       <GridList
         cellHeight={200}
         style={styles.gridList}
+        cols={5}
       >
       {
         props.auctions.map(auction => (
