@@ -22,11 +22,11 @@ Lobby.create = function(){
     //Lobby.joinGameButton.centerX = game.world.centerX;
     //Lobby.joinGameButton.centerY = game.world.centerY;
 
-    let name = getParameterByName('name');
-    let gameId = getParameterByName('gameId');
+    Lobby.name = getParameterByName('name');
+    Lobby.gameId = getParameterByName('gameId');
 
     Client.sendPreJoin(name, gameId);
-    
+
     //put up a message if they're still around
     var style = { font: "bold 32px Arial", fill: "#2f2" };
     Lobby.waitText = game.add.text(20, 20, "Waiting for match...", style);
@@ -77,7 +77,7 @@ Lobby.startGameState = function(){
 }
 
 Lobby.setDeck = function(deck){
-    Client.joinLobby();
+    Client.joinLobby(Lobby.name, Lobby.gameId, deck);
 }
 
 function randomInt (low, high) {
